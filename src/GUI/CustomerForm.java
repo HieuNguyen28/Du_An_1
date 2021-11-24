@@ -53,6 +53,8 @@ public class CustomerForm extends javax.swing.JPanel {
         btnDelete = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(255, 255, 255));
+
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(102, 51, 255));
         jLabel1.setText("Customer");

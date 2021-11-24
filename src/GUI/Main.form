@@ -48,7 +48,7 @@
         <Component class="javax.swing.JLabel" name="lblTime">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Arial" size="18" style="1"/>
+              <Font name="Arial" size="14" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="99" green="0" red="0" type="rgb"/>
@@ -56,11 +56,10 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/Icons/clock.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="jLabel1"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="30" y="560" width="230" height="-1"/>
+              <AbsoluteConstraints x="20" y="550" width="230" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -79,7 +78,10 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="lblMainFrame" alignment="0" pref="930" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="919" max="-2" attributes="0"/>
+                      <Component id="lblMainFrame" max="32767" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -111,10 +113,17 @@
             </Constraint>
           </Constraints>
         </Component>
+        <Component class="GUI.ProducerForm" name="pnlProducer">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="269" y="0" width="930" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
         <Component class="GUI.WarehouseForm" name="pnlWarehouse">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="270" y="0" width="930" height="-1"/>
+              <AbsoluteConstraints x="270" y="0" width="930" height="600"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -162,6 +171,13 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
           </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+              <AbsoluteConstraints x="270" y="0" width="930" height="-1"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="GUI.VoucherForm" name="pnlVoucher">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="270" y="0" width="930" height="-1"/>
