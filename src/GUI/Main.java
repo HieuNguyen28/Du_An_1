@@ -3,14 +3,18 @@ package GUI;
 import Controller.Helper.Image_Auth;
 import Controller.Helper.Mgsbox;
 import Event.EventMenu;
-import Model.Employee;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class Main extends javax.swing.JFrame {
 
-    public Main(Employee a) {
+    public Main() {
         initComponents();
         lblMainFrame.setHorizontalAlignment((int) CENTER_ALIGNMENT);
         lblMainFrame.setBackground(Color.decode("#deddf8"));
@@ -27,6 +31,13 @@ public class Main extends javax.swing.JFrame {
     }
 
     private void init() {
+        new Timer(1000, new ActionListener() {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                lblTime.setText(sdf.format(new Date()));
+            }
+        }).start();
         setBackground(new Color(0, 0, 0, 0));
         menu2.initMoving(this);
         menu2.addEventMenu(new EventMenu() {
@@ -48,6 +59,7 @@ public class Main extends javax.swing.JFrame {
                 } else if (index == 7) {
                     if (Mgsbox.comfirm(null, "Do you really want to sign out?")) {
                         dispose();
+                        Image_Auth.logOff();
                         new LoginForm().setVisible(true);
                     }
                 } else if (index == 5) {
@@ -66,6 +78,7 @@ public class Main extends javax.swing.JFrame {
     private void initComponents() {
 
         panelBorder1 = new GUI.PanelBorder();
+        lblTime = new javax.swing.JLabel();
         pnlMain = new javax.swing.JPanel();
         lblMainFrame = new javax.swing.JLabel();
         pnlEmployee = new GUI.EmployeeGUI();
@@ -82,7 +95,13 @@ public class Main extends javax.swing.JFrame {
         panelBorder1.setBackground(new java.awt.Color(255, 255, 255));
         panelBorder1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        pnlMain.setBackground(new java.awt.Color(242, 242, 242));
+        lblTime.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        lblTime.setForeground(new java.awt.Color(0, 0, 153));
+        lblTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/clock.png"))); // NOI18N
+        lblTime.setText("jLabel1");
+        panelBorder1.add(lblTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 560, 230, -1));
+
+        pnlMain.setBackground(new java.awt.Color(255, 255, 255));
 
         lblMainFrame.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         lblMainFrame.setForeground(new java.awt.Color(255, 0, 0));
@@ -102,10 +121,16 @@ public class Main extends javax.swing.JFrame {
         panelBorder1.add(pnlMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(272, 0, 930, 599));
         panelBorder1.add(pnlEmployee, new org.netbeans.lib.awtextra.AbsoluteConstraints(269, 0, 930, 600));
         panelBorder1.add(pnlWarehouse, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 930, -1));
+
+        pnlMedicine.setBackground(new java.awt.Color(255, 255, 255));
         panelBorder1.add(pnlMedicine, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 930, -1));
+
+        pnlMedicineType.setBackground(new java.awt.Color(255, 255, 255));
         panelBorder1.add(pnlMedicineType, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 930, -1));
         panelBorder1.add(menu2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 11, 256, 590));
         panelBorder1.add(pnlReceipt, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 930, -1));
+
+        pnlCustomer.setBackground(new java.awt.Color(255, 255, 255));
         panelBorder1.add(pnlCustomer, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 930, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -157,6 +182,7 @@ public class Main extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblMainFrame;
+    private javax.swing.JLabel lblTime;
     private GUI.Menu menu2;
     private GUI.PanelBorder panelBorder1;
     private GUI.CustomerForm pnlCustomer;
