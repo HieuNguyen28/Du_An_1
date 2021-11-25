@@ -23,6 +23,7 @@ public class EmployeeDAO extends ModelDataAccessObject<Employee, String> {
     private final String SELECT_ALL_SQL = "SELECT * FROM NhanVien";
     private final String SELECT_BY_ID_SQL = "SELECT * FROM NhanVien WHERE MaNhanVien=?";
     private final String SELECT_BY_USERNAME = "SELECT * FROM NhanVien WHERE TenTaiKhoan = ? ";
+    private final String UPDATE_PASSWORD = "UPDATE NhanVien SET MatKhau =? WHERE MaNhanVien=?";
 
     @Override
     public void insert(Employee entity) {
@@ -66,7 +67,15 @@ public class EmployeeDAO extends ModelDataAccessObject<Employee, String> {
             ex.printStackTrace();
         }
     }
-
+    
+    public void updatePassword(String password, String ID){
+        try {
+            Controller.Helper.Database.executeUpdate(UPDATE_PASSWORD, password, ID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     @Override
     public void delete(String ID) {
         try {

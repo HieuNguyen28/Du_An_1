@@ -1,22 +1,21 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package GUI;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import javax.swing.JTextField;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 
 /**
  *
- * @author Laxus
+ * @author LENOVO
  */
-public class TextField extends JTextField{
-    public TextField() {
+public class PasswordField extends JPasswordField{
+    public PasswordField() {
         setBorder(new EmptyBorder(1, 1, 1, 1));
     }
 
