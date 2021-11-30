@@ -51,7 +51,7 @@ public class MedicineDAO extends ModelDataAccessObject<Medicine, String> {
     @Override
     public void update(Medicine entity) {
         try {
-            Controller.Helper.Database.executeUpdate(UPDATE_SQL, 
+            Controller.Helper.Database.executeUpdate(UPDATE_SQL,  
                     entity.getMdcName(), 
                     entity.getMdcIngredient(), 
                     entity.getMdcConcentration(), 
