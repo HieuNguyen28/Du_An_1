@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Path2D;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.Timer;
 
 public class Menu extends javax.swing.JPanel {
@@ -88,15 +89,17 @@ public class Menu extends javax.swing.JPanel {
     }
 
     private void initData() {
-        listMenu.addItem(new Model_Menu("1", "Employee", Model_Menu.MenuType.MENU));
-        listMenu.addItem(new Model_Menu("2", "Warehouse", Model_Menu.MenuType.MENU));
-        listMenu.addItem(new Model_Menu("3", "Medicine", Model_Menu.MenuType.MENU));
-        listMenu.addItem(new Model_Menu("4", "Medicine type", Model_Menu.MenuType.MENU));
-        listMenu.addItem(new Model_Menu("5", "Statistical", Model_Menu.MenuType.MENU));
-        listMenu.addItem(new Model_Menu("6", "Receipt", Model_Menu.MenuType.MENU));
+        listMenu.addItem(new Model_Menu("1", "Receipt", Model_Menu.MenuType.MENU));
+        listMenu.addItem(new Model_Menu("2", "Employee", Model_Menu.MenuType.MENU));
+        listMenu.addItem(new Model_Menu("3", "Warehouse", Model_Menu.MenuType.MENU));
+        listMenu.addItem(new Model_Menu("4", "Medicine", Model_Menu.MenuType.MENU));
+        listMenu.addItem(new Model_Menu("5", "Medicine type", Model_Menu.MenuType.MENU));
+        listMenu.addItem(new Model_Menu("6", "Statistical", Model_Menu.MenuType.MENU));
         listMenu.addItem(new Model_Menu("7", "Customer", Model_Menu.MenuType.MENU));
-        listMenu.addItem(new Model_Menu("8", "Sign out", Model_Menu.MenuType.MENU));
-        listMenu.addItem(new Model_Menu("9", "Exit", Model_Menu.MenuType.MENU));
+        listMenu.addItem(new Model_Menu("8", "Voucher", Model_Menu.MenuType.MENU));
+        listMenu.addItem(new Model_Menu("9", "Producer", Model_Menu.MenuType.MENU));
+        listMenu.addItem(new Model_Menu("10", "Sign out", Model_Menu.MenuType.MENU));
+        listMenu.addItem(new Model_Menu("11", "Exit", Model_Menu.MenuType.MENU));
         listMenu.addItem(new Model_Menu("", "", Model_Menu.MenuType.EMPTY));
     }
     

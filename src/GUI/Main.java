@@ -4,6 +4,7 @@ import Controller.Helper.Image_Auth;
 import Controller.Helper.Mgsbox;
 import Event.EventMenu;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -19,15 +20,7 @@ public class Main extends javax.swing.JFrame {
         lblMainFrame.setHorizontalAlignment((int) CENTER_ALIGNMENT);
         lblMainFrame.setBackground(Color.decode("#deddf8"));
         pnlMain.setBackground(Color.decode("#deddf8"));
-        prepareUI(pnlMain, pnlEmployee, pnlWarehouse, pnlMedicine, pnlMedicineType, pnlReceipt, pnlCustomer);
         init();
-    }
-
-    private void prepareUI(JPanel... jPanels) {
-        jPanels[0].setVisible(true);
-        for (int i = 1; i < jPanels.length; i++) {
-            jPanels[i].setVisible(false);
-        }
     }
 
     private void init() {
@@ -43,34 +36,44 @@ public class Main extends javax.swing.JFrame {
         menu2.addEventMenu(new EventMenu() {
             @Override
             public void menuIndexChange(int index) {
-                if (index == 8) {
-                    if (Mgsbox.comfirm(null, "Do you really want to exit?")) {
-                        JOptionPane.showMessageDialog(null, "See you again");
-                        System.exit(0);
-                    }
-                } else if (index == 0) {
-                    prepareUI(pnlEmployee, pnlMain, pnlWarehouse, pnlMedicine, pnlMedicineType, pnlReceipt, pnlCustomer);
-                } else if (index == 1) {
-                    prepareUI(pnlWarehouse, pnlMain, pnlMedicine, pnlMedicineType, pnlEmployee, pnlReceipt, pnlCustomer);
-                } else if (index == 2) {
-                    prepareUI(pnlMedicine, pnlMain, pnlWarehouse, pnlMedicineType, pnlEmployee, pnlReceipt, pnlCustomer);
-                } else if (index == 3) {
-                    prepareUI(pnlMedicineType, pnlMain, pnlWarehouse, pnlMedicine, pnlEmployee, pnlReceipt, pnlCustomer);
-                } else if (index == 7) {
-                    if (Mgsbox.comfirm(null, "Do you really want to sign out?")) {
-                        dispose();
+                if (index == 0) {
+                    showForm(new ReceiptForm());
+                }else if (index == 1) {
+                    showForm(new EmployeeGUI());
+                }else if (index == 2) {
+                    showForm(new WarehouseForm());
+                }else if (index == 3) {
+                    showForm(new MedicineForm());
+                }else if (index == 4) {
+                    showForm(new MedicineTypeForm());
+                }else if (index == 5) {
+                    showForm(new StatisForm());
+                }else if (index == 6) {
+                    showForm(new CustomerForm());
+                }else if (index == 7) {
+                    showForm(new VoucherForm());
+                }else if (index == 8) {
+                    showForm(new ProducerForm());
+                }else if (index == 9) {
+                    if (Mgsbox.comfirm(null, "Do you really want to sign out ?")) {
                         Image_Auth.logOff();
+                        dispose();
                         new LoginForm().setVisible(true);
                     }
-                } else if (index == 5) {
-                    prepareUI(pnlReceipt, pnlMedicineType, pnlMain, pnlWarehouse, pnlMedicine, pnlEmployee, pnlCustomer);
-                } else if (index == 4) {
-                    System.out.println("The function is developing");
-                } else if (index == 6) {
-                    prepareUI(pnlCustomer, pnlReceipt, pnlMedicineType, pnlMain, pnlWarehouse, pnlMedicine, pnlEmployee);
+                }else if (index == 10) {
+                    if (Mgsbox.comfirm(null, "Do you really want to exit ?")) {
+                        System.exit(0);
+                    }
                 }
             }
         });
+    }
+    
+    private void showForm(Component com){
+        pnlMain.removeAll();
+        pnlMain.add(com);
+        pnlMain.revalidate();
+        pnlMain.repaint();
     }
 
     @SuppressWarnings("unchecked")
@@ -79,69 +82,67 @@ public class Main extends javax.swing.JFrame {
 
         panelBorder1 = new GUI.PanelBorder();
         lblTime = new javax.swing.JLabel();
-        pnlMain = new javax.swing.JPanel();
-        lblMainFrame = new javax.swing.JLabel();
-        pnlEmployee = new GUI.EmployeeGUI();
-        pnlWarehouse = new GUI.WarehouseForm();
-        pnlMedicine = new GUI.MedicineForm();
-        pnlMedicineType = new GUI.MedicineTypeForm();
         menu2 = new GUI.Menu();
-        pnlReceipt = new GUI.ReceiptForm();
-        pnlCustomer = new GUI.CustomerForm();
+        pnlMain = new GUI.PanelBorder();
+        lblMainFrame = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
         panelBorder1.setBackground(new java.awt.Color(255, 255, 255));
-        panelBorder1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        panelBorder1.setPreferredSize(new java.awt.Dimension(909, 608));
 
-        lblTime.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        lblTime.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         lblTime.setForeground(new java.awt.Color(0, 0, 153));
         lblTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/clock.png"))); // NOI18N
-        lblTime.setText("jLabel1");
-        panelBorder1.add(lblTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 560, 230, -1));
 
-        pnlMain.setBackground(new java.awt.Color(255, 255, 255));
+        pnlMain.setPreferredSize(new java.awt.Dimension(909, 313));
+        pnlMain.setLayout(new java.awt.BorderLayout());
 
-        lblMainFrame.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        lblMainFrame.setForeground(new java.awt.Color(255, 0, 0));
         lblMainFrame.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/MainFrame.png"))); // NOI18N
+        pnlMain.add(lblMainFrame, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout pnlMainLayout = new javax.swing.GroupLayout(pnlMain);
-        pnlMain.setLayout(pnlMainLayout);
-        pnlMainLayout.setHorizontalGroup(
-            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblMainFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 930, Short.MAX_VALUE)
+        javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
+        panelBorder1.setLayout(panelBorder1Layout);
+        panelBorder1Layout.setHorizontalGroup(
+            panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBorder1Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelBorder1Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(lblTime, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(menu2, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10)
+                .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, 920, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10))
         );
-        pnlMainLayout.setVerticalGroup(
-            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblMainFrame, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        panelBorder1Layout.setVerticalGroup(
+            panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBorder1Layout.createSequentialGroup()
+                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelBorder1Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panelBorder1Layout.createSequentialGroup()
+                                .addGap(539, 539, 539)
+                                .addComponent(lblTime))
+                            .addComponent(menu2, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panelBorder1Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, 599, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(10, 10, 10))
         );
-
-        panelBorder1.add(pnlMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(272, 0, 930, 599));
-        panelBorder1.add(pnlEmployee, new org.netbeans.lib.awtextra.AbsoluteConstraints(269, 0, 930, 600));
-        panelBorder1.add(pnlWarehouse, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 930, -1));
-
-        pnlMedicine.setBackground(new java.awt.Color(255, 255, 255));
-        panelBorder1.add(pnlMedicine, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 930, -1));
-
-        pnlMedicineType.setBackground(new java.awt.Color(255, 255, 255));
-        panelBorder1.add(pnlMedicineType, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 930, -1));
-        panelBorder1.add(menu2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 11, 256, 590));
-        panelBorder1.add(pnlReceipt, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 930, -1));
-
-        pnlCustomer.setBackground(new java.awt.Color(255, 255, 255));
-        panelBorder1.add(pnlCustomer, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 0, 930, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelBorder1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panelBorder1, javax.swing.GroupLayout.DEFAULT_SIZE, 1208, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelBorder1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panelBorder1, javax.swing.GroupLayout.DEFAULT_SIZE, 621, Short.MAX_VALUE)
         );
 
         pack();
@@ -185,12 +186,6 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel lblTime;
     private GUI.Menu menu2;
     private GUI.PanelBorder panelBorder1;
-    private GUI.CustomerForm pnlCustomer;
-    private GUI.EmployeeGUI pnlEmployee;
-    private javax.swing.JPanel pnlMain;
-    private GUI.MedicineForm pnlMedicine;
-    private GUI.MedicineTypeForm pnlMedicineType;
-    private GUI.ReceiptForm pnlReceipt;
-    private GUI.WarehouseForm pnlWarehouse;
+    private GUI.PanelBorder pnlMain;
     // End of variables declaration//GEN-END:variables
 }

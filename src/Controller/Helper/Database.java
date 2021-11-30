@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * @author LENOVO
  */
 public class Database {
-    private static String connectionUrl = "jdbc:sqlserver://14.168.220.186:1433;databaseName=QL_NhaThuoc;user=sa;password=2892002";
+    private static String connectionUrl = "jdbc:sqlserver://localHost;databaseName=QL_NhaThuoc;user=sa;password=123456";
     
 
     public static PreparedStatement preparedStatement(String sql, Object... args) throws SQLException {
