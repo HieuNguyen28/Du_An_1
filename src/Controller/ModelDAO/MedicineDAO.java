@@ -19,7 +19,7 @@ public class MedicineDAO extends ModelDataAccessObject<Medicine, String> {
 
     private final String INSERT_SQL = "INSERT INTO Thuoc(MaThuoc,MaLoaiThuoc,MaLoThuoc,MaNhaSanXuat,TenThuoc,ThanhPhan,HamLuong,DonViTinh,HuongDanSuDung,GiaNiemYet,HinhAnh,LaiSuat,GiaGoc)"
             + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
-    private final String UPDATE_SQL = "UPDATE Thuoc SET MaLoaiThuoc=?,MaLoThuoc=?,MaNhaSanXuat=?,TenThuoc=?,ThanhPhan=?,HamLuong=?,DonViTinh=?,HuongDanSuDung=?,GiaNiemYet=?,HinhAnh=?,LaiSuat=?,GiaGoc=? WHERE MaThuoc=?";
+    private final String UPDATE_SQL = "UPDATE Thuoc SET TenThuoc=?,ThanhPhan=?,HamLuong=?,DonViTinh=?,HuongDanSuDung=?,GiaNiemYet=?,HinhAnh=?,LaiSuat=?,GiaGoc=? WHERE MaThuoc=?";
     private final String DELETE_SQL = "DELETE FROM Thuoc WHERE MaThuoc=?";
     private final String SELECT_ALL_SQL = "SELECT * FROM Thuoc";
     private final String SELECT_BY_ID_SQL = "SELECT * FROM Thuoc WHERE MaThuoc=?";
@@ -51,10 +51,7 @@ public class MedicineDAO extends ModelDataAccessObject<Medicine, String> {
     @Override
     public void update(Medicine entity) {
         try {
-            Controller.Helper.Database.executeUpdate(INSERT_SQL, 
-                    entity.getMdcTypeOfMedicineID(), 
-                    entity.getMdcBatchID(),
-                    entity.getMdcProducerID(), 
+            Controller.Helper.Database.executeUpdate(UPDATE_SQL,  
                     entity.getMdcName(), 
                     entity.getMdcIngredient(), 
                     entity.getMdcConcentration(), 

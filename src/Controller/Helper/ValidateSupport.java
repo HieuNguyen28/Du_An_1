@@ -16,13 +16,21 @@ import javax.swing.JTextPane;
 public class ValidateSupport {
 
     public static boolean isNull(JTextField txt) {
-        return txt.getText().trim().isEmpty();
+        txt.setBackground(white);
+        if (txt.getText().trim().length() > 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
-    public static boolean isNull(JTextPane txp) {
-        return txp.getText().trim().isEmpty();
-    }
-
+//    public static boolean isNull(JTextField txt) {
+//        return txt.getText().trim().isEmpty();
+//    }
+//
+//    public static boolean isNull(JTextPane txp) {
+//        return txp.getText().trim().isEmpty();
+//    }
     public static boolean isNumber(JTextField txt) {
         if (!txt.getText().trim().matches("(\\d+.\\d+)|\\d+")) {
             Mgsbox.error(txt.getRootPane(), "Please enter a number....");
@@ -31,6 +39,7 @@ public class ValidateSupport {
             return true;
         }
     }
+
     public static boolean checkSDT(JTextField txt) {
         txt.setBackground(white);
         String id = txt.getText();
@@ -39,7 +48,7 @@ public class ValidateSupport {
             return true;
         } else {
             txt.setBackground(pink);
-            Mgsbox.error(txt.getRootPane(),"Number phone invalid.");
+            Mgsbox.error(txt.getRootPane(), "Number phone invalid.");
             return false;
         }
     }
@@ -55,5 +64,20 @@ public class ValidateSupport {
             Mgsbox.error(txt.getRootPane(), "Email invalid...");
             return false;
         }
+    }
+
+    public static boolean checkPrice(JTextField txt) {
+        try {
+            float hp = Float.parseFloat(txt.getText());
+            if (hp >= 0) {
+                return true;
+            } else {
+                txt.setBackground(pink);
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            txt.setBackground(pink);
+        }
+        return false;
     }
 }
