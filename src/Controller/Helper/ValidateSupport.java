@@ -18,15 +18,8 @@ import javax.swing.JTextPane;
  */
 public class ValidateSupport {
 
-//    public static boolean isNull(JTextField txt) {
-//         txt.setBackground(pink);
-//         Mgsbox.alert(txt.getRootPane(), "Không được để trống " + txt.getName());
-//         return txt.getText().trim().isEmpty();
-//        
-//    }
     public static boolean isNumber(JTextField txt) {
         if (!txt.getText().trim().matches("(\\d+.\\d+)|\\d+")) {
-            Mgsbox.error(txt.getRootPane(), "Please enter a number....");
             return false;
         } else {
             return true;
@@ -75,6 +68,7 @@ public class ValidateSupport {
         if (txt.getText().trim().length() > 0) {
             return false;
         } else {
+            txt.setBackground(pink);
             return true;
         }
     }
@@ -83,7 +77,4 @@ public class ValidateSupport {
         return txp.getText().trim().isEmpty();
     }
     
-    public static boolean isSeleted(JRadioButton rdo) {
-        return rdo.isSelected();  
-    }
 }

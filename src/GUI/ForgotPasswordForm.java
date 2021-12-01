@@ -51,7 +51,7 @@ public class ForgotPasswordForm extends javax.swing.JFrame {
             @Override
             public void run() {
                 try {
-                    EmailSupport.send(staff.getEpeEmail(), "CAPCHA FOR YOU", message + code);
+                    EmailSupport.send(staff.getEpeEmail(), "CAPCHA FOR YOU", message + code, null);
                 } catch (MessagingException | IOException ex) {
                     Logger.getLogger(ForgotPasswordForm.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -135,6 +135,7 @@ public class ForgotPasswordForm extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Forgot Password");
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1090, 528));
         setResizable(false);

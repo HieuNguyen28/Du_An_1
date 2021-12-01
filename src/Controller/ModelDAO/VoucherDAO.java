@@ -18,7 +18,7 @@ import java.util.List;
 public class VoucherDAO extends ModelDataAccessObject<Voucher, String> {
 
     private final String INSERT_SQL = "INSERT INTO Voucher (MaVoucher, MaThuoc, NguoiThemVoucher, NgayBatDau, NgayKetThuc, GiaHoaDonApDung, TiLeGiam) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private final String UPDATE_SQL = "UPDATE Voucher SET MaThuoc=?, NguoiThemVoucher=?, NgayBatDau=?, NgayKetThuc=?, GiaHoaDonApDung=?, TiLeGiam=? WHERE MaVoucher=?";
+    private final String UPDATE_SQL = "UPDATE Voucher SET MaThuoc=?, NgayBatDau=?, NgayKetThuc=?, GiaHoaDonApDung=?, TiLeGiam=? WHERE MaVoucher=?";
     private final String DELETE_SQL = "DELETE FROM Voucher WHERE MaVoucher=?";
     private final String SELECT_ALL_SQL = "SELECT * FROM Voucher";
     private final String SELECT_BY_ID_SQL = "SELECT * FROM Voucher WHERE MaVoucher=?";
@@ -44,7 +44,6 @@ public class VoucherDAO extends ModelDataAccessObject<Voucher, String> {
         try {
             Controller.Helper.Database.executeUpdate(UPDATE_SQL,
                     entity.getVcMedicineID(),
-                    entity.getVcEmployeeAddVoucher(),
                     entity.getVcStartDate(),
                     entity.getVcEndDate(),
                     entity.getVcTotalBillCanAdd(),
