@@ -6,7 +6,9 @@
 package GUI;
 
 import Controller.Helper.Image_Auth;
+import static Controller.Helper.Image_Auth.USER;
 import Controller.Helper.Mgsbox;
+import Controller.Helper.ValidateSupport;
 import Controller.ModelDAO.MedicineDAO;
 import Model.Medicine;
 import java.awt.Color;
@@ -15,6 +17,7 @@ import java.io.File;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -59,22 +62,23 @@ public class MedicineForm extends javax.swing.JPanel {
         jLabel13 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         lblMedicineImage = new javax.swing.JLabel();
-        txtDrugBatch = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
-        txtProducer = new javax.swing.JTextField();
-        txtDrugID = new javax.swing.JTextField();
-        txtContent = new javax.swing.JTextField();
-        txtCost = new javax.swing.JTextField();
-        txtDrugTypeID = new javax.swing.JTextField();
-        txtDrugName = new javax.swing.JTextField();
-        txtShared = new javax.swing.JTextField();
-        txtIgredient = new javax.swing.JTextField();
-        txtUserManual = new javax.swing.JTextField();
-        txtPrice = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblMedicine = new javax.swing.JTable();
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
+        btnUpdate = new javax.swing.JButton();
+        txtDrugID = new GUI.TextField();
+        txtDrugTypeID = new GUI.TextField();
+        txtDrugBatch = new GUI.TextField();
+        txtProducer = new GUI.TextField();
+        txtDrugName = new GUI.TextField();
+        txtIgredient = new GUI.TextField();
+        txtContent = new GUI.TextField();
+        txtUserManual = new GUI.TextField();
+        txtCost = new GUI.TextField();
+        txtShared = new GUI.TextField();
+        txtPrice = new GUI.TextField();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -84,6 +88,7 @@ public class MedicineForm extends javax.swing.JPanel {
 
         jLabel2.setText("Drug batch:");
 
+        jLabel3.setForeground(new java.awt.Color(255, 51, 51));
         jLabel3.setText("Drug ID:");
 
         jLabel4.setText("Drug type ID:");
@@ -126,6 +131,7 @@ public class MedicineForm extends javax.swing.JPanel {
 
         jLabel14.setText("Price:");
 
+        tblMedicine.setBackground(new java.awt.Color(222, 221, 248));
         tblMedicine.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null},
@@ -180,6 +186,40 @@ public class MedicineForm extends javax.swing.JPanel {
             }
         });
 
+        btnUpdate.setBackground(new java.awt.Color(0, 153, 255));
+        btnUpdate.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnUpdate.setForeground(new java.awt.Color(255, 255, 255));
+        btnUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/edit.png"))); // NOI18N
+        btnUpdate.setText("Update");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
+
+        txtDrugID.setBackground(new java.awt.Color(255, 255, 255));
+        txtDrugID.setForeground(new java.awt.Color(255, 0, 51));
+
+        txtDrugTypeID.setBackground(new java.awt.Color(255, 255, 255));
+
+        txtDrugBatch.setBackground(new java.awt.Color(255, 255, 255));
+
+        txtProducer.setBackground(new java.awt.Color(255, 255, 255));
+
+        txtDrugName.setBackground(new java.awt.Color(255, 255, 255));
+
+        txtIgredient.setBackground(new java.awt.Color(255, 255, 255));
+
+        txtContent.setBackground(new java.awt.Color(255, 255, 255));
+
+        txtUserManual.setBackground(new java.awt.Color(255, 255, 255));
+
+        txtCost.setBackground(new java.awt.Color(255, 255, 255));
+
+        txtShared.setBackground(new java.awt.Color(255, 255, 255));
+
+        txtPrice.setBackground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -197,10 +237,10 @@ public class MedicineForm extends javax.swing.JPanel {
                             .addComponent(jLabel9)
                             .addComponent(jLabel12))
                         .addGap(4, 4, 4)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtDrugID, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtProducer, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtContent, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtDrugID, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtCost, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,28 +250,31 @@ public class MedicineForm extends javax.swing.JPanel {
                             .addComponent(jLabel13))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtShared, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtDrugName, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbbUnit, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtDrugTypeID, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(txtDrugTypeID, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtDrugName, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(cbbUnit, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtShared, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel2)
                             .addComponent(jLabel8)
                             .addComponent(jLabel14))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(txtIgredient, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtUserManual, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtDrugBatch, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(62, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(txtIgredient, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtDrugBatch, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtUserManual, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtPrice, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(70, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -248,49 +291,54 @@ public class MedicineForm extends javax.swing.JPanel {
                         .addGap(12, 12, 12)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addComponent(jLabel3)
-                        .addGap(24, 24, 24)
-                        .addComponent(jLabel6)
-                        .addGap(24, 24, 24)
-                        .addComponent(jLabel9)
-                        .addGap(24, 24, 24)
-                        .addComponent(jLabel12))
+                        .addGap(14, 14, 14)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(txtDrugID, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(txtProducer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9)
+                            .addComponent(txtContent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel12)
+                            .addComponent(txtCost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
+                        .addGap(14, 14, 14)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtDrugID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4)
-                            .addComponent(txtDrugTypeID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2)
+                            .addComponent(txtDrugTypeID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtDrugBatch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addGap(22, 22, 22)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtProducer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel7)
-                            .addComponent(txtDrugName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5)
+                            .addComponent(txtDrugName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtIgredient, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addGap(20, 20, 20)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtContent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10)
                             .addComponent(cbbUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8)
                             .addComponent(txtUserManual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addGap(20, 20, 20)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtCost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel13)
-                            .addComponent(txtShared, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel14)
+                            .addComponent(txtShared, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnEdit)
-                    .addComponent(btnDelete))
+                    .addComponent(btnDelete)
+                    .addComponent(btnUpdate))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -300,6 +348,7 @@ public class MedicineForm extends javax.swing.JPanel {
         this.index = tblMedicine.rowAtPoint(evt.getPoint());
         if (this.index >= 0) {
             this.edit();
+            EditStatus(false);
         }
     }//GEN-LAST:event_tblMedicineMouseClicked
 
@@ -321,13 +370,46 @@ public class MedicineForm extends javax.swing.JPanel {
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
-        update();
+        if (Image_Auth.USER.isEpeIsRole()) {
+            edittManager(true);
+
+        } else {
+            editstaff(true);
+        }
+
     }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+        if (ValidateSupport.isNull(txtDrugID)
+                || ValidateSupport.isNull(txtDrugTypeID)
+                || ValidateSupport.isNull(txtDrugBatch)
+                || ValidateSupport.isNull(txtProducer)
+                || ValidateSupport.isNull(txtContent)
+                || ValidateSupport.isNull(txtCost)
+                || ValidateSupport.isNull(txtDrugName)
+                || ValidateSupport.isNull(txtIgredient)
+                || ValidateSupport.isNull(txtShared)
+                || ValidateSupport.isNull(txtUserManual)
+                || ValidateSupport.isNull(txtPrice)) {
+            Mgsbox.error(this, "Please fill out the form...");
+        } else if (!ValidateSupport.checkPrice(txtPrice)
+                || !ValidateSupport.checkPrice(txtCost)
+                || !ValidateSupport.checkPrice(txtShared)) {
+            Mgsbox.error(this, "Please fill in the correct format as required !!!");
+        } else  {
+            update();
+            EditStatus(false);
+
+        }
+
+    }//GEN-LAST:event_btnUpdateActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cbbUnit;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -346,17 +428,17 @@ public class MedicineForm extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     public javax.swing.JLabel lblMedicineImage;
     private javax.swing.JTable tblMedicine;
-    private javax.swing.JTextField txtContent;
-    private javax.swing.JTextField txtCost;
-    private javax.swing.JTextField txtDrugBatch;
-    private javax.swing.JTextField txtDrugID;
-    private javax.swing.JTextField txtDrugName;
-    private javax.swing.JTextField txtDrugTypeID;
-    private javax.swing.JTextField txtIgredient;
-    private javax.swing.JTextField txtPrice;
-    private javax.swing.JTextField txtProducer;
-    private javax.swing.JTextField txtShared;
-    private javax.swing.JTextField txtUserManual;
+    private GUI.TextField txtContent;
+    private GUI.TextField txtCost;
+    private GUI.TextField txtDrugBatch;
+    private GUI.TextField txtDrugID;
+    private GUI.TextField txtDrugName;
+    private GUI.TextField txtDrugTypeID;
+    private GUI.TextField txtIgredient;
+    private GUI.TextField txtPrice;
+    private GUI.TextField txtProducer;
+    private GUI.TextField txtShared;
+    private GUI.TextField txtUserManual;
     // End of variables declaration//GEN-END:variables
     private void EditTable(JTable a) {
         a.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -519,5 +601,68 @@ public class MedicineForm extends javax.swing.JPanel {
         TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
         tblMedicine.setRowSorter(rowSorter);
         rowSorter.setRowFilter(RowFilter.regexFilter(text));
+    }
+
+    public void EditStatus(boolean b) {
+        txtDrugID.setEditable(b);
+        txtDrugTypeID.setEditable(b);
+        txtProducer.setEditable(b);
+        txtDrugBatch.setEditable(b);
+        txtContent.setEditable(b);
+        txtCost.setEditable(b);
+        txtDrugName.setEditable(b);
+        txtIgredient.setEditable(b);
+        txtPrice.setEditable(b);
+        txtShared.setEditable(b);
+        txtUserManual.setEditable(b);
+
+        btnUpdate.setEnabled(b);
+        btnDelete.setEnabled(b);
+        btnEdit.setEnabled(!b);
+    }
+
+    public void edittManager(boolean b) {
+        txtDrugID.setEditable(!b);
+        txtDrugTypeID.setEditable(!b);
+        txtProducer.setEditable(!b);
+        txtDrugBatch.setEditable(!b);
+        txtContent.setEditable(b);
+        txtCost.setEditable(b);
+        txtDrugName.setEditable(b);
+        txtIgredient.setEditable(b);
+        txtPrice.setEditable(b);
+        txtShared.setEditable(b);
+        txtUserManual.setEditable(b);
+
+        btnUpdate.setEnabled(b);
+        btnDelete.setEnabled(b);
+        btnEdit.setEnabled(!b);
+    }
+
+    public boolean checkRole(JTextField txt) {
+        Medicine md = this.MD.selectByID(txt.getText());
+        if (md.getMdcID().equals(USER.isEpeIsRole())) {
+            Mgsbox.alert(this, "You can not update yourself.");
+            return false;
+        } else {
+            return true;
+        }
+    }
+    public void editstaff(boolean b) {
+        txtDrugID.setEditable(!b);
+        txtDrugTypeID.setEditable(!b);
+        txtProducer.setEditable(!b);
+        txtDrugBatch.setEditable(!b);
+        txtContent.setEditable(b);
+        txtCost.setEditable(b);
+        txtDrugName.setEditable(b);
+        txtIgredient.setEditable(b);
+        txtPrice.setEditable(b);
+        txtShared.setEditable(!b);
+        txtUserManual.setEditable(b);
+
+        btnUpdate.setEnabled(b);
+        btnDelete.setEnabled(b);
+        btnEdit.setEnabled(!b);
     }
 }

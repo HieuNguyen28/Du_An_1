@@ -54,7 +54,7 @@ public class MedicineDAO extends ModelDataAccessObject<Medicine, String> {
             Controller.Helper.Database.executeUpdate(UPDATE_SQL,
                     entity.getMdcName(),
                     entity.getMdcIngredient(),
-                    entity.getMdcConcentration(),
+                    entity.getMdcConcentration();
                     entity.getMdcUnit(),
                     entity.getMdcUserManual(),
                     entity.getMdcPriceSale(),
