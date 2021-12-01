@@ -5,12 +5,16 @@
 package Controller.Helper;
 
 import Model.Employee;
+import java.awt.Component;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 /**
@@ -45,9 +49,8 @@ public class Image_Auth {
         }
     }
 
-    public static ImageIcon readImage(String fileName) {
-        File path = new File("Image", fileName);
-        return new ImageIcon(new ImageIcon(path.getAbsolutePath()).getImage().getScaledInstance(180, 180, Image.SCALE_DEFAULT));
+    public static ImageIcon readImage(File file, int width, int height) {
+        return new ImageIcon(new ImageIcon(file.getAbsolutePath()).getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));
     }
 
     public static Employee USER = null;
@@ -59,4 +62,59 @@ public class Image_Auth {
     public static boolean authenticated() {
         return Image_Auth.USER != null;
     }
+
+    public static BufferedImage getScreenShot(Component cpn) {
+        BufferedImage image = new BufferedImage(cpn.getWidth(), cpn.getHeight(), BufferedImage.TYPE_INT_RGB);
+        cpn.paint(image.getGraphics());
+        return image;
+    }
+
+    public static void saveScreenShot(Component cpn, String filename) throws IOException {
+        BufferedImage img = getScreenShot(cpn);
+        ImageIO.write(img, "png", new File(filename));
+    }
+    
+    public static File bufferedImageToFile(BufferedImage file, String fileName){
+        File dir = new File("cache");
+        
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File newFile = new File(dir, fileName + ".png");
+        try {
+            ImageIO.write(file, "PNG", newFile);
+        } catch (IOException ex) {
+        }
+        return newFile;
+    }
+    
+    public static File imageCameraToFile(BufferedImage file, String fileName){
+        File dir = new File("Image");
+        
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File newFile = new File(dir, fileName + ".png");
+        try {
+            ImageIO.write(file, "PNG", newFile);
+        } catch (IOException ex) {
+        }
+        return newFile;
+    }
+    
+    public static boolean saveVoucher(BufferedImage file, String fileName) {
+        File dir = new File("Vouchers");
+
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File newFile = new File(dir, fileName + ".png");
+        try {
+            ImageIO.write(file, "PNG", newFile);
+            return true;
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
 }

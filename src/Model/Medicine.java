@@ -148,7 +148,7 @@ public class Medicine {
 
     @Override
     public String toString() {
-        return "Medicine{" + "mdcID=" + mdcID + ", mdcTypeOfMedicineID=" + mdcTypeOfMedicineID + ", mdcBatchID=" + mdcBatchID + ", mdcProducerID=" + mdcProducerID + ", mdcName=" + mdcName + ", mdcIngredient=" + mdcIngredient + ", mdcConcentration=" + mdcConcentration + ", mdcUnit=" + mdcUnit + ", mdcUserManual=" + mdcUserManual + ", mdcPriceSale=" + mdcPriceSale + ", mdcRate=" + mdcRate + ", mdcPriceImport=" + mdcPriceImport + ", mdcImage=" + mdcImage + '}';
+        return mdcID + "-"+ mdcBatchID;
     }
     
 }

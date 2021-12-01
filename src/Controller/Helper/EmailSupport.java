@@ -4,7 +4,10 @@
  */
 package Controller.Helper;
 
+import java.io.File;
 import java.util.Properties;
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -25,7 +28,7 @@ public class EmailSupport {
     public static final String PASSWORD = "xlceubfxzhydzkvy";
     public static final String USER = "hieuncps15722@fpt.edu.vn";
 
-    public static void send(String to, String subject, String body) throws MessagingException, java.io.IOException {
+    public static void send(String to, String subject, String body, File file) throws MessagingException, java.io.IOException {
         Properties prop = new Properties();
         prop.put("mail.smtp.auth", "true");
         prop.put("mail.smtp.starttls.enable", "true");
@@ -42,8 +45,17 @@ public class EmailSupport {
         MimeMessage msg = new MimeMessage(session);
         msg.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
         msg.setSubject(subject);
+        
         Multipart multipart = new MimeMultipart();
         MimeBodyPart messageBodyPart = new MimeBodyPart();
+        multipart.addBodyPart(messageBodyPart);
+        if (file!=null) {
+            MimeBodyPart bodyPart = new MimeBodyPart();
+            FileDataSource dataSource = new FileDataSource(file);
+            bodyPart.setDataHandler(new DataHandler(dataSource));
+            bodyPart.setFileName("CardEmployee.png");
+            multipart.addBodyPart(bodyPart);
+        }
         messageBodyPart.setText(body);
         multipart.addBodyPart(messageBodyPart);
         msg.setContent(multipart);

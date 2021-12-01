@@ -1,13 +1,18 @@
 package GUI;
 
 import Controller.Helper.DateSupport;
+import Controller.Helper.EmailSupport;
 import Controller.Helper.Image_Auth;
 import static Controller.Helper.Image_Auth.USER;
 import Controller.Helper.Mgsbox;
+import Controller.Helper.QRCodeSupport;
 import Controller.Helper.ValidateSupport;
 import Controller.ModelDAO.EmployeeDAO;
 import Model.Employee;
+import com.google.zxing.WriterException;
+import com.toedter.calendar.JDateChooser;
 import java.awt.Color;
+import static java.awt.Color.red;
 import static java.awt.Color.white;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -17,50 +22,98 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
-import javax.imageio.ImageIO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 public class EmployeeGUI extends javax.swing.JPanel {
 
     EmployeeDAO ED = new EmployeeDAO();
-    JFileChooser fileChooser = new JFileChooser();
-    int index = 0;
     File lastPast;
     String fileImg = "";
-    
+    public static BufferedImage IMAGE_WEBCAM = null;
+
     public EmployeeGUI() {
         initComponents();
         EditTable(tblEmployee);
         setOpaque(false);
-        lblImg.setHorizontalAlignment((int) CENTER_ALIGNMENT);
+        lblImage.setHorizontalAlignment((int) CENTER_ALIGNMENT);
         LoadDataToTable();
-        fileChooser.setDialogTitle("Choose Logo for Employee");
-//        btnAdd.setBounds(70,80,100,30);
-//        btnAdd.setBorder(new Controller.Helper.RoundedBorder(4));
-//        jScrollPane1.addKeyListener(new KeyAdapter() {
-//            @Override
-//            public void keyPressed(KeyEvent e) {
-//                int rowCurrent = tblEmployee.getSelectedRow();
-//                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-//                    rowCurrent = rowCurrent < 0 ? tblEmployee.getRowCount() + 1 : rowCurrent;
-//                    tblEmployee.setRowSelectionInterval(rowCurrent - 1, rowCurrent - 1);
-//                    System.out.println("+");
-//                } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-//                    rowCurrent = rowCurrent > tblEmployee.getRowCount() ? 0 : rowCurrent;
-//                    tblEmployee.setRowSelectionInterval(rowCurrent + 1, rowCurrent + 1);
-//                    System.out.println("-");
-//                }
-//            }
-//
-//        });
+        setStatusControl(false);
+        initRole();
     }
 
-    //CODE
+    private void initRole() {
+        if (Image_Auth.USER.isEpeIsRole()) {
+            btnUpdate.setVisible(false);
+            btnAdd.setVisible(false);
+            btnDelete.setVisible(false);
+        } else {
+
+            btnNew.setVisible(false);
+            btnEdit.setVisible(false);
+            btnUpdate.setVisible(false);
+            btnAdd.setVisible(false);
+            btnDelete.setVisible(false);
+        }
+    }
+
+//    void initNewFrame() {
+//        
+//        framewebcam.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+//        
+//        JPanel jPanel1 = new javax.swing.JPanel();
+//        JButton btnSelfie = new JButton("Chụp nè");
+//        JSeparator jSeparator1 = new javax.swing.JSeparator();
+//        JPanel jPanel2 = new javax.swing.JPanel();
+//
+//        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+//        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+//
+//        jPanel1.add(btnSelfie, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 470, 20));
+//
+//        jSeparator1.setForeground(new java.awt.Color(126, 167, 206));
+//        
+//        jPanel2.setBackground(new java.awt.Color(250, 250, 250));
+//        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(230, 230, 230)));
+//        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+//        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 470, 300));
+//        jPanel1.add(btnSelfie, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, -1, -1));
+//        framewebcam.add(jPanel1);
+//        framewebcam.setVisible(true);
+//    }
+//    private void openAndSelfie() {
+//        JFrame framewebcam = new JFrame("SELFIE");
+//        framewebcam.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        framewebcam.setSize(470, 370);
+//        framewebcam.setLocationRelativeTo(null);
+//        JButton btnSelfie = new JButton("Chụp nè");
+//        btnSelfie.setSize(470, 100);
+//        btnSelfie.setBackground(red);
+//        JPanel pnlMain = new JPanel();
+//        pnlMain.setSize(470,370);
+//        JPanel pnlCam = new JPanel();
+//        pnlCam.setSize(470,270);
+//        pnlCam.setBackground(red);
+//        pnlMain.add(pnlCam);
+//        pnlMain.add(btnSelfie);
+//        framewebcam.add(pnlMain);
+////        WebcamPanel panel = null;
+////        Webcam webcam = null;
+//        framewebcam.setVisible(true);
+//
+//    }
     private void LoadDataToTable() {
         DefaultTableModel model = (DefaultTableModel) tblEmployee.getModel();
         model.setRowCount(0);
@@ -72,21 +125,16 @@ public class EmployeeGUI extends javax.swing.JPanel {
                     e.getEpeName(),
                     e.isEpeIsGender() ? "Male" : "Femail",
                     e.getEpeDayOfBirth(),
-                    e.getEpeAddress(),
                     e.getEpeNumberPhone(),
                     e.getEpeEmail(),
-                    e.isEpeIsRole() ? "Manager" : "Employee",
-                    e.getEpeUserName(),
-                    hidePassWord(e.getEpePassword()),
-                    e.getEpeAccountCreationDate()});
+                    e.isEpeIsRole() ? "Manager" : "Employee"});
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    void insert(Employee model) {
-        //Employee model = getModel();
+    private void insert(Employee model) {
         try {
             ED.insert(model);
             this.LoadDataToTable();
@@ -131,7 +179,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
         }
     }
 
-    private void setModel(Employee model) {
+    private void setModel(Employee model) throws WriterException {
         if (model != null) {
             txtID.setText(model.getEpeID());
             txtName.setText(model.getEpeName());
@@ -144,18 +192,25 @@ public class EmployeeGUI extends javax.swing.JPanel {
             txtEmail.setText(model.getEpeEmail());
             rdoManager.setSelected(model.isEpeIsRole());
             rdoStaff.setSelected(!model.isEpeIsRole());
-            txtUsername.setText(model.getEpeUserName());
-            txtPassword.setText(model.getEpePassword());
-            if (model.getEpeImage() != null) {
-                lblImg.setIcon(Image_Auth.readImage(model.getEpeImage()));
-                lblImg.setToolTipText(model.getEpeImage());
+            if (Image_Auth.USER.isEpeIsRole()) {
+                txtUsername.setText(model.getEpeUserName());
+                txtPassword.setText(model.getEpePassword());
             } else {
-                lblImg.setIcon(Image_Auth.readImage("employee.png"));
+                txtUsername.setText(model.getEpeUserName().replace(model.getEpeUserName(), "Anonymous"));
+                txtPassword.setText(hidePassWord(model.getEpePassword()));
+            }
+            lblCardNameEmployee.setText(model.getEpeName());
+            lblCardRoleEmployee.setText(model.isEpeIsRole() ? "Manager" : "Employee");
+            lblQRcode.setIcon(new ImageIcon(QRCodeSupport.createQRCode(model.getEpeUserName() + "/" + txtPassword.getText(), lblQRcode.getWidth(), lblQRcode.getHeight() + 30)));
+            if (model.getEpeImage() != null) {
+                lblImage.setIcon(Image_Auth.readImage(new File("Image", model.getEpeImage()), lblImage.getWidth(), lblImage.getHeight()));
+                lblImage.setToolTipText(model.getEpeImage());
+            } else {
+                lblImage.setIcon(Image_Auth.readImage(new File("Image", "employee.png"), lblImage.getWidth(), lblImage.getHeight()));
             }
         } else {
             Mgsbox.error(this, "Can't not load this employee");
         }
-
     }
 
     private Employee getModel() {
@@ -167,7 +222,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
         model.setEpeAddress(txtAddress.getText());
         model.setEpeNumberPhone(txtPhoneNumber.getText());
         model.setEpeEmail(txtEmail.getText());
-        model.setEpeImage(lblImg.getToolTipText());
+        model.setEpeImage(lblImage.getToolTipText());
         model.setEpeIsRole(rdoManager.isSelected());
         model.setEpeUserName(txtUsername.getText());
         model.setEpePassword(txtPassword.getText());
@@ -191,33 +246,39 @@ public class EmployeeGUI extends javax.swing.JPanel {
         txtUsername.setText(a);
         txtPassword.setText(a);
         txtID.requestFocus();
-        lblImg.setIcon(Image_Auth.readImage("employee.png"));
-        lblImg.setToolTipText("employee.png");
+        lblImage.setIcon(Image_Auth.readImage(new File("Image", "employee.png"), lblImage.getWidth(), lblImage.getHeight()));
+        lblImage.setToolTipText("employee.png");
+        lblCardNameEmployee.setText("");
+        lblCardRoleEmployee.setText("");
+        lblQRcode.setIcon(null);
         buttonGroup1.clearSelection();
         buttonGroup2.clearSelection();
+
     }
 
     private boolean isMySelf(String EmloyeeID) {
         return EmloyeeID.equals(USER.getEpeID());
     }
 
-    void selectImage() {// Làm thêm lưu History
+    void selectImage() {
+        lblImage.setVisible(true);
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter excelExtensionFilter = new FileNameExtensionFilter("Image file", "png", "jpg");
+        fileChooser.setFileFilter(excelExtensionFilter);
         if (lastPast != null) {
             fileChooser.setCurrentDirectory(lastPast);
         }
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            if (Image_Auth.saveImage(file)) {
-                lblImg.setIcon(Image_Auth.readImage(file.getName()));
-                lblImg.setToolTipText(file.getName());
-            }
+            lblImage.setIcon(Image_Auth.readImage(file, lblImage.getWidth(), lblImage.getHeight()));
+            lblImage.setToolTipText(file.getName());
+            Image_Auth.saveImage(file);
+            fileImg = fileChooser.getSelectedFile().getName();
+            lastPast = fileChooser.getSelectedFile().getParentFile();
         }
-         fileImg = fileChooser.getSelectedFile().getName();
-         lastPast = fileChooser.getSelectedFile().getParentFile();
-        
+
     }
 
-    //DESIGN
     private void EditTable(JTable a) {
         a.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
         a.getTableHeader().setOpaque(false);
@@ -226,94 +287,85 @@ public class EmployeeGUI extends javax.swing.JPanel {
         a.setRowHeight(25);
     }
 
-    //Check Trung Ma
+    public boolean isValidYearOlds(JDateChooser date) {
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+        c1.setTime(date.getDate());
+        c2.setTime(DateSupport.now());
+        long a = (c2.getTime().getTime() - c1.getTime().getTime());
+        if (a < 5843) {
+            Mgsbox.error(this, "Employees are not of working age!");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isValidateForm() {
+        if (ValidateSupport.isNull(txtID) || ValidateSupport.isNull(txtName)
+                || ValidateSupport.isNull(txtAddress) || ValidateSupport.isNull(txtEmail)
+                || ValidateSupport.isNull(txtIdentityCard) || ValidateSupport.isNull(txtPhoneNumber)
+                || ValidateSupport.isNull(txtUsername) || ValidateSupport.isNull(txtPassword)
+                || buttonGroup1.getSelection() == null || buttonGroup2.getSelection() == null) {
+            Mgsbox.error(this, "Please fill out the form...");
+            return false;
+        } else if (!ValidateSupport.checkEmployeeID(txtID)) {
+            Mgsbox.error(this, "Employee ID is invalid characters");
+            txtID.requestFocus();
+            return false;
+        } else if (!ValidateSupport.checkSDT(txtPhoneNumber)) {
+            Mgsbox.error(this, "Your number phone is invalid!...");
+            txtPhoneNumber.requestFocus();
+            return false;
+        } else if (!ValidateSupport.isCCCD(txtIdentityCard)) {
+            Mgsbox.error(this, "Indentity Card must be 12 number!");
+            txtIdentityCard.requestFocus();
+            return false;
+        } else if (!ValidateSupport.isEmail(txtEmail)) {
+            Mgsbox.error(this, "Your email is invalid!");
+            txtEmail.requestFocus();
+            return false;
+        } else if (isDuplicateID(txtID)) {
+            Mgsbox.error(this, "This employee code already exists");
+            txtID.requestFocus();
+            return false;
+        } else if (isDuplicateAccount(txtUsername.getText())) {
+            Mgsbox.error(this, "Username already exists!");
+            txtUsername.requestFocus();
+            return false;
+        }
+        return true;
+    }
+
     private boolean isDuplicateID(JTextField txt) {
         txt.setBackground(white);
         if (ED.selectByID(txt.getText()) != null) {
-
             return true;
         }
         return false;
 
     }
 
-    //ChecknullImage
-    //EditStatus
-    private void editBtn(boolean b) {
-        txtID.setEditable(b);
-        txtName.setEditable(b);
-        txtAddress.setEditable(b);
-        txtEmail.setEditable(b);
-        txtIdentityCard.setEditable(b);
-        txtPassword.setEditable(b);
-        txtPhoneNumber.setEditable(b);
-        txtUsername.setEditable(b);
-        rdoMale.setEnabled(b);
-        rdoFemale.setEnabled(b);
-        rdoManager.setEnabled(b);
-        rdoStaff.setEnabled(b);
-        dcDate.setEnabled(b);
-        btnNew.setEnabled(!b);
-        btnAdd.setEnabled(b);
-        btnUpdate.setEnabled(b);
-        btnEdit.setEnabled(!b);
+    private boolean isDuplicateAccount(String Account) {
+        return new EmployeeDAO().selectByUsername(Account) != null;
     }
 
-    private void BtnNew(boolean b) {
-        txtID.setEditable(b);
-        txtName.setEditable(b);
-        txtAddress.setEditable(b);
-        txtEmail.setEditable(b);
-        txtIdentityCard.setEditable(b);
-        txtPassword.setEditable(b);
-        txtPhoneNumber.setEditable(b);
-        txtUsername.setEditable(b);
-        rdoMale.setEnabled(b);
-        rdoFemale.setEnabled(b);
-        rdoManager.setEnabled(b);
-        rdoStaff.setEnabled(b);
-        dcDate.setEnabled(b);
-        btnNew.setEnabled(!b);
-        btnAdd.setEnabled(b);
-        btnDelete.setEnabled(b);
-        btnUpdate.setEnabled(!b);
-        btnEdit.setEnabled(!b);
-    }
-
-    private void btnEditManager(boolean b) {
-        txtID.setEditable(!b);
-        txtName.setEditable(b);
-        txtAddress.setEditable(b);
-        txtEmail.setEditable(b);
-        txtIdentityCard.setEditable(b);
-        txtPassword.setEditable(b);
-        txtPhoneNumber.setEditable(b);
-        txtUsername.setEditable(b);
-        rdoMale.setEnabled(b);
-        rdoFemale.setEnabled(b);
-        rdoManager.setEnabled(b);
-        rdoStaff.setEnabled(b);
-        dcDate.setEnabled(b);
-        btnUpdate.setEnabled(b);
-    }
-
-    private void btnStatusStaff(boolean b) {
-        txtID.setEditable(b);
-        txtName.setEditable(b);
-        txtAddress.setEditable(b);
-        txtEmail.setEditable(b);
-        txtIdentityCard.setEditable(b);
-        txtPassword.setEditable(b);
-        txtPhoneNumber.setEditable(b);
-        txtUsername.setEditable(b);
-        rdoMale.setEnabled(b);
-        rdoManager.setEnabled(b);
-        dcDate.setEnabled(b);
-        btnUpdate.setEnabled(b);
-        btnDelete.setEnabled(b);
-        btnEdit.setEnabled(b);
-        btnNew.setEnabled(b);
-        btnAdd.setEnabled(b);
+    private void setStatusControl(boolean flag) {
+        txtID.setEditable(flag);
+        txtName.setEditable(flag);
+        txtAddress.setEditable(flag);
+        txtEmail.setEditable(flag);
+        txtIdentityCard.setEditable(flag);
+        txtPassword.setEditable(flag);
+        txtPhoneNumber.setEditable(flag);
+        txtUsername.setEditable(flag);
+        rdoMale.setEnabled(flag);
+        rdoFemale.setEnabled(flag);
+        rdoManager.setEnabled(flag);
+        rdoStaff.setEnabled(flag);
+        dcDate.setEnabled(flag);
+        btnOpenfile.setEnabled(flag);
+        btnOpenCamera.setEnabled(flag);
     }
 
     @SuppressWarnings("unchecked")
@@ -344,7 +396,6 @@ public class EmployeeGUI extends javax.swing.JPanel {
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
-        lblImg = new javax.swing.JLabel();
         btnChangePass = new javax.swing.JButton();
         txtID = new GUI.TextField();
         txtPhoneNumber = new GUI.TextField();
@@ -356,6 +407,15 @@ public class EmployeeGUI extends javax.swing.JPanel {
         txtPassword = new GUI.TextField();
         btnEdit = new javax.swing.JButton();
         btnChange = new javax.swing.JButton();
+        pnlCardEmployee = new javax.swing.JPanel();
+        lblImage = new javax.swing.JLabel();
+        lblQRcode = new javax.swing.JLabel();
+        lblCardRoleEmployee = new javax.swing.JLabel();
+        lblText = new javax.swing.JLabel();
+        lblCardNameEmployee = new javax.swing.JLabel();
+        lblCardEmployee = new javax.swing.JLabel();
+        btnOpenfile = new javax.swing.JButton();
+        btnOpenCamera = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setForeground(new java.awt.Color(80, 23, 231));
@@ -365,17 +425,17 @@ public class EmployeeGUI extends javax.swing.JPanel {
         tblEmployee.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         tblEmployee.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Name", "Sex", "Date", "Address", "Phone number", "Email", "Role", "Username", "Password", "Date create"
+                "ID", "Name", "Sex", "Date", "Phone number", "Email", "Role"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -450,10 +510,20 @@ public class EmployeeGUI extends javax.swing.JPanel {
         rdoManager.setBackground(new java.awt.Color(255, 255, 255));
         buttonGroup2.add(rdoManager);
         rdoManager.setText("Manager");
+        rdoManager.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rdoManagerMouseClicked(evt);
+            }
+        });
 
         rdoStaff.setBackground(new java.awt.Color(255, 255, 255));
         buttonGroup2.add(rdoStaff);
         rdoStaff.setText("Staff");
+        rdoStaff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdoStaffActionPerformed(evt);
+            }
+        });
 
         lblUserName.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         lblUserName.setText("Username:");
@@ -505,13 +575,6 @@ public class EmployeeGUI extends javax.swing.JPanel {
             }
         });
 
-        lblImg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/employee.png"))); // NOI18N
-        lblImg.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblImgMouseClicked(evt);
-            }
-        });
-
         btnChangePass.setBackground(new java.awt.Color(255, 255, 255));
         btnChangePass.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnChangePass.setForeground(new java.awt.Color(255, 0, 0));
@@ -523,38 +586,45 @@ public class EmployeeGUI extends javax.swing.JPanel {
             }
         });
 
-        txtID.setEditable(false);
         txtID.setBackground(new java.awt.Color(255, 255, 255));
         txtID.setForeground(new java.awt.Color(204, 0, 0));
         txtID.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtPhoneNumber.setEditable(false);
         txtPhoneNumber.setBackground(new java.awt.Color(255, 255, 255));
         txtPhoneNumber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtUsername.setEditable(false);
         txtUsername.setBackground(new java.awt.Color(255, 255, 255));
         txtUsername.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtUsername.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtUsernameKeyReleased(evt);
+            }
+        });
 
-        txtName.setEditable(false);
         txtName.setBackground(new java.awt.Color(255, 255, 255));
         txtName.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtNameKeyReleased(evt);
+            }
+        });
 
-        txtAddress.setEditable(false);
         txtAddress.setBackground(new java.awt.Color(255, 255, 255));
         txtAddress.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtEmail.setEditable(false);
         txtEmail.setBackground(new java.awt.Color(255, 255, 255));
         txtEmail.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtIdentityCard.setEditable(false);
         txtIdentityCard.setBackground(new java.awt.Color(255, 255, 255));
         txtIdentityCard.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtPassword.setEditable(false);
         txtPassword.setBackground(new java.awt.Color(255, 255, 255));
         txtPassword.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPasswordKeyReleased(evt);
+            }
+        });
 
         btnEdit.setBackground(new java.awt.Color(92, 84, 179));
         btnEdit.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -576,163 +646,223 @@ public class EmployeeGUI extends javax.swing.JPanel {
             }
         });
 
+        pnlCardEmployee.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pnlCardEmployee.add(lblImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, 100, 80));
+
+        lblQRcode.setBackground(new java.awt.Color(255, 255, 255));
+        pnlCardEmployee.add(lblQRcode, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 185, 60, 50));
+
+        lblCardRoleEmployee.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        lblCardRoleEmployee.setForeground(new java.awt.Color(204, 255, 204));
+        lblCardRoleEmployee.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCardRoleEmployee.setToolTipText("");
+        pnlCardEmployee.add(lblCardRoleEmployee, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 170, 110, -1));
+
+        lblText.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        lblText.setForeground(new java.awt.Color(255, 255, 255));
+        lblText.setText("EMPLOYEE");
+        pnlCardEmployee.add(lblText, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 240, -1, -1));
+
+        lblCardNameEmployee.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblCardNameEmployee.setForeground(new java.awt.Color(0, 0, 204));
+        lblCardNameEmployee.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblCardNameEmployee.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        pnlCardEmployee.add(lblCardNameEmployee, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 160, 30));
+        lblCardNameEmployee.getAccessibleContext().setAccessibleDescription("");
+
+        lblCardEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/EmployeeCard.png"))); // NOI18N
+        pnlCardEmployee.add(lblCardEmployee, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 180, 270));
+
+        btnOpenfile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/folder.png"))); // NOI18N
+        btnOpenfile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOpenfileActionPerformed(evt);
+            }
+        });
+
+        btnOpenCamera.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/Opencamera.png"))); // NOI18N
+        btnOpenCamera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOpenCameraActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(895, 895, 895)
+                .addComponent(btnChange))
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(31, 31, 31)
-                            .addComponent(lblImg, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(40, 40, 40)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lblID)
-                                .addComponent(lblDate)
-                                .addComponent(lblNumnerPhone)
-                                .addComponent(lblUserName))
-                            .addGap(4, 4, 4)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(dcDate, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lblName)
-                                .addComponent(lblAddress)
-                                .addComponent(lblEmail)
-                                .addComponent(lblPassWord))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(15, 15, 15)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(18, 18, 18)
-                                    .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(lblSex)
-                                    .addGap(0, 0, 0)
-                                    .addComponent(rdoMale)
-                                    .addGap(0, 0, 0)
-                                    .addComponent(rdoFemale))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(lblRole)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(rdoManager)
-                                    .addGap(0, 0, 0)
-                                    .addComponent(rdoStaff))
-                                .addComponent(btnChangePass)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(lblCard)
-                                    .addGap(10, 10, 10)
-                                    .addComponent(txtIdentityCard, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addGap(895, 895, 895)
-                            .addComponent(btnChange)))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 889, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(9, 9, 9)
-                            .addComponent(btnDelete)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(btnUpdate)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(btnNew, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(19, 19, 19))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(pnlCardEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnOpenfile)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnOpenCamera)))
+                .addGap(11, 11, 11)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblID)
+                        .addGap(75, 75, 75)
+                        .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblName)
+                        .addGap(39, 39, 39)
+                        .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblSex)
+                        .addGap(0, 0, 0)
+                        .addComponent(rdoMale)
+                        .addGap(0, 0, 0)
+                        .addComponent(rdoFemale))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblDate)
+                        .addGap(61, 61, 61)
+                        .addComponent(dcDate, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblAddress)
+                        .addGap(25, 25, 25)
+                        .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblCard)
+                        .addGap(10, 10, 10)
+                        .addComponent(txtIdentityCard, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblNumnerPhone)
+                        .addGap(4, 4, 4)
+                        .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblEmail)
+                        .addGap(40, 40, 40)
+                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblRole)
+                        .addGap(18, 18, 18)
+                        .addComponent(rdoManager)
+                        .addGap(0, 0, 0)
+                        .addComponent(rdoStaff))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblUserName)
+                        .addGap(29, 29, 29)
+                        .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblPassWord)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnChangePass))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 698, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(303, 303, 303)
+                .addComponent(btnNew, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(9, 9, 9)
+                .addComponent(btnDelete)
+                .addGap(10, 10, 10)
+                .addComponent(btnUpdate)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGap(11, 11, 11)
+                .addComponent(btnChange)
+                .addGap(34, 34, 34)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnChange)
-                        .addGap(34, 34, 34)
+                        .addGap(10, 10, 10)
+                        .addComponent(pnlCardEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnOpenfile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnOpenCamera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(6, 6, 6)
-                                .addComponent(lblID)
-                                .addGap(27, 27, 27)
-                                .addComponent(lblDate)
-                                .addGap(22, 22, 22)
-                                .addComponent(lblNumnerPhone)
-                                .addGap(19, 19, 19)
-                                .addComponent(lblUserName))
+                                .addComponent(lblID))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(5, 5, 5)
-                                .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(19, 19, 19)
-                                .addComponent(dcDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(22, 22, 22)
-                                .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(17, 17, 17)
-                                .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(6, 6, 6)
-                                .addComponent(lblName)
-                                .addGap(21, 21, 21)
-                                .addComponent(lblAddress)
-                                .addGap(25, 25, 25)
-                                .addComponent(lblEmail)
-                                .addGap(16, 16, 16)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(lblPassWord)
-                                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(btnChangePass)))
+                                .addComponent(lblName))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(5, 5, 5)
-                                .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(19, 19, 19)
-                                .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(23, 23, 23)
+                                .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(4, 4, 4)
+                                .addComponent(lblSex))
+                            .addComponent(rdoMale)
+                            .addComponent(rdoFemale))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(lblDate))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(1, 1, 1)
+                                .addComponent(dcDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblAddress)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(1, 1, 1)
+                                .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addComponent(lblCard))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(1, 1, 1)
+                                .addComponent(txtIdentityCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(19, 19, 19)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(3, 3, 3)
+                                .addComponent(lblNumnerPhone))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(3, 3, 3)
+                                .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblEmail)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(3, 3, 3)
                                 .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(4, 4, 4)
-                                        .addComponent(lblSex))
-                                    .addComponent(rdoMale)
-                                    .addComponent(rdoFemale))
-                                .addGap(20, 20, 20)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(1, 1, 1)
-                                        .addComponent(lblCard))
-                                    .addComponent(txtIdentityCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(20, 20, 20)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(4, 4, 4)
-                                        .addComponent(lblRole))
-                                    .addComponent(rdoManager)
-                                    .addComponent(rdoStaff)))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblImg, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)))
-                .addGap(17, 17, 17)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnUpdate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(btnDelete, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addGap(4, 4, 4)
+                                .addComponent(lblRole))
+                            .addComponent(rdoManager)
+                            .addComponent(rdoStaff))
+                        .addGap(8, 8, 8)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(lblUserName))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(3, 3, 3)
+                                .addComponent(lblPassWord))
+                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(1, 1, 1)
+                                .addComponent(btnChangePass)))
+                        .addGap(17, 17, 17)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnNew, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addComponent(btnNew, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -740,41 +870,26 @@ public class EmployeeGUI extends javax.swing.JPanel {
         // TODO add your handling code here:
         findAndLoadRowToControl(tblEmployee.getValueAt(tblEmployee.getSelectedRow(), 0).toString());
         if (Image_Auth.USER.isEpeIsRole()) {
-            editBtn(false);
-        } else {
-            txtPassword.setText("********");
-            btnStatusStaff(false);
+            btnDelete.setVisible(true);
         }
-
     }//GEN-LAST:event_tblEmployeeMouseClicked
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
-        if (ValidateSupport.isNull(txtID)
-                || ValidateSupport.isNull(txtName)
-                || ValidateSupport.isNull(txtAddress)
-                || ValidateSupport.isNull(txtEmail)
-                || ValidateSupport.isNull(txtIdentityCard)
-                || ValidateSupport.isNull(txtPhoneNumber)
-                || ValidateSupport.isNull(txtUsername)
-                || ValidateSupport.isNull(txtPassword)
-                || ValidateSupport.isSeleted(rdoMale)
-                || ValidateSupport.isSeleted(rdoFemale)
-                || ValidateSupport.isSeleted(rdoManager)
-                || ValidateSupport.isSeleted(rdoStaff)
-             ) 
-        {
-            Mgsbox.error(this, "Please fill out the form...");
-        } else if (!ValidateSupport.checkEmployeeID(txtID) || !ValidateSupport.checkSDT(txtPhoneNumber)
-                || !ValidateSupport.isCCCD(txtIdentityCard)
-                || !ValidateSupport.isEmail(txtEmail)) {
-            Mgsbox.error(this, "Please fill in the correct format as required !!!");
-        } else if (!isDuplicateID(txtID)) {
+        if (isValidateForm() && isValidYearOlds(dcDate)) {
             insert(getModel());
-            editBtn(false);   
+            Thread sendMail = new Thread(() -> {
+                try {
+                    EmailSupport.send(txtEmail.getText().trim(), "WELCOME TO YOU", "Welcome to our company",
+                            Image_Auth.bufferedImageToFile(Image_Auth.getScreenShot(pnlCardEmployee), txtID.getText()));
+                } catch (MessagingException | IOException ex) {
+                    Logger.getLogger(EmployeeGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            sendMail.start();
             clearForm();
-        }else{
-            Mgsbox.error(this, "This employee code already exists");
+            btnAdd.setVisible(false);
+            btnNew.setVisible(true);
         }
 
     }//GEN-LAST:event_btnAddActionPerformed
@@ -783,10 +898,9 @@ public class EmployeeGUI extends javax.swing.JPanel {
         if (Image_Auth.USER.isEpeIsRole()) {
             if (!isMySelf(txtID.getText())) {
                 delete(txtID.getText());
-                System.out.println(txtID.toString());
-            }else{
+            } else {
                 Mgsbox.alert(this, "You can't delete yourself!!!");
-            } 
+            }
         } else {
             Mgsbox.error(this, "Just manager can delete!!!");
         }
@@ -794,25 +908,30 @@ public class EmployeeGUI extends javax.swing.JPanel {
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         try {
+            Thread sendMail = new Thread(() -> {
+                try {
+                    EmailSupport.send(txtEmail.getText().trim(), "CHANGE YOUR INFORMATION", "Your information has changed so we send you Employee Card new!",
+                            Image_Auth.bufferedImageToFile(Image_Auth.getScreenShot(pnlCardEmployee), txtID.getText()));
+                } catch (MessagingException | IOException ex) {
+                    Logger.getLogger(EmployeeGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            sendMail.start();
             update(getModel());
             clearForm();
-            editBtn(false);   
+            btnUpdate.setVisible(false);
+            btnEdit.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-        // TODO add your handling code here:
         clearForm();
-        BtnNew(true);
+        setStatusControl(true);
+        btnNew.setVisible(false);
+        btnAdd.setVisible(true);
     }//GEN-LAST:event_btnNewActionPerformed
-
-    private void lblImgMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblImgMouseClicked
-        // TODO add your handling code here:
-        selectImage();
-         
-    }//GEN-LAST:event_lblImgMouseClicked
 
     private void btnChangePassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangePassActionPerformed
 
@@ -821,7 +940,10 @@ public class EmployeeGUI extends javax.swing.JPanel {
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
-        btnEditManager(true);
+        btnEdit.setVisible(false);
+        btnUpdate.setVisible(true);
+        setStatusControl(true);
+        txtID.setEditable(false);
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void tblEmployeeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblEmployeeKeyPressed
@@ -874,6 +996,81 @@ public class EmployeeGUI extends javax.swing.JPanel {
 
     }//GEN-LAST:event_tblEmployeeKeyReleased
 
+    private void btnOpenfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenfileActionPerformed
+        // TODO add your handling code here:
+        selectImage();
+    }//GEN-LAST:event_btnOpenfileActionPerformed
+
+    private void txtUsernameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUsernameKeyReleased
+        try {
+            // TODO add your handling code here:
+            lblQRcode.setIcon(new ImageIcon(QRCodeSupport.createQRCode(txtUsername.getText().trim() + "/" + txtPassword.getText().trim(), lblQRcode.getWidth(), lblQRcode.getHeight() + 30)));
+
+        } catch (WriterException ex) {
+            Logger.getLogger(EmployeeGUI.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_txtUsernameKeyReleased
+
+    private void txtPasswordKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPasswordKeyReleased
+        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            lblQRcode.setIcon(new ImageIcon(QRCodeSupport.createQRCode(txtUsername.getText().trim() + "/" + txtPassword.getText().trim(), lblQRcode.getWidth(), lblQRcode.getHeight() + 30)));
+
+        } catch (WriterException ex) {
+            Logger.getLogger(EmployeeGUI.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_txtPasswordKeyReleased
+
+    private void txtNameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNameKeyReleased
+        // TODO add your handling code here:
+        lblCardNameEmployee.setText(txtName.getText());
+    }//GEN-LAST:event_txtNameKeyReleased
+
+    private void rdoManagerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rdoManagerMouseClicked
+        // TODO add your handling code here:
+        lblCardRoleEmployee.setText("Manager");
+    }//GEN-LAST:event_rdoManagerMouseClicked
+
+    private void rdoStaffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdoStaffActionPerformed
+        // TODO add your handling code here:
+        lblCardRoleEmployee.setText("Employee");
+    }//GEN-LAST:event_rdoStaffActionPerformed
+
+    private void btnOpenCameraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenCameraActionPerformed
+        // TODO add your handling code here:o
+        if (txtID.getText().length() != 0) {
+            new FrameCamera().setVisible(true);
+            Thread setImage = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(EmployeeGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        if (IMAGE_WEBCAM != null) {
+                            lblImage.setIcon(
+                                    Image_Auth.readImage(
+                                            Image_Auth.imageCameraToFile(
+                                                    IMAGE_WEBCAM, txtID.getText()), lblImage.getWidth(), lblImage.getHeight()));
+                            IMAGE_WEBCAM = null;
+                            lblImage.setToolTipText(txtID.getText() + ".png");
+                            break;
+
+                        }
+                    }
+                }
+
+            });
+            setImage.start();
+        }
+
+    }//GEN-LAST:event_btnOpenCameraActionPerformed
+
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -891,6 +1088,8 @@ public class EmployeeGUI extends javax.swing.JPanel {
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnNew;
+    private javax.swing.JButton btnOpenCamera;
+    private javax.swing.JButton btnOpenfile;
     private javax.swing.JButton btnUpdate;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
@@ -898,16 +1097,22 @@ public class EmployeeGUI extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblAddress;
     private javax.swing.JLabel lblCard;
+    private javax.swing.JLabel lblCardEmployee;
+    private javax.swing.JLabel lblCardNameEmployee;
+    private javax.swing.JLabel lblCardRoleEmployee;
     private javax.swing.JLabel lblDate;
     private javax.swing.JLabel lblEmail;
     private javax.swing.JLabel lblID;
-    private javax.swing.JLabel lblImg;
+    public javax.swing.JLabel lblImage;
     private javax.swing.JLabel lblName;
     private javax.swing.JLabel lblNumnerPhone;
     private javax.swing.JLabel lblPassWord;
+    private javax.swing.JLabel lblQRcode;
     private javax.swing.JLabel lblRole;
     private javax.swing.JLabel lblSex;
+    private javax.swing.JLabel lblText;
     private javax.swing.JLabel lblUserName;
+    private javax.swing.JPanel pnlCardEmployee;
     private javax.swing.JRadioButton rdoFemale;
     private javax.swing.JRadioButton rdoMale;
     private javax.swing.JRadioButton rdoManager;

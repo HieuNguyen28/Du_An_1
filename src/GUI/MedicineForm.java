@@ -426,7 +426,7 @@ public class MedicineForm extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lblMedicineImage;
+    public javax.swing.JLabel lblMedicineImage;
     private javax.swing.JTable tblMedicine;
     private GUI.TextField txtContent;
     private GUI.TextField txtCost;
@@ -541,7 +541,7 @@ public class MedicineForm extends javax.swing.JPanel {
         txtUserManual.setText(model.getMdcUserManual());
         txtCost.setText(String.valueOf(model.getMdcPriceSale()));
         if (model.getMdcImage() != null) {
-            lblMedicineImage.setIcon(Image_Auth.readImage(model.getMdcImage()));
+            lblMedicineImage.setIcon(Image_Auth.readImage(new File("Image",model.getMdcImage()), lblMedicineImage.getWidth(), lblMedicineImage.getHeight()));
             lblMedicineImage.setToolTipText(model.getMdcImage());
         }
         txtShared.setText(String.valueOf(model.getMdcRate()));
@@ -570,7 +570,7 @@ public class MedicineForm extends javax.swing.JPanel {
             File file = fileChooser.getSelectedFile();    //lấy file người dùng chọn
             if (Image_Auth.saveImage(file)) {  //sao chép file đã chọn thư mục logos
                 // Hiển thị hình lên form
-                lblMedicineImage.setIcon(Image_Auth.readImage(file.getName())); //file.getName(); lấy tên của file
+                lblMedicineImage.setIcon(Image_Auth.readImage(file, lblMedicineImage.getWidth(), lblMedicineImage.getHeight())); //file.getName(); lấy tên của file
                 //ImageIcon readLogo(String tenFile) đọc file trong thư mục logos theo tên file trả về ImageIcon
                 //void setIcon(ImageIcon icon) set Icon cho lbl
                 lblMedicineImage.setToolTipText(file.getName());

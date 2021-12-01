@@ -30,18 +30,18 @@ public class MedicineDAO extends ModelDataAccessObject<Medicine, String> {
     public void insert(Medicine entity) {
         try {
             Controller.Helper.Database.executeUpdate(INSERT_SQL,
-                    entity.getMdcID(), 
-                    entity.getMdcTypeOfMedicineID(), 
+                    entity.getMdcID(),
+                    entity.getMdcTypeOfMedicineID(),
                     entity.getMdcBatchID(),
-                    entity.getMdcProducerID(), 
-                    entity.getMdcName(), 
-                    entity.getMdcIngredient(), 
-                    entity.getMdcConcentration(), 
+                    entity.getMdcProducerID(),
+                    entity.getMdcName(),
+                    entity.getMdcIngredient(),
+                    entity.getMdcConcentration(),
                     entity.getMdcUnit(),
-                    entity.getMdcUserManual(), 
-                    entity.getMdcPriceSale(), 
-                    entity.getMdcImage(), 
-                    entity.getMdcRate(), 
+                    entity.getMdcUserManual(),
+                    entity.getMdcPriceSale(),
+                    entity.getMdcImage(),
+                    entity.getMdcRate(),
                     entity.getMdcPriceImport());
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -51,16 +51,16 @@ public class MedicineDAO extends ModelDataAccessObject<Medicine, String> {
     @Override
     public void update(Medicine entity) {
         try {
-            Controller.Helper.Database.executeUpdate(UPDATE_SQL,  
-                    entity.getMdcName(), 
-                    entity.getMdcIngredient(), 
-                    entity.getMdcConcentration(), 
+            Controller.Helper.Database.executeUpdate(UPDATE_SQL,
+                    entity.getMdcName(),
+                    entity.getMdcIngredient(),
+                    entity.getMdcConcentration();
                     entity.getMdcUnit(),
-                    entity.getMdcUserManual(), 
-                    entity.getMdcPriceSale(), 
-                    entity.getMdcImage(), 
-                    entity.getMdcRate(), 
-                    entity.getMdcPriceImport(), 
+                    entity.getMdcUserManual(),
+                    entity.getMdcPriceSale(),
+                    entity.getMdcImage(),
+                    entity.getMdcRate(),
+                    entity.getMdcPriceImport(),
                     entity.getMdcID());
         } catch (Exception ex) {
             ex.printStackTrace();

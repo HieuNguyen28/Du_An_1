@@ -101,7 +101,11 @@ public class EmployeeDAO extends ModelDataAccessObject<Employee, String> {
     }
 
     public Employee selectByUsername(String username) {
-        return selectBySQL(SELECT_BY_USERNAME, username).get(0);
+        List<Employee> list = this.selectBySQL(SELECT_BY_USERNAME, username);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
     }
 
     @Override
