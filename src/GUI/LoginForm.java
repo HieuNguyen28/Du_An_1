@@ -40,6 +40,7 @@ public class LoginForm extends javax.swing.JFrame {
             }
         }
     };
+    
     private EmployeeDAO ED = new EmployeeDAO();
     private CreateCapcha cc = new CreateCapcha();
 

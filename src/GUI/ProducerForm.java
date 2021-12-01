@@ -1,4 +1,3 @@
-
 package GUI;
 
 import static Controller.Helper.DateSupport.toDate;
@@ -18,6 +17,8 @@ public class ProducerForm extends javax.swing.JPanel {
         initComponents();
         EditTable(tblProducer);
         loadDataToTabel();
+        defaultButton(false);
+        defaultText(false);
     }
 
     @SuppressWarnings("unchecked")
@@ -231,11 +232,16 @@ public class ProducerForm extends javax.swing.JPanel {
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         // TODO add your handling code here:
         clearForm();
+        defaultText(true);
+        defaultButton(false);
+        btnAdd.setEnabled(true);
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
-        update();
+        if (check()) {
+            update();
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -245,12 +251,26 @@ public class ProducerForm extends javax.swing.JPanel {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
-        insert();
+        if (check()) {
+            if (pdao.selectByID(txtID.getText()) != null) {
+                Mgsbox.alert(this, "Duplicate producer ID");
+            } else {
+                insert();
+            }
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void tblProducerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProducerMouseClicked
         // TODO add your handling code here:
-        
+        this.index = tblProducer.rowAtPoint(evt.getPoint());
+        if (this.index >= 0) {
+            this.edit();
+            defaultText(true);
+            btnUpdate.setEnabled(true);
+            btnDelete.setEnabled(true);
+            btnAdd.setEnabled(false);
+            txtID.setEditable(false);
+        }
     }//GEN-LAST:event_tblProducerMouseClicked
 
 
@@ -281,16 +301,17 @@ public class ProducerForm extends javax.swing.JPanel {
         a.getTableHeader().setForeground(new Color(255, 255, 255));
         a.setRowHeight(25);
     }
-    
-    private void clearForm(){
+
+    private void clearForm() {
         txtID.setText("");
         txtCompanyName.setText("");
         txtEmail.setText("");
         txtHotline.setText("");
     }
-    
+
     ProducerDAO pdao = new ProducerDAO();
-    private void loadDataToTabel(){
+
+    private void loadDataToTabel() {
         DefaultTableModel model = (DefaultTableModel) tblProducer.getModel();
         model.setRowCount(0);
         try {
@@ -307,16 +328,16 @@ public class ProducerForm extends javax.swing.JPanel {
         } catch (Exception e) {
         }
     }
-    
-    private void setModel(Producer model){
+
+    private void setModel(Producer model) {
         txtCompanyName.setText(model.getPdcCompanyName());
         txtEmail.setText(model.getPdcEmail());
         txtHotline.setText(model.getPdcHotline());
         txtID.setText(model.getPdcID());
         dcFounding.setDate(model.getPdcFoundingDate());
     }
-    
-    private Producer getModel(){
+
+    private Producer getModel() {
         Producer model = new Producer();
         model.setPdcCompanyName(txtCompanyName.getText());
         model.setPdcEmail(txtEmail.getText());
@@ -325,32 +346,38 @@ public class ProducerForm extends javax.swing.JPanel {
         model.setPdcID(txtID.getText());
         return model;
     }
-    
-    private void insert(){
+
+    private void insert() {
         Producer model = getModel();
         try {
             pdao.insert(model);
             loadDataToTabel();
             clearForm();
             Mgsbox.alert(this, "Insert successfull");
+            defaultButton(false);
+            defaultText(false);
         } catch (Exception e) {
             Mgsbox.alert(this, "Insert fail");
         }
     }
-    
-    private void update(){
-        Producer model = getModel();
-        try {
-            pdao.update(model);
-            loadDataToTabel();
-            clearForm();
-            Mgsbox.alert(this, "Update successfull");
-        } catch (Exception e) {
-            Mgsbox.alert(this, "Insert fail");
+
+    private void update() {
+        if (Mgsbox.comfirm(this, "Do you really want to update ?")) {
+            Producer model = getModel();
+            try {
+                pdao.update(model);
+                loadDataToTabel();
+                clearForm();
+                Mgsbox.alert(this, "Update successfull");
+                defaultButton(false);
+                defaultText(true);
+            } catch (Exception e) {
+                Mgsbox.alert(this, "Update fail");
+            }
         }
     }
-    
-    private void delete(){
+
+    private void delete() {
         if (Mgsbox.comfirm(this, "Do you really want to delete ?")) {
             String id = txtID.getText();
             try {
@@ -358,24 +385,61 @@ public class ProducerForm extends javax.swing.JPanel {
                 loadDataToTabel();
                 clearForm();
                 Mgsbox.alert(this, "Delete successful !");
+                defaultButton(false);
+                defaultText(false);
             } catch (Exception e) {
                 Mgsbox.alert(this, "Delete failed !");
             }
         }
     }
-    
+
     int index = 0;
-    
+
     private void edit() {
         try {
             String manv = (String) tblProducer.getValueAt(this.index, 0);
             Producer model = pdao.selectByID(manv);
             if (model != null) {
                 this.setModel(model);
-//                this.setStatus(false);
             }
         } catch (Exception e) {
             Mgsbox.error(this, "Data Query Error!!!");
         }
+    }
+
+    private boolean check() {
+        if (txtID.getText().equals("")) {
+            Mgsbox.alert(this, "Flease fill out producer ID");
+            return false;
+        } else if (!txtID.getText().matches("^(NS)[0-9]{1,4}$")) {
+            Mgsbox.alert(this, "Invalid producer ID. Ex:NS0001");
+            return false;
+        } else if (txtCompanyName.getText().equals("")) {
+            Mgsbox.alert(this, "Flease fill out company name");
+            return false;
+        } else if (txtHotline.getText().equals("")) {
+            Mgsbox.alert(this, "Flease fill out hotline");
+            return false;
+        } else if (txtEmail.getText().equals("")) {
+            Mgsbox.alert(this, "Flease fill out email");
+            return false;
+        } else if (dcFounding.getDate().equals("")) {
+            Mgsbox.alert(this, "Flease choose founding");
+            return false;
+        }
+        return true;
+    }
+
+    private void defaultButton(boolean a) {
+        btnDelete.setEnabled(a);
+        btnAdd.setEnabled(a);
+        btnUpdate.setEnabled(a);
+    }
+
+    private void defaultText(boolean a) {
+        txtCompanyName.setEditable(a);
+        txtID.setEditable(a);
+        txtEmail.setEditable(a);
+        txtHotline.setEditable(a);
     }
 }
