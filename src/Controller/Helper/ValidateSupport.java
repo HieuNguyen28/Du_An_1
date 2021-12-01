@@ -36,7 +36,6 @@ public class ValidateSupport {
 //    }
     public static boolean isNumber(JTextField txt) {
         if (!txt.getText().trim().matches("(\\d+.\\d+)|\\d+")) {
-            Mgsbox.error(txt.getRootPane(), "Please enter a number....");
             return false;
         } else {
             return true;
@@ -85,6 +84,7 @@ public class ValidateSupport {
         if (txt.getText().trim().length() > 0) {
             return false;
         } else {
+            txt.setBackground(pink);
             return true;
         }
     }
@@ -110,4 +110,5 @@ public class ValidateSupport {
         return rdo.isSelected();  
 
     }
+
 }
