@@ -28,6 +28,8 @@ public class CustomerForm extends javax.swing.JPanel {
         initComponents();
         loadDataToTable();
         EditTable(tblCustomer);
+        defaultButton(false);
+        defaultText(false);
     }
 
     /**
@@ -202,11 +204,16 @@ public class CustomerForm extends javax.swing.JPanel {
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         // TODO add your handling code here:
         clearForm();
+        defaultText(true);
+        defaultButton(false);
+        btnAdd.setEnabled(true);
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
-        update();
+        if (check()) {
+            update();
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -216,9 +223,15 @@ public class CustomerForm extends javax.swing.JPanel {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
-        insert();
+        if (check()) {
+            if (ctm.selectByID(txtID.getText()) != null) {
+                Mgsbox.alert(this, "Invalid customer ID. Ex: KH001");
+            } else {
+                insert();
+            }
+        }
     }//GEN-LAST:event_btnAddActionPerformed
-    
+
     int index = 0;
     private void tblCustomerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCustomerMouseClicked
         // TODO add your handling code here:
@@ -243,8 +256,8 @@ public class CustomerForm extends javax.swing.JPanel {
     private javax.swing.JTextField txtPN;
     // End of variables declaration//GEN-END:variables
     CustomerDAO ctm = new CustomerDAO();
-    
-    private void loadDataToTable(){
+
+    private void loadDataToTable() {
         DefaultTableModel dtm = (DefaultTableModel) tblCustomer.getModel();
         dtm.setRowCount(0);
         try {
@@ -263,14 +276,14 @@ public class CustomerForm extends javax.swing.JPanel {
         } catch (Exception e) {
         }
     }
-    
-    private void setModel(Customer model){
+
+    private void setModel(Customer model) {
         txtID.setText(model.getCtmID());
         txtName.setText(model.getCtmName());
         txtPN.setText(model.getCtmNumberPhone());
     }
-    
-    private Customer getModel(){
+
+    private Customer getModel() {
         Customer c = new Customer();
         c.setCtmID(txtID.getText());
         c.setCtmName(txtName.getText());
@@ -281,8 +294,8 @@ public class CustomerForm extends javax.swing.JPanel {
         c.setCtmTotalMoneyBought(0);
         return c;
     }
-    
-    private void edit(){
+
+    private void edit() {
         try {
             String cID = tblCustomer.getValueAt(index, 0).toString();
             Customer c = ctm.selectByID(cID);
@@ -292,36 +305,42 @@ public class CustomerForm extends javax.swing.JPanel {
         } catch (Exception e) {
         }
     }
-    
-    private void clearForm(){
+
+    private void clearForm() {
         txtID.setText("");
         txtName.setText("");
         txtPN.setText("");
     }
-    
-    private void update(){
+
+    private void update() {
         Customer model = getModel();
         try {
             ctm.update(model);
             this.loadDataToTable();
             Mgsbox.alert(this, "Update successful!");
+            clearForm();
+            defaultButton(false);
+            defaultText(false);
         } catch (Exception e) {
             Mgsbox.alert(this, "Update failed!");
         }
     }
-    
-    private void insert(){
+
+    private void insert() {
         Customer model = getModel();
         try {
             ctm.insert(model);
             this.loadDataToTable();
             Mgsbox.alert(this, "Insert successful!");
+            clearForm();
+            defaultButton(false);
+            defaultText(false);
         } catch (Exception e) {
             Mgsbox.alert(this, "Insert failed!");
         }
     }
-    
-    private void delete(){
+
+    private void delete() {
         if (Mgsbox.comfirm(this, "Do you really want to delete this customer?")) {
             String cID = txtID.getText();
             try {
@@ -329,17 +348,48 @@ public class CustomerForm extends javax.swing.JPanel {
                 this.loadDataToTable();
                 this.clearForm();
                 Mgsbox.alert(this, "Delete successfully!");
+                defaultButton(false);
+                defaultText(false);
             } catch (Exception e) {
                 Mgsbox.alert(this, "Delete failed!");
             }
         }
     }
-    
-    private void EditTable(JTable a){
+
+    private void EditTable(JTable a) {
         a.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
         a.getTableHeader().setOpaque(false);
         a.getTableHeader().setBackground(new Color(32, 136, 203));
         a.getTableHeader().setForeground(new Color(255, 255, 255));
         a.setRowHeight(25);
+    }
+
+    private void defaultText(boolean a) {
+        txtID.setEditable(a);
+        txtName.setEditable(a);
+        txtPN.setEditable(a);
+    }
+
+    private void defaultButton(boolean a) {
+        btnAdd.setEnabled(a);
+        btnDelete.setEnabled(a);
+        btnUpdate.setEnabled(a);
+    }
+
+    private boolean check() {
+        if (txtID.getText().equals("")) {
+            Mgsbox.alert(this, "Please fill out ID");
+            return false;
+        } else if (txtName.getText().equals("")) {
+            Mgsbox.alert(this, "Please fill out customer name");
+            return false;
+        } else if (txtPN.getText().equals("")) {
+            Mgsbox.alert(this, "Please fill out phone number");
+            return false;
+        } else if (ctm.selectByID(txtID.getText()) != null) {
+            Mgsbox.alert(this, "Duplicate ID");
+            return false;
+        }
+        return true;
     }
 }
