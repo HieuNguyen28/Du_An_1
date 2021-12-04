@@ -95,13 +95,6 @@ public class ValidateSupport {
         }
     }
 
-//    public static boolean isNull(JTextField txt) {
-//        if (txt.getText().trim().length() > 0) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
     
     
     public static boolean isNull(JTextField txt) {
@@ -127,7 +120,7 @@ public class ValidateSupport {
             txt.setBackground(pink);
         }
         return false;
-      
+
     public static boolean isNull(JTextPane txp) {
         return txp.getText().trim().isEmpty();
     }
