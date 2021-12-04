@@ -9,23 +9,25 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Main extends javax.swing.JFrame {
+
+    Thread startForm;
 
     public Main() {
         initComponents();
         lblMainFrame.setHorizontalAlignment((int) CENTER_ALIGNMENT);
         lblMainFrame.setBackground(Color.decode("#deddf8"));
         pnlMain.setBackground(Color.decode("#deddf8"));
+        lblInfor.setText(Image_Auth.USER.getEpeName());
         init();
     }
 
     private void init() {
         new Timer(1000, new ActionListener() {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 lblTime.setText(sdf.format(new Date()));
@@ -38,29 +40,29 @@ public class Main extends javax.swing.JFrame {
             public void menuIndexChange(int index) {
                 if (index == 0) {
                     showForm(new ReceiptForm());
-                }else if (index == 1) {
+                } else if (index == 1) {
                     showForm(new EmployeeGUI());
-                }else if (index == 2) {
+                } else if (index == 2) {
                     showForm(new WarehouseForm());
-                }else if (index == 3) {
+                } else if (index == 3) {
                     showForm(new MedicineForm());
-                }else if (index == 4) {
+                } else if (index == 4) {
                     showForm(new MedicineTypeForm());
-                }else if (index == 5) {
+                } else if (index == 5) {
                     showForm(new StatisForm());
-                }else if (index == 6) {
+                } else if (index == 6) {
                     showForm(new CustomerForm());
-                }else if (index == 7) {
+                } else if (index == 7) {
                     showForm(new VoucherForm());
-                }else if (index == 8) {
+                } else if (index == 8) {
                     showForm(new ProducerForm());
-                }else if (index == 9) {
+                } else if (index == 9) {
                     if (Mgsbox.comfirm(null, "Do you really want to sign out ?")) {
                         Image_Auth.logOff();
                         dispose();
                         new LoginForm().setVisible(true);
                     }
-                }else if (index == 10) {
+                } else if (index == 10) {
                     if (Mgsbox.comfirm(null, "Do you really want to exit ?")) {
                         System.exit(0);
                     }
@@ -68,12 +70,18 @@ public class Main extends javax.swing.JFrame {
             }
         });
     }
-    
-    private void showForm(Component com){
-        pnlMain.removeAll();
-        pnlMain.add(com);
-        pnlMain.revalidate();
-        pnlMain.repaint();
+
+    private void showForm(Component com) {
+        startForm = new Thread() {
+            @Override
+            public void run() {
+                pnlMain.removeAll();
+                pnlMain.add(com);
+                pnlMain.revalidate();
+                pnlMain.repaint();
+            }
+        };
+        startForm.start();
     }
 
     @SuppressWarnings("unchecked")
@@ -81,7 +89,10 @@ public class Main extends javax.swing.JFrame {
     private void initComponents() {
 
         panelBorder1 = new GUI.PanelBorder();
+        jLabel1 = new javax.swing.JLabel();
         lblTime = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        lblInfor = new javax.swing.JLabel();
         menu2 = new GUI.Menu();
         pnlMain = new GUI.PanelBorder();
         lblMainFrame = new javax.swing.JLabel();
@@ -91,10 +102,31 @@ public class Main extends javax.swing.JFrame {
 
         panelBorder1.setBackground(new java.awt.Color(255, 255, 255));
         panelBorder1.setPreferredSize(new java.awt.Dimension(909, 608));
+        panelBorder1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lblTime.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel1.setText("Đổi mật khẩu");
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
+        panelBorder1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 570, 70, 20));
+
+        lblTime.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         lblTime.setForeground(new java.awt.Color(0, 0, 153));
         lblTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/clock.png"))); // NOI18N
+        panelBorder1.add(lblTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 520, 230, -1));
+
+        jSeparator1.setForeground(new java.awt.Color(51, 0, 51));
+        panelBorder1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 588, 70, 10));
+
+        lblInfor.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblInfor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/Info.png"))); // NOI18N
+        lblInfor.setText("Trần Thanh Dũng");
+        panelBorder1.add(lblInfor, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 570, -1, -1));
+        panelBorder1.add(menu2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 256, 600));
 
         pnlMain.setPreferredSize(new java.awt.Dimension(909, 313));
         pnlMain.setLayout(new java.awt.BorderLayout());
@@ -102,37 +134,7 @@ public class Main extends javax.swing.JFrame {
         lblMainFrame.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/MainFrame.png"))); // NOI18N
         pnlMain.add(lblMainFrame, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout panelBorder1Layout = new javax.swing.GroupLayout(panelBorder1);
-        panelBorder1.setLayout(panelBorder1Layout);
-        panelBorder1Layout.setHorizontalGroup(
-            panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBorder1Layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelBorder1Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(lblTime, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(menu2, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10)
-                .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, 920, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10))
-        );
-        panelBorder1Layout.setVerticalGroup(
-            panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBorder1Layout.createSequentialGroup()
-                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelBorder1Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelBorder1Layout.createSequentialGroup()
-                                .addGap(539, 539, 539)
-                                .addComponent(lblTime))
-                            .addComponent(menu2, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(panelBorder1Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, 599, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(10, 10, 10))
-        );
+        panelBorder1.add(pnlMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(276, 10, 920, 599));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -148,6 +150,11 @@ public class Main extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        this.setVisible(false);
+        new ChangePasswordForm().setVisible(true);
+    }//GEN-LAST:event_jLabel1MouseClicked
 
 //    public static void main(String args[]) {
 //        /* Set the Nimbus look and feel */
@@ -182,6 +189,9 @@ public class Main extends javax.swing.JFrame {
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lblInfor;
     private javax.swing.JLabel lblMainFrame;
     private javax.swing.JLabel lblTime;
     private GUI.Menu menu2;

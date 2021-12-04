@@ -396,7 +396,6 @@ public class EmployeeGUI extends javax.swing.JPanel {
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
-        btnChangePass = new javax.swing.JButton();
         txtID = new GUI.TextField();
         txtPhoneNumber = new GUI.TextField();
         txtUsername = new GUI.TextField();
@@ -575,25 +574,11 @@ public class EmployeeGUI extends javax.swing.JPanel {
             }
         });
 
-        btnChangePass.setBackground(new java.awt.Color(255, 255, 255));
-        btnChangePass.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        btnChangePass.setForeground(new java.awt.Color(255, 0, 0));
-        btnChangePass.setText("Change password ?");
-        btnChangePass.setBorder(null);
-        btnChangePass.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnChangePassActionPerformed(evt);
-            }
-        });
-
-        txtID.setBackground(new java.awt.Color(255, 255, 255));
         txtID.setForeground(new java.awt.Color(204, 0, 0));
         txtID.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtPhoneNumber.setBackground(new java.awt.Color(255, 255, 255));
         txtPhoneNumber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtUsername.setBackground(new java.awt.Color(255, 255, 255));
         txtUsername.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtUsername.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -601,7 +586,6 @@ public class EmployeeGUI extends javax.swing.JPanel {
             }
         });
 
-        txtName.setBackground(new java.awt.Color(255, 255, 255));
         txtName.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtName.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -609,16 +593,12 @@ public class EmployeeGUI extends javax.swing.JPanel {
             }
         });
 
-        txtAddress.setBackground(new java.awt.Color(255, 255, 255));
         txtAddress.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtEmail.setBackground(new java.awt.Color(255, 255, 255));
         txtEmail.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtIdentityCard.setBackground(new java.awt.Color(255, 255, 255));
         txtIdentityCard.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtPassword.setBackground(new java.awt.Color(255, 255, 255));
         txtPassword.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtPassword.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -753,9 +733,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(lblPassWord)
                         .addGap(18, 18, 18)
-                        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnChangePass))
+                        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 698, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(layout.createSequentialGroup()
                 .addGap(303, 303, 303)
@@ -848,10 +826,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(3, 3, 3)
                                 .addComponent(lblPassWord))
-                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(1, 1, 1)
-                                .addComponent(btnChangePass)))
+                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(17, 17, 17)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(8, 8, 8)
@@ -933,11 +908,6 @@ public class EmployeeGUI extends javax.swing.JPanel {
         btnAdd.setVisible(true);
     }//GEN-LAST:event_btnNewActionPerformed
 
-    private void btnChangePassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangePassActionPerformed
-
-        new ChangePasswordForm().setVisible(true);
-    }//GEN-LAST:event_btnChangePassActionPerformed
-
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
         btnEdit.setVisible(false);
@@ -969,7 +939,6 @@ public class EmployeeGUI extends javax.swing.JPanel {
             Controller.Helper.BackgroundC1.ChangeTxt(txtPhoneNumber);
             Controller.Helper.BackgroundC1.ChangeTxt(txtUsername);
             Controller.Helper.BackgroundC1.ChangeBtn(btnChange);
-            Controller.Helper.BackgroundC1.ChangeBtn(btnChangePass);
         } else if (evt.getClickCount() == 2) {
             btnChange.setToolTipText("Cick 1 for change Background");
             setBackground(Color.white);
@@ -977,7 +946,6 @@ public class EmployeeGUI extends javax.swing.JPanel {
             rdoMale.setBackground(Color.white);
             rdoManager.setBackground(Color.white);
             rdoStaff.setBackground(Color.white);
-            btnChangePass.setBackground(Color.white);
             txtID.setBackground(Color.WHITE);
             txtAddress.setBackground(Color.WHITE);
             txtEmail.setBackground(Color.WHITE);
@@ -1084,7 +1052,6 @@ public class EmployeeGUI extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnChange;
-    private javax.swing.JButton btnChangePass;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnNew;

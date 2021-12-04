@@ -5,9 +5,19 @@
  */
 package GUI;
 
+import Controller.Helper.CreateCapcha;
+import Controller.Helper.EmailSupport;
 import Controller.Helper.Image_Auth;
 import Controller.Helper.Mgsbox;
+import Controller.Helper.QRCodeSupport;
 import Controller.ModelDAO.EmployeeDAO;
+import com.google.zxing.WriterException;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.MessagingException;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -20,6 +30,64 @@ public class ChangePasswordForm extends javax.swing.JFrame {
      */
     public ChangePasswordForm() {
         initComponents();
+        createCapcha();
+    }
+
+    final static String REGEX_PASSWORD = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
+
+    private EmployeeDAO ED = new EmployeeDAO();
+    private CreateCapcha cc = new CreateCapcha();
+
+    private void createCapcha() {
+        BufferedImage bi = cc.getCaptchaImage();
+        ImageIcon ii = new ImageIcon(bi);
+        lblCapcha.setIcon(ii);
+    }
+
+    private void changePassWord() {
+        String currentpassword = txtCurrentPassword.getText().trim();
+        String passWord = txtNewPassword.getText().trim();
+        String commitPass = txtCommitPassword.getText().trim();
+        if (currentpassword.length() == 0 || passWord.length() == 0 || commitPass.length() == 0) {
+            Mgsbox.error(this, "Please fill out the form!");
+        } else if (!passWord.equals(commitPass)) {
+            Mgsbox.alert(this, "New password and cofirm password must be the same!");
+        } else if (passWord.equals(currentpassword)) {
+            Mgsbox.alert(this, "Your new password can't be like a current password!");
+        } else if (!passWord.matches(REGEX_PASSWORD)) {
+            Mgsbox.alert(this, "New password is too weak. Try again!");
+        } else if (!Image_Auth.authenticated()) {
+            Mgsbox.alert(this, "You must sign in to change password!");
+        } else if (!currentpassword.equals(Image_Auth.USER.getEpePassword())) {
+            Mgsbox.alert(this, "Current password is not correct!");
+            txtCurrentPassword.requestFocus();
+        } else if (!txtCapcha.getText().equals(cc.getCaptchaString())) {
+            Mgsbox.error(this, "Wrong capcha....");
+            txtCapcha.setText("");
+            txtCapcha.requestFocus();
+        } else {
+            new EmployeeDAO().updatePassword(commitPass, Image_Auth.USER.getEpeID());
+            Thread sendMail = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        EmailSupport.send(Image_Auth.USER.getEpeEmail(), "CHANGE PASSWORD", "Your password has changed!",
+                                Image_Auth.bufferedImageToFile(QRCodeSupport.createQRCode(
+                                        Image_Auth.USER.getEpeUserName() + "/" + commitPass, 1000, 1000), "QRCODE"));
+                    } catch (MessagingException | IOException ex) {
+                        Logger.getLogger(EmployeeGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (WriterException ex) {
+                        Logger.getLogger(ChangePasswordForm.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
+            sendMail.start();
+            Mgsbox.alert(this, "Change password successfully!");
+            Image_Auth.logOff();
+            this.dispose();
+            new LoginForm().setVisible(true);
+        }
+
     }
 
     /**
@@ -35,21 +103,22 @@ public class ChangePasswordForm extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        lblOldPassword = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        txtUser = new javax.swing.JTextField();
-        jSeparator1 = new javax.swing.JSeparator();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        txtPass = new javax.swing.JTextField();
-        jSeparator2 = new javax.swing.JSeparator();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        txtCommitPass = new javax.swing.JTextField();
-        jSeparator3 = new javax.swing.JSeparator();
-        jButton1 = new javax.swing.JButton();
+        btnChangePassword = new javax.swing.JButton();
+        txtCurrentPassword = new GUI.PasswordField();
+        txtNewPassword = new GUI.PasswordField();
+        txtCommitPassword = new GUI.PasswordField();
+        txtCapcha = new GUI.TextField();
+        jLabel4 = new javax.swing.JLabel();
+        lblCapcha = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CHANGE PASSWORD");
         setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/Login.jpg"))); // NOI18N
@@ -61,43 +130,38 @@ public class ChangePasswordForm extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel3.setText("Change Password");
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel4.setText("Username");
+        lblOldPassword.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblOldPassword.setText("Current Password");
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/user.png"))); // NOI18N
 
-        txtUser.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtUser.setBorder(null);
-
-        jSeparator1.setForeground(new java.awt.Color(0, 204, 51));
-
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel6.setText("Password");
+        jLabel6.setText("New Password");
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/pass.png"))); // NOI18N
-
-        txtPass.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtPass.setBorder(null);
-
-        jSeparator2.setForeground(new java.awt.Color(0, 204, 51));
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setText("Commit Password");
 
         jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/pass.png"))); // NOI18N
 
-        txtCommitPass.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtCommitPass.setBorder(null);
-
-        jSeparator3.setForeground(new java.awt.Color(0, 204, 51));
-
-        jButton1.setBackground(new java.awt.Color(0, 204, 51));
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Change Password");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnChangePassword.setBackground(new java.awt.Color(0, 204, 51));
+        btnChangePassword.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnChangePassword.setForeground(new java.awt.Color(255, 255, 255));
+        btnChangePassword.setText("Change Password");
+        btnChangePassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnChangePasswordActionPerformed(evt);
+            }
+        });
+
+        txtCapcha.setForeground(new java.awt.Color(153, 0, 153));
+        txtCapcha.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/captcha.png"))); // NOI18N
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
             }
         });
 
@@ -119,22 +183,25 @@ public class ChangePasswordForm extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(56, 56, 56)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
-                            .addComponent(jSeparator3)
-                            .addComponent(jSeparator1)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtCurrentPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtPass, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtNewPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtCommitPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btnChangePassword, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCommitPass, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(txtCapcha, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblCapcha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(122, 122, 122)
                         .addComponent(jLabel6)))
@@ -143,7 +210,7 @@ public class ChangePasswordForm extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(123, 123, 123)
-                        .addComponent(jLabel4))
+                        .addComponent(lblOldPassword))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(121, 121, 121)
                         .addComponent(jLabel8)))
@@ -155,34 +222,38 @@ public class ChangePasswordForm extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel4)
-                .addGap(8, 8, 8)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5)
-                    .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel6)
-                .addGap(5, 5, 5)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblOldPassword)
+                                .addGap(8, 8, 8)
+                                .addComponent(jLabel5))
+                            .addComponent(txtCurrentPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(34, 34, 34)
+                        .addComponent(jLabel6)
+                        .addGap(5, 5, 5)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel7)
+                            .addComponent(txtNewPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(34, 34, 34)
+                        .addComponent(jLabel8)
+                        .addGap(4, 4, 4)
+                        .addComponent(jLabel9))
+                    .addComponent(txtCommitPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel7)
-                    .addComponent(txtPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(13, 13, 13)
+                            .addComponent(jLabel4))
+                        .addComponent(txtCapcha, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblCapcha, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel8)
-                .addGap(4, 4, 4)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel9)
-                    .addComponent(txtCommitPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addComponent(btnChangePassword, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -197,17 +268,22 @@ public class ChangePasswordForm extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnChangePasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangePasswordActionPerformed
         // TODO add your handling code here:
         changePassWord();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnChangePasswordActionPerformed
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+        // TODO add your handling code here:
+        createCapcha();
+    }//GEN-LAST:event_jLabel4MouseClicked
 
     /**
      * @param args the command line arguments
@@ -246,7 +322,7 @@ public class ChangePasswordForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnChangePassword;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -257,27 +333,12 @@ public class ChangePasswordForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JTextField txtCommitPass;
-    private javax.swing.JTextField txtPass;
-    private javax.swing.JTextField txtUser;
+    private javax.swing.JLabel lblCapcha;
+    private javax.swing.JLabel lblOldPassword;
+    private GUI.TextField txtCapcha;
+    private GUI.PasswordField txtCommitPassword;
+    private GUI.PasswordField txtCurrentPassword;
+    private GUI.PasswordField txtNewPassword;
     // End of variables declaration//GEN-END:variables
-    EmployeeDAO ED = new EmployeeDAO();
-    private void changePassWord() {
-        String userName = txtUser.getText().trim();
-        String passWord = txtPass.getText().trim();
-        String commitPass = txtCommitPass.getText().trim();
-        Model.Employee employee = ED.selectByUsername(userName);
-        if (!userName.equals(Image_Auth.USER.getEpeUserName())) {
-            Mgsbox.alert(this, "UserName doesn't exist!!!");
-        } else if (!commitPass.equals(passWord)) {
-            Mgsbox.alert(this, "Password have to the same!!!");
-        } else {
-            Image_Auth.USER.setEpePassword(commitPass);
-            ED.update(Image_Auth.USER);
-            Mgsbox.alert(this, "Password update successfully!");
-        }
-    }
+
 }

@@ -22,7 +22,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -34,10 +33,11 @@ import static java.awt.print.Printable.NO_SUCH_PAGE;
 import static java.awt.print.Printable.PAGE_EXISTS;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
@@ -59,6 +59,278 @@ public class ReceiptForm extends javax.swing.JPanel {
         loadDataToCustomer();
         loadDataToVoucher();
         tblReceipt.addKeyListener(KA);
+    }
+    public static String TEXT_FROM_QRCODE_VOUCHER= null;
+    private Double bHeight = 0.0;
+    private InvoiceDAO idao = new InvoiceDAO();
+    private MedicineDAO mdao = new MedicineDAO();
+    private CustomerDAO cdao = new CustomerDAO();
+    private WareHouseDAO wdao = new WareHouseDAO();
+    private WareHouse wareHouse = null;
+    private String maKH = "";
+
+    private boolean check() {
+        Invoice invoice = idao.selectByID(txtReceiptID.getText());
+        if (txtReceiptID.getText().equals("") || txtReceiptID.getText().equalsIgnoreCase("HD")) {
+            Mgsbox.alert(this, "Please fill out receipt ID");
+            return false;
+        } else if (cbbCustomerPhoneNumber.getSelectedIndex() == 0) {
+            Mgsbox.alert(this, "Please choose customer");
+            return false;
+        } else if (invoice != null) {
+            Mgsbox.alert(this, "Duplicate receipt ID");
+            return false;
+        } else if (!txtReceiptID.getText().matches("^(HD)[0-9]{1,6}$")) {
+            Mgsbox.alert(this, "Invalid receipt ID. Ex:HD001");
+            return false;
+        } else if (tblReceipt.getRowCount() == 0) {
+            Mgsbox.alert(this, "There is no drug in receipt");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkID() {
+        List<Invoice> invoice = idao.selectAll();
+        for (Invoice list : invoice) {
+            if (list.getIvID().equalsIgnoreCase(txtReceiptID.getText())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public PageFormat getPageFormat(PrinterJob pj) {
+        PageFormat pf = pj.defaultPage();
+        Paper paper = pf.getPaper();
+
+        double bodyHeight = bHeight;
+        double headerHeight = 5.0;
+        double footerHeight = 5.0;
+        double width = cm_to_pp(9);
+        double height = cm_to_pp(headerHeight + bodyHeight + footerHeight);
+        paper.setSize(width, height);
+        paper.setImageableArea(0, 10, width, height - cm_to_pp(1));
+
+        pf.setOrientation(PageFormat.PORTRAIT);
+        pf.setPaper(paper);
+
+        return pf;
+    }
+
+    protected static double cm_to_pp(double cm) {
+        return toPPI(cm * 0.393600787);
+    }
+
+    protected static double toPPI(double inch) {
+        return inch * 72d;
+    }
+
+    public class BillPrintable implements Printable {
+
+        public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
+                throws PrinterException {
+
+            int r = tblReceipt.getRowCount();
+            ImageIcon icon = new ImageIcon("src/Icons/Logo_Print.png");
+            int result = NO_SUCH_PAGE;
+            if (pageIndex == 0) {
+
+                Graphics2D g2d = (Graphics2D) graphics;
+                double width = pageFormat.getImageableWidth();
+                g2d.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY());
+
+                //  FontMetrics metrics=g2d.getFontMetrics(new Font("Arial",Font.BOLD,7));
+                try {
+                    int y = 20;
+                    int yShift = 10;
+                    int headerRectHeight = 12;
+                    // int headerRectHeighta=40;
+
+                    g2d.setFont(new Font("Monospaced", Font.PLAIN, 12));
+                    g2d.drawImage(icon.getImage(), 80, 20, 90, 30, null);
+                    y += yShift + 30;
+                    g2d.drawString("-------------------------------------", 12, y);
+                    y += yShift;
+                    g2d.drawString("             Pharmacy        ", 12, y);
+                    y += yShift;
+                    g2d.drawString("  Gia re - uy tin - chat luong ! ", 12, y);
+                    y += yShift;
+                    g2d.drawString("          CTY TNHH Nhom 4 ", 12, y);
+                    y += yShift;
+                    g2d.drawString("      Ma so thue: 2923144574 ", 12, y);
+                    y += yShift;
+                    g2d.drawString("Phone: 0123456789 Fax: 0373 917333", 12, y);
+                    y += yShift;
+                    g2d.drawString("-------------------------------------", 12, y);
+                    y += headerRectHeight;
+                    g2d.drawString("          Phieu tinh tien", 10, y);
+                    y += yShift;
+                    g2d.drawString(" Item Name                  Price   ", 10, y);
+                    y += yShift;
+                    g2d.drawString("-------------------------------------", 10, y);
+                    y += headerRectHeight;
+
+                    for (int s = 0; s < r; s++) {
+                        g2d.drawString(" " + tblReceipt.getValueAt(s, 0) + "                            ", 10, y);
+                        y += yShift;
+                        g2d.drawString("      " + tblReceipt.getValueAt(s, 1) + " * " + tblReceipt.getValueAt(s, 2), 10, y);
+                        double subtotal = Double.valueOf(tblReceipt.getValueAt(s, 1).toString()) * Double.valueOf(tblReceipt.getValueAt(s, 2).toString());
+                        g2d.drawString(String.valueOf(subtotal), 160, y);
+                        y += yShift;
+
+                    }
+
+                    g2d.drawString("-------------------------------------", 10, y);
+                    y += yShift;
+                    g2d.drawString(" Total amount:               " + lblTotal.getText() + "   ", 10, y);
+                    y += yShift;
+                    g2d.drawString("-------------------------------------", 10, y);
+                    y += yShift;
+                    g2d.drawString(" Cash      :                 " + txtCash.getText() + "   ", 10, y);
+                    y += yShift;
+                    g2d.drawString("-------------------------------------", 10, y);
+                    y += yShift;
+                    g2d.drawString(" Balance   :                 " + lblBalance.getText() + "   ", 10, y);
+                    y += yShift;
+
+                    g2d.drawString("*************************************", 10, y);
+                    y += yShift;
+                    g2d.drawString("       THANK YOU COME AGAIN            ", 10, y);
+                    y += yShift;
+                    g2d.drawString("*************************************", 10, y);
+                    y += yShift;
+                    g2d.drawString("       Hotline: 0123456789          ", 10, y);
+                    y += yShift;
+                    g2d.drawString("   CONTACT: pharmacy@gmail.com       ", 10, y);
+                    y += yShift;
+                    y += yShift;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                result = PAGE_EXISTS;
+            }
+            return result;
+        }
+    }
+
+    private void EditTable(JTable a) {
+        a.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        a.getTableHeader().setOpaque(false);
+        a.getTableHeader().setBackground(new Color(32, 136, 203));
+        a.getTableHeader().setForeground(new Color(255, 255, 255));
+        a.setRowHeight(25);
+    }
+
+    private void loadDataToRrugName() {
+        DefaultComboBoxModel dcm = (DefaultComboBoxModel) cbbDrugName.getModel();
+        dcm.removeAllElements();
+        dcm.addElement("Select...");
+        try {
+            List<Medicine> list = mdao.selectAll();
+            for (Medicine medicine : list) {
+                dcm.addElement(medicine.getMdcName());
+            }
+        } catch (Exception e) {
+        }
+        cbbDrugName.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    String drugName = cbbDrugName.getSelectedItem().toString();
+                    loadDataToBatchID(drugName);
+                }
+            }
+        });
+    }
+
+    private void loadDataToCustomer() {
+        DefaultComboBoxModel dcm = (DefaultComboBoxModel) cbbCustomerPhoneNumber.getModel();
+        dcm.removeAllElements();
+        dcm.addElement("Select...");
+        try {
+            List<Customer> list = cdao.selectAll();
+            for (Customer customer : list) {
+                dcm.addElement(customer.getCtmNumberPhone());
+            }
+        } catch (Exception e) {
+        }
+        cbbCustomerPhoneNumber.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    if (cbbCustomerPhoneNumber.getSelectedIndex() != 0) {
+                        String pn = (String) cbbCustomerPhoneNumber.getSelectedItem();
+                        lblPN.setText(pn);
+                        Customer customer = cdao.selectByPN(pn);
+                        maKH = customer.getCtmID();
+                        lblName.setText(customer.getCtmName());
+                    } else {
+                        lblPN.setText("");
+                        lblName.setText("");
+                    }
+                }
+            }
+        });
+    }
+
+    private void loadDataToBatchID(String dn) {
+        DefaultComboBoxModel dcm = (DefaultComboBoxModel) cbbBatchID.getModel();
+        dcm.removeAllElements();
+        dcm.addElement("Select...");
+        try {
+            List<Medicine> medicine = mdao.selectByMedicineName(dn);
+            for (Medicine list : medicine) {
+                dcm.addElement(list.getMdcBatchID());
+            }
+        } catch (Exception e) {
+        }
+
+        cbbBatchID.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED && cbbBatchID.getSelectedIndex() != 0) {
+                    if (cbbBatchID.getSelectedIndex() != 0) {
+                        String batchID = (String) cbbBatchID.getSelectedItem();
+                        wareHouse = new WareHouseDAO().selectByID(batchID);
+                        txtRemainingAmount.setText(String.valueOf(wareHouse.getWhRemainingAmout()));
+                        txtExpirationDate.setText(String.valueOf(wareHouse.getWhExpiryDate()));
+                    } else {
+                        lblPN.setText("");
+                        lblName.setText("");
+                    }
+                }
+            }
+        });
+    }
+
+    VoucherDAO vdao = new VoucherDAO();
+
+    private void loadDataToVoucher() {
+        DefaultComboBoxModel model = (DefaultComboBoxModel) cbbVoucher.getModel();
+        model.removeAllElements();
+        model.addElement("Select...");
+        try {
+            List<Voucher> list = vdao.selectAll();
+            for (Voucher voucher : list) {
+                model.addElement(voucher.getVcID());
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    private void clearForm() {
+        lblName.setText("");
+        lblPN.setText("");
+        lblTotal.setText("");
+        DefaultTableModel model = (DefaultTableModel) tblReceipt.getModel();
+        for (int i = 0; i < tblReceipt.getRowCount(); i++) {
+            model.removeRow(i);
+        }
+        txtReceiptID.setText("HD");
+        cbbCustomerPhoneNumber.setSelectedIndex(0);
+        cbbVoucher.setSelectedIndex(0);
     }
 
     /**
@@ -95,6 +367,11 @@ public class ReceiptForm extends javax.swing.JPanel {
         jLabel11 = new javax.swing.JLabel();
         txtReceiptID = new GUI.TextField();
         cbbVoucher = new ComboBox_Suggestion.ComboBoxSuggestion();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        lblBalance = new javax.swing.JLabel();
+        txtCash = new GUI.TextField();
+        lblQRVoucher = new javax.swing.JLabel();
         btnChange = new javax.swing.JButton();
 
 
@@ -217,6 +494,11 @@ public class ReceiptForm extends javax.swing.JPanel {
         txtReceiptID.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
 
         cbbVoucher.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "..." }));
+        cbbVoucher.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbVoucherActionPerformed(evt);
+            }
+        });
 
         btnChange.setBackground(new java.awt.Color(255, 255, 255));
         btnChange.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/night-mode.png"))); // NOI18N
@@ -224,6 +506,13 @@ public class ReceiptForm extends javax.swing.JPanel {
         btnChange.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnChangeMouseClicked(evt);
+            }
+        });
+
+        lblQRVoucher.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/camera.png"))); // NOI18N
+        lblQRVoucher.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblQRVoucherMouseClicked(evt);
             }
         });
 
@@ -268,6 +557,14 @@ public class ReceiptForm extends javax.swing.JPanel {
                                     .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(4, 4, 4)
+                                .addComponent(lblQRVoucher, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(btnPay, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                                    .addComponent(cbbVoucher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(20, 20, 20))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -286,6 +583,7 @@ public class ReceiptForm extends javax.swing.JPanel {
                                                 .addComponent(jLabel7)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(lblTotal)))
+                                        .addGap(0, 41, Short.MAX_VALUE)))
                                         .addGap(0, 22, Short.MAX_VALUE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel6)
@@ -386,9 +684,13 @@ public class ReceiptForm extends javax.swing.JPanel {
                             .addComponent(jLabel13)
                             .addComponent(lblBalance))
                         .addGap(18, 18, 18)
-                        .addComponent(cbbVoucher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cbbVoucher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblQRVoucher))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnPay)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
                         .addGap(0, 1, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
                 .addContainerGap())
@@ -434,7 +736,6 @@ public class ReceiptForm extends javax.swing.JPanel {
 
     int index = 0;
 
-    int index = 0;
     int flag = 0;
     private KeyAdapter KA = new KeyAdapter() {
         @Override
@@ -488,8 +789,16 @@ public class ReceiptForm extends javax.swing.JPanel {
                 return true;
             }
         }
-        return false;
-    }
+    };
+    private void tblReceiptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblReceiptMouseClicked
+        // TODO add your handling code here:
+        index = tblReceipt.getSelectedRow();
+        if (evt.getClickCount() == 2) {
+            flag = 1;
+            System.out.println(flag);
+        }
+    }//GEN-LAST:event_tblReceiptMouseClicked
+
 
     private void btnPayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPayActionPerformed
         // TODO add your handling code here:
@@ -573,122 +882,33 @@ public class ReceiptForm extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_tblReceiptKeyReleased
 
-    Double bHeight = 0.0;
+    private void cbbVoucherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbVoucherActionPerformed
+    }//GEN-LAST:event_cbbVoucherActionPerformed
 
-    public PageFormat getPageFormat(PrinterJob pj) {
-        PageFormat pf = pj.defaultPage();
-        Paper paper = pf.getPaper();
-
-        double bodyHeight = bHeight;
-        double headerHeight = 5.0;
-        double footerHeight = 5.0;
-        double width = cm_to_pp(9);
-        double height = cm_to_pp(headerHeight + bodyHeight + footerHeight);
-        paper.setSize(width, height);
-        paper.setImageableArea(0, 10, width, height - cm_to_pp(1));
-
-        pf.setOrientation(PageFormat.PORTRAIT);
-        pf.setPaper(paper);
-
-        return pf;
-    }
-
-    protected static double cm_to_pp(double cm) {
-        return toPPI(cm * 0.393600787);
-    }
-
-    protected static double toPPI(double inch) {
-        return inch * 72d;
-    }
-
-    public class BillPrintable implements Printable {
-
-        public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
-                throws PrinterException {
-
-            int r = tblReceipt.getRowCount();
-            ImageIcon icon = new ImageIcon("src/Icons/Logo_Print.png");
-            int result = NO_SUCH_PAGE;
-            if (pageIndex == 0) {
-
-                Graphics2D g2d = (Graphics2D) graphics;
-                double width = pageFormat.getImageableWidth();
-                g2d.translate((int) pageFormat.getImageableX(), (int) pageFormat.getImageableY());
-
-                //  FontMetrics metrics=g2d.getFontMetrics(new Font("Arial",Font.BOLD,7));
-                try {
-                    int y = 20;
-                    int yShift = 10;
-                    int headerRectHeight = 12;
-                    // int headerRectHeighta=40;
-
-                    g2d.setFont(new Font("Monospaced", Font.PLAIN, 12));
-                    g2d.drawImage(icon.getImage(), 80, 20, 90, 30, null);
-                    y += yShift + 30;
-                    g2d.drawString("-------------------------------------", 12, y);
-                    y += yShift;
-                    g2d.drawString("             Pharmacy        ", 12, y);
-                    y += yShift;
-                    g2d.drawString("  Gia re - uy tin - chat luong ! ", 12, y);
-                    y += yShift;
-                    g2d.drawString("          CTY TNHH Nhom 4 ", 12, y);
-                    y += yShift;
-                    g2d.drawString("      Ma so thue: 2923144574 ", 12, y);
-                    y += yShift;
-                    g2d.drawString("Phone: 0123456789 Fax: 0373 917333", 12, y);
-                    y += yShift;
-                    g2d.drawString("-------------------------------------", 12, y);
-                    y += headerRectHeight;
-                    g2d.drawString("          Phieu tinh tien", 10, y);
-                    y += yShift;
-                    g2d.drawString(" Item Name                  Price   ", 10, y);
-                    y += yShift;
-                    g2d.drawString("-------------------------------------", 10, y);
-                    y += headerRectHeight;
-
-                    for (int s = 0; s < r; s++) {
-                        g2d.drawString(" " + tblReceipt.getValueAt(s, 0) + "                            ", 10, y);
-                        y += yShift;
-                        g2d.drawString("      " + tblReceipt.getValueAt(s, 1) + " * " + tblReceipt.getValueAt(s, 2), 10, y);
-                        double subtotal = Double.valueOf(tblReceipt.getValueAt(s, 1).toString()) * Double.valueOf(tblReceipt.getValueAt(s, 2).toString());
-                        g2d.drawString(String.valueOf(subtotal), 160, y);
-                        y += yShift;
-
+    private void lblQRVoucherMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQRVoucherMouseClicked
+        new FrameCameraQRCodeVoucher().setVisible(true);
+            Thread setImage = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(EmployeeGUI.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        if (TEXT_FROM_QRCODE_VOUCHER != null) {
+                            System.out.println(TEXT_FROM_QRCODE_VOUCHER);
+                            cbbVoucher.setSelectedItem(TEXT_FROM_QRCODE_VOUCHER);
+                            // DO SOMETHING AT THERE
+                            break;
+                        }
                     }
-
-                    g2d.drawString("-------------------------------------", 10, y);
-                    y += yShift;
-                    g2d.drawString(" Total amount:               " + lblTotal.getText() + "   ", 10, y);
-                    y += yShift;
-                    g2d.drawString("-------------------------------------", 10, y);
-                    y += yShift;
-                    g2d.drawString(" Cash      :                 " + txtCash.getText() + "   ", 10, y);
-                    y += yShift;
-                    g2d.drawString("-------------------------------------", 10, y);
-                    y += yShift;
-                    g2d.drawString(" Balance   :                 " + lblBalance.getText() + "   ", 10, y);
-                    y += yShift;
-
-                    g2d.drawString("*************************************", 10, y);
-                    y += yShift;
-                    g2d.drawString("       THANK YOU COME AGAIN            ", 10, y);
-                    y += yShift;
-                    g2d.drawString("*************************************", 10, y);
-                    y += yShift;
-                    g2d.drawString("       Hotline: 0123456789          ", 10, y);
-                    y += yShift;
-                    g2d.drawString("   CONTACT: pharmacy@gmail.com       ", 10, y);
-                    y += yShift;
-                    y += yShift;
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
 
-                result = PAGE_EXISTS;
-            }
-            return result;
-        }
-    }
+            });
+            setImage.start();
+    }//GEN-LAST:event_lblQRVoucherMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
@@ -714,6 +934,8 @@ public class ReceiptForm extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblBalance;
     private javax.swing.JLabel lblName;
+    private javax.swing.JLabel lblPN;
+    private javax.swing.JLabel lblQRVoucher;
     private javax.swing.JLabel lblTotal;
     private javax.swing.JTable tblReceipt;
     private GUI.TextField txtCash;

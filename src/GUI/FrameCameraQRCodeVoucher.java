@@ -7,10 +7,18 @@ package GUI;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 import com.github.sarxos.webcam.WebcamResolution;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.LuminanceSource;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
+import com.google.zxing.Result;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -19,15 +27,15 @@ import java.util.concurrent.ThreadFactory;
  *
  * @author LENOVO
  */
-public class FrameCamera extends javax.swing.JFrame implements Runnable, ThreadFactory {
-
+public class FrameCameraQRCodeVoucher extends javax.swing.JFrame implements Runnable, ThreadFactory {
+    
     private WebcamPanel panel = null;
     private Webcam webcam = null;
 
     private static final long serialVersionUID = 6441489157408381878L;
     private Executor executor = Executors.newSingleThreadExecutor(this);
 
-    public FrameCamera() {
+    public FrameCameraQRCodeVoucher() {
         initComponents();
         initWebcam();
     }
@@ -37,7 +45,6 @@ public class FrameCamera extends javax.swing.JFrame implements Runnable, ThreadF
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        btnGetImage = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -47,11 +54,6 @@ public class FrameCamera extends javax.swing.JFrame implements Runnable, ThreadF
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        btnGetImage.setText("Get Image");
-        btnGetImage.setBackground(Color.GRAY);
-        btnGetImage.setOpaque(false);
-        jPanel1.add(btnGetImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 470, 20));
 
         jSeparator1.setForeground(new java.awt.Color(126, 167, 206));
         jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, 470, 10));
@@ -103,7 +105,6 @@ public class FrameCamera extends javax.swing.JFrame implements Runnable, ThreadF
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JButton btnGetImage;
     // End of variables declaration//GEN-END:variables
 
     private void initWebcam() {
@@ -116,16 +117,46 @@ public class FrameCamera extends javax.swing.JFrame implements Runnable, ThreadF
         panel.setFPSDisplayed(true);
         jPanel2.add(panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 470, 300));
         executor.execute(this);
-        btnGetImage.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (webcam.isOpen()) {
-                    EmployeeGUI.IMAGE_WEBCAM = webcam.getImage();
-                    webcam.close();
-                    dispose();
+        
+        Thread a = new Thread(() -> {
+            do {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            }
+                Result result = null;
+                BufferedImage image = null;
+
+                if (webcam.isOpen()) {
+                    try {
+                        if ((image = webcam.getImage()) == null) {
+                            continue;
+                        }
+                    } catch (Exception e) {
+                        // Camera error
+                    }
+
+                }
+
+                LuminanceSource source = new BufferedImageLuminanceSource(image);
+                BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+                try {
+                    result = new MultiFormatReader().decode(bitmap);
+                } catch (NotFoundException e) {
+                    //No result...
+                }
+
+                if (result != null) {
+                    ReceiptForm.TEXT_FROM_QRCODE_VOUCHER=result.getText();
+                    webcam.close();
+                    this.dispose();
+                    break;
+                }
+            } while (true);
         });
+        a.start();
+        
     }
 
     @Override
