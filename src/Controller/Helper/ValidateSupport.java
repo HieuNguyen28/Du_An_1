@@ -79,15 +79,15 @@ public class ValidateSupport {
         }
     }
 
-    public static boolean isNull(JTextField txt) {
-        txt.setBackground(white);
-        if (txt.getText().trim().length() > 0) {
-            return false;
-        } else {
-            txt.setBackground(pink);
-            return true;
-        }
-    }
+//    public static boolean isNull(JTextField txt) {
+//        txt.setBackground(white);
+//        if (txt.getText().trim().length() > 0) {
+//            return false;
+//        } else {
+//            txt.setBackground(pink);
+//            return true;
+//        }
+//    }
 
     public static boolean checkPrice(JTextField txt) {
         try {
@@ -102,6 +102,8 @@ public class ValidateSupport {
             txt.setBackground(pink);
         }
         return false;
+    }
+    
     public static boolean isNull(JTextPane txp) {
         return txp.getText().trim().isEmpty();
     }

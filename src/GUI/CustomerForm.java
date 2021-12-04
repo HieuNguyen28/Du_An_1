@@ -235,6 +235,9 @@ public class CustomerForm extends javax.swing.JPanel {
     int index = 0;
     private void tblCustomerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCustomerMouseClicked
         // TODO add your handling code here:
+        defaultText(true);
+        defaultButton(false);
+        btnUpdate.setEnabled(true);
         this.index = tblCustomer.rowAtPoint(evt.getPoint());
         this.edit();
     }//GEN-LAST:event_tblCustomerMouseClicked
