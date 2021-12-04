@@ -45,8 +45,8 @@ public class VoucherForm extends javax.swing.JPanel {
         loadComboboxMedicine();
         setStatus(false);
 
-        dcDayStart.setMinSelectableDate(DateSupport.now());
-        dcDayEnd.setMinSelectableDate(DateSupport.now());
+//        dcDayStart.setMinSelectableDate(DateSupport.now());
+//        dcDayEnd.setMinSelectableDate(DateSupport.now());
         btnAdd.setVisible(false);
         btnUpdate.setVisible(false);
         btnDelete.setVisible(false);
@@ -133,8 +133,8 @@ public class VoucherForm extends javax.swing.JPanel {
         cbbMedicineID.setSelectedIndex(0);
         txtReceiptApply.setText("");
         txtVoucherID.setText("");
-        dcDayEnd.cleanup();
-        dcDayStart.cleanup();
+//        dcDayEnd.cleanup();
+//        dcDayStart.cleanup();
         lblQRCode.setIcon(null);
         lblStartDate.setText("");
         lblEndDate.setText("");
