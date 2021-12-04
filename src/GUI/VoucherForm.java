@@ -234,6 +234,15 @@ public class VoucherForm extends javax.swing.JPanel {
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
+        btnChange = new javax.swing.JButton();
+
+        setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(102, 51, 255));
+        jLabel1.setText("Voucher");
+
+        tblVoucher.setBackground(new java.awt.Color(222, 221, 248));
         cbbMedicineID = new javax.swing.JComboBox<>();
         btnEdit = new javax.swing.JButton();
         lblStatus = new javax.swing.JLabel();
@@ -247,7 +256,6 @@ public class VoucherForm extends javax.swing.JPanel {
         btnCapture = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
-
         tblVoucher.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
@@ -268,9 +276,10 @@ public class VoucherForm extends javax.swing.JPanel {
             }
         });
         tblVoucher.setFocusable(false);
+        tblVoucher.setGridColor(new java.awt.Color(15, 106, 205));
         tblVoucher.setIntercellSpacing(new java.awt.Dimension(0, 0));
         tblVoucher.setRowHeight(25);
-        tblVoucher.setSelectionBackground(new java.awt.Color(232, 57, 95));
+        tblVoucher.setSelectionBackground(new java.awt.Color(51, 153, 255));
         tblVoucher.setShowVerticalLines(false);
         tblVoucher.getTableHeader().setReorderingAllowed(false);
         tblVoucher.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -361,6 +370,12 @@ public class VoucherForm extends javax.swing.JPanel {
             }
         });
 
+        btnChange.setBackground(new java.awt.Color(255, 255, 255));
+        btnChange.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/night-mode.png"))); // NOI18N
+        btnChange.setBorder(null);
+        btnChange.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnChangeMouseClicked(evt);
         cbbMedicineID.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnEdit.setBackground(new java.awt.Color(0, 153, 255));
@@ -420,6 +435,12 @@ public class VoucherForm extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10))
+                    .addGroup(layout.createSequentialGroup()
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
@@ -470,6 +491,11 @@ public class VoucherForm extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -546,6 +572,26 @@ public class VoucherForm extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnAddActionPerformed
 
+    private void btnChangeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnChangeMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 1) {
+            btnChange.setToolTipText("Cick 2 for change Background");
+            setBackground(Color.decode("#9badf2"));
+            Controller.Helper.BackgroundC1.ChangeTxt(txtDiscount);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtMedicineID);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtReceiptApply);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtVoucherID);
+            Controller.Helper.BackgroundC1.ChangeBtn(btnChange);
+        } else if (evt.getClickCount() == 2) {
+            btnChange.setToolTipText("Cick 1 for change Background");
+            setBackground(Color.white);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtDiscount);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtMedicineID);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtReceiptApply);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtVoucherID);
+            Controller.Helper.BackgroundC2.ChangeBtn(btnChange);
+        }
+    }//GEN-LAST:event_btnChangeMouseClicked
     private void tblVoucherMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblVoucherMouseClicked
         // TODO add your handling code here:
         loadRowToControl(tblVoucher.getValueAt(tblVoucher.getSelectedRow(), 0).toString());
@@ -589,6 +635,7 @@ public class VoucherForm extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnChange;
     private javax.swing.JButton btnCapture;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
@@ -617,5 +664,4 @@ public class VoucherForm extends javax.swing.JPanel {
     private GUI.TextField txtReceiptApply;
     private GUI.TextField txtVoucherID;
     // End of variables declaration//GEN-END:variables
-
 }

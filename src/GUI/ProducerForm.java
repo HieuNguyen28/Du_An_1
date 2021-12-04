@@ -43,6 +43,7 @@ public class ProducerForm extends javax.swing.JPanel {
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
+        btnChange = new javax.swing.JButton();
 
         pnlMain.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -60,6 +61,7 @@ public class ProducerForm extends javax.swing.JPanel {
 
         jLabel5.setText("Hotline:");
 
+        tblProducer.setBackground(new java.awt.Color(222, 221, 248));
         tblProducer.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
@@ -80,8 +82,9 @@ public class ProducerForm extends javax.swing.JPanel {
             }
         });
         tblProducer.setFocusable(false);
+        tblProducer.setGridColor(new java.awt.Color(15, 106, 205));
         tblProducer.setIntercellSpacing(new java.awt.Dimension(0, 0));
-        tblProducer.setSelectionBackground(new java.awt.Color(232, 57, 95));
+        tblProducer.setSelectionBackground(new java.awt.Color(51, 153, 255));
         tblProducer.setShowVerticalLines(false);
         tblProducer.getTableHeader().setReorderingAllowed(false);
         tblProducer.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -135,6 +138,15 @@ public class ProducerForm extends javax.swing.JPanel {
             }
         });
 
+        btnChange.setBackground(new java.awt.Color(255, 255, 255));
+        btnChange.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/night-mode.png"))); // NOI18N
+        btnChange.setBorder(null);
+        btnChange.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnChangeMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlMainLayout = new javax.swing.GroupLayout(pnlMain);
         pnlMain.setLayout(pnlMainLayout);
         pnlMainLayout.setHorizontalGroup(
@@ -168,25 +180,33 @@ public class ProducerForm extends javax.swing.JPanel {
                                 .addComponent(jLabel3)
                                 .addGap(24, 24, 24)
                                 .addComponent(dcFounding, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(285, 285, 285)
                         .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMainLayout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
                             .addGroup(pnlMainLayout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(53, 53, 53)))
-                        .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCompanyName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 47, Short.MAX_VALUE)))
+                                .addGap(285, 285, 285)
+                                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMainLayout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                    .addGroup(pnlMainLayout.createSequentialGroup()
+                                        .addComponent(jLabel4)
+                                        .addGap(53, 53, 53)))
+                                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtCompanyName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 47, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlMainLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(11, 11, 11)))))
                 .addContainerGap())
         );
         pnlMainLayout.setVerticalGroup(
             pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlMainLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel6)
+                .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6)
+                    .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(pnlMainLayout.createSequentialGroup()
@@ -273,9 +293,31 @@ public class ProducerForm extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_tblProducerMouseClicked
 
+    private void btnChangeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnChangeMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 1) {
+            btnChange.setToolTipText("Cick 2 for change Background");
+            pnlMain.setBackground(Color.decode("#9badf2"));
+            Controller.Helper.BackgroundC1.ChangeTxt(txtCompanyName);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtEmail);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtHotline);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtID);
+            Controller.Helper.BackgroundC1.ChangeBtn(btnChange);
+        } else if (evt.getClickCount() == 2) {
+            btnChange.setToolTipText("Cick 1 for change Background");
+            pnlMain.setBackground(Color.white);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtCompanyName);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtEmail);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtHotline);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtID);
+            Controller.Helper.BackgroundC2.ChangeBtn(btnChange);
+        }
+    }//GEN-LAST:event_btnChangeMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnChange;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnUpdate;

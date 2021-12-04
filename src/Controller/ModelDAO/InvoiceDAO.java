@@ -5,6 +5,7 @@
 package Controller.ModelDAO;
 
 import Controller.Helper.Database;
+import static Controller.Helper.Database.executeQuery;
 import Model.Invoice;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -106,7 +107,5 @@ public class InvoiceDAO extends ModelDataAccessObject<Invoice, String> {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-
     }
-
 }
