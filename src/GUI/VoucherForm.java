@@ -1,18 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
+
 import Controller.Helper.DateSupport;
-import static Controller.Helper.DateSupport.toDate;
 import Controller.Helper.Image_Auth;
-import Controller.Helper.Mgsbox;
 import Controller.Helper.QRCodeSupport;
-import Controller.Helper.ValidateSupport;
 import Controller.ModelDAO.MedicineDAO;
 import Controller.ModelDAO.VoucherDAO;
+import Controller.Helper.Mgsbox;
+import Controller.Helper.ValidateSupport;
 import Model.Voucher;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.WriterException;
@@ -27,10 +22,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author Laxus
- */
 public class VoucherForm extends javax.swing.JPanel {
 
     /**
@@ -45,8 +36,8 @@ public class VoucherForm extends javax.swing.JPanel {
         loadComboboxMedicine();
         setStatus(false);
 
-//        dcDayStart.setMinSelectableDate(DateSupport.now());
-//        dcDayEnd.setMinSelectableDate(DateSupport.now());
+        dcDayStart.setMinSelectableDate(DateSupport.now());
+        dcDayEnd.setMinSelectableDate(DateSupport.now());
         btnAdd.setVisible(false);
         btnUpdate.setVisible(false);
         btnDelete.setVisible(false);
@@ -123,8 +114,8 @@ public class VoucherForm extends javax.swing.JPanel {
         model.setVcMedicineID(cbbMedicineID.getSelectedItem().toString());
         model.setVcTotalBillCanAdd(Double.valueOf(txtReceiptApply.getText()));
         model.setVcPriceDiscount(Double.valueOf(txtDiscount.getText()));
-        model.setVcStartDate(toDate(new SimpleDateFormat("yyyy-MM-dd").format(dcDayStart.getDate())));
-        model.setVcEndDate(toDate(new SimpleDateFormat("yyyy-MM-dd").format(dcDayEnd.getDate())));
+        model.setVcStartDate(DateSupport.toDate(new SimpleDateFormat("yyyy-MM-dd").format(dcDayStart.getDate())));
+        model.setVcEndDate(DateSupport.toDate(new SimpleDateFormat("yyyy-MM-dd").format(dcDayEnd.getDate())));
         return model;
     }
 
@@ -133,8 +124,8 @@ public class VoucherForm extends javax.swing.JPanel {
         cbbMedicineID.setSelectedIndex(0);
         txtReceiptApply.setText("");
         txtVoucherID.setText("");
-//        dcDayEnd.cleanup();
-//        dcDayStart.cleanup();
+        dcDayEnd.cleanup();
+        dcDayStart.cleanup();
         lblQRCode.setIcon(null);
         lblStartDate.setText("");
         lblEndDate.setText("");
@@ -216,13 +207,12 @@ public class VoucherForm extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
-        jScrollPane1 = new javax.swing.JScrollPane();
+ jScrollPane1 = new javax.swing.JScrollPane();
         tblVoucher = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         txtVoucherID = new GUI.TextField();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+jLabel4 = new javax.swing.JLabel();
         txtReceiptApply = new GUI.TextField();
         jLabel5 = new javax.swing.JLabel();
         dcDayStart = new com.toedter.calendar.JDateChooser();
@@ -234,15 +224,6 @@ public class VoucherForm extends javax.swing.JPanel {
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
-        btnChange = new javax.swing.JButton();
-
-        setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(102, 51, 255));
-        jLabel1.setText("Voucher");
-
-        tblVoucher.setBackground(new java.awt.Color(222, 221, 248));
         cbbMedicineID = new javax.swing.JComboBox<>();
         btnEdit = new javax.swing.JButton();
         lblStatus = new javax.swing.JLabel();
@@ -256,7 +237,7 @@ public class VoucherForm extends javax.swing.JPanel {
         btnCapture = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
-        tblVoucher.setModel(new javax.swing.table.DefaultTableModel(
+ tblVoucher.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -276,10 +257,9 @@ public class VoucherForm extends javax.swing.JPanel {
             }
         });
         tblVoucher.setFocusable(false);
-        tblVoucher.setGridColor(new java.awt.Color(15, 106, 205));
         tblVoucher.setIntercellSpacing(new java.awt.Dimension(0, 0));
         tblVoucher.setRowHeight(25);
-        tblVoucher.setSelectionBackground(new java.awt.Color(51, 153, 255));
+        tblVoucher.setSelectionBackground(new java.awt.Color(232, 57, 95));
         tblVoucher.setShowVerticalLines(false);
         tblVoucher.getTableHeader().setReorderingAllowed(false);
         tblVoucher.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -370,12 +350,6 @@ public class VoucherForm extends javax.swing.JPanel {
             }
         });
 
-        btnChange.setBackground(new java.awt.Color(255, 255, 255));
-        btnChange.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/night-mode.png"))); // NOI18N
-        btnChange.setBorder(null);
-        btnChange.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnChangeMouseClicked(evt);
         cbbMedicineID.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnEdit.setBackground(new java.awt.Color(0, 153, 255));
@@ -435,18 +409,12 @@ public class VoucherForm extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(10, 10, 10))
-                    .addGroup(layout.createSequentialGroup()
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel5))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+  .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtDiscount, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                             .addComponent(txtVoucherID, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                             .addComponent(lblStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -455,22 +423,22 @@ public class VoucherForm extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cbbMedicineID, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+   .addComponent(cbbMedicineID, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel6)
-                                .addGap(19, 19, 19)
+  .addGap(19, 19, 19)
                                 .addComponent(dcDayStart, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(118, 118, 118)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jLabel7))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+ .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtReceiptApply, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(dcDayEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(26, 26, 26))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+ .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(btnNew, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -491,21 +459,16 @@ public class VoucherForm extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGap(39, 39, 39)
+.addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2)
                         .addComponent(txtVoucherID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtReceiptApply, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3)
+                        .addComponent(jLabel4))    
+.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+.addComponent(jLabel3)
                         .addComponent(cbbMedicineID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(3, 3, 3)
                 .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -532,7 +495,7 @@ public class VoucherForm extends javax.swing.JPanel {
                     .addComponent(btnDelete)
                     .addComponent(btnAdd)
                     .addComponent(btnUpdate)
-                    .addComponent(btnNew)
+ .addComponent(btnNew)
                     .addComponent(btnEdit))
                 .addContainerGap())
         );
@@ -552,11 +515,11 @@ public class VoucherForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        delete(tblVoucher.getValueAt(tblVoucher.getSelectedRow(), 0).toString());
+    delete(tblVoucher.getValueAt(tblVoucher.getSelectedRow(), 0).toString());
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        if (ValidateSupport.isNull(txtVoucherID)) {
+ if (ValidateSupport.isNull(txtVoucherID)) {
             Mgsbox.error(this, "Please enter Voucher ID...");
         } else if (!ValidateSupport.isNumber(txtDiscount) || !ValidateSupport.isNumber(txtReceiptApply)) {
             Mgsbox.error(txtDiscount.getRootPane(), "Please enter a number....");
@@ -572,26 +535,6 @@ public class VoucherForm extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnAddActionPerformed
 
-    private void btnChangeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnChangeMouseClicked
-        // TODO add your handling code here:
-        if (evt.getClickCount() == 1) {
-            btnChange.setToolTipText("Cick 2 for change Background");
-            setBackground(Color.decode("#9badf2"));
-            Controller.Helper.BackgroundC1.ChangeTxt(txtDiscount);
-            Controller.Helper.BackgroundC1.ChangeTxt(txtMedicineID);
-            Controller.Helper.BackgroundC1.ChangeTxt(txtReceiptApply);
-            Controller.Helper.BackgroundC1.ChangeTxt(txtVoucherID);
-            Controller.Helper.BackgroundC1.ChangeBtn(btnChange);
-        } else if (evt.getClickCount() == 2) {
-            btnChange.setToolTipText("Cick 1 for change Background");
-            setBackground(Color.white);
-            Controller.Helper.BackgroundC2.ChangeTxt(txtDiscount);
-            Controller.Helper.BackgroundC2.ChangeTxt(txtMedicineID);
-            Controller.Helper.BackgroundC2.ChangeTxt(txtReceiptApply);
-            Controller.Helper.BackgroundC2.ChangeTxt(txtVoucherID);
-            Controller.Helper.BackgroundC2.ChangeBtn(btnChange);
-        }
-    }//GEN-LAST:event_btnChangeMouseClicked
     private void tblVoucherMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblVoucherMouseClicked
         // TODO add your handling code here:
         loadRowToControl(tblVoucher.getValueAt(tblVoucher.getSelectedRow(), 0).toString());
@@ -633,9 +576,8 @@ public class VoucherForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btnCaptureActionPerformed
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JButton btnAdd;
-    private javax.swing.JButton btnChange;
     private javax.swing.JButton btnCapture;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
@@ -644,7 +586,7 @@ public class VoucherForm extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> cbbMedicineID;
     private com.toedter.calendar.JDateChooser dcDayEnd;
     private com.toedter.calendar.JDateChooser dcDayStart;
-    private javax.swing.JLabel jLabel2;
+ private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -661,7 +603,6 @@ public class VoucherForm extends javax.swing.JPanel {
     public javax.swing.JPanel pnlVoucher;
     private javax.swing.JTable tblVoucher;
     private GUI.TextField txtDiscount;
-    private GUI.TextField txtReceiptApply;
+ private GUI.TextField txtReceiptApply;
     private GUI.TextField txtVoucherID;
-    // End of variables declaration//GEN-END:variables
 }

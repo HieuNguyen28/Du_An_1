@@ -134,7 +134,7 @@ public class MedicineTypeForm extends javax.swing.JPanel {
         jLabel6.setText("Note:");
 
         txtNote.setColumns(20);
-        txtNote.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtNote.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         txtNote.setRows(5);
         jScrollPane2.setViewportView(txtNote);
 
@@ -196,16 +196,13 @@ public class MedicineTypeForm extends javax.swing.JPanel {
             }
         });
 
-        txtDrugTypeID.setBackground(new java.awt.Color(255, 255, 255));
         txtDrugTypeID.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtDrugNameID.setBackground(new java.awt.Color(255, 255, 255));
         txtDrugNameID.setText(" ");
-        txtDrugNameID.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtDrugNameID.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
-        txtUserObject.setBackground(new java.awt.Color(255, 255, 255));
         txtUserObject.setText(" ");
-        txtUserObject.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtUserObject.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         btnAdd.setBackground(new java.awt.Color(92, 84, 179));
         btnAdd.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N

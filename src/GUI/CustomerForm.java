@@ -296,7 +296,7 @@ public class CustomerForm extends javax.swing.JPanel {
         // TODO add your handling code here:
         update();
         editBtn(false);
-        }
+        
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -316,14 +316,10 @@ public class CustomerForm extends javax.swing.JPanel {
         } else {
             Mgsbox.error(this, "This customer code already exists");
         }
-
-        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     int index = 0;
     private void tblCustomerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCustomerMouseClicked
-        defaultText(true);
-        defaultButton(false);
         btnUpdate.setEnabled(true);
         this.index = tblCustomer.rowAtPoint(evt.getPoint());
         this.edit();
@@ -485,8 +481,6 @@ public class CustomerForm extends javax.swing.JPanel {
             loadDataToTable(new CustomerDAO().selectAll());
             Mgsbox.alert(this, "Update successful!");
             clearForm();
-            defaultButton(false);
-            defaultText(false);
         } catch (Exception e) {
             Mgsbox.alert(this, "Update failed!");
         }
@@ -499,8 +493,6 @@ public class CustomerForm extends javax.swing.JPanel {
             loadDataToTable(new CustomerDAO().selectAll());
             Mgsbox.alert(this, "Insert successful!");
             clearForm();
-            defaultButton(false);
-            defaultText(false);
         } catch (Exception e) {
             Mgsbox.alert(this, "Insert failed!");
         }
@@ -514,8 +506,6 @@ public class CustomerForm extends javax.swing.JPanel {
                 loadDataToTable(new CustomerDAO().selectAll());
                 this.clearForm();
                 Mgsbox.alert(this, "Delete successfully!");
-                defaultButton(false);
-                defaultText(false);
             } catch (Exception e) {
                 Mgsbox.alert(this, "Delete failed!");
             }
@@ -528,7 +518,6 @@ public class CustomerForm extends javax.swing.JPanel {
             return true;
         }
         return false;
-
     }
 
     private void editBtn(boolean b) {
