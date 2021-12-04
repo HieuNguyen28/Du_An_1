@@ -27,13 +27,6 @@ public class ValidateSupport {
         }
     }
 
-//    public static boolean isNull(JTextField txt) {
-//        return txt.getText().trim().isEmpty();
-//    }
-//
-//    public static boolean isNull(JTextPane txp) {
-//        return txp.getText().trim().isEmpty();
-//    }
     public static boolean isNumber(JTextField txt) {
         if (!txt.getText().trim().matches("(\\d+.\\d+)|\\d+")) {
             return false;
@@ -59,7 +52,7 @@ public class ValidateSupport {
     public static boolean checkEmployeeID(JTextField txt) {
         txt.setBackground(white);
         String id = txt.getText();
-        String rgx = "[A-Z0-9]{5,10}";
+        String rgx = "[A-Z0-9]{5}";
          return id.matches(rgx);
     }
 
@@ -69,7 +62,30 @@ public class ValidateSupport {
         String rgx = "[0-9]{12}";
         return id.matches(rgx);
     }
-
+    
+    public static boolean checkPrice(JTextField txt) {
+        try {
+            double hp = Double.parseDouble(txt.getText());
+            if (hp >= 0) {
+                return true;
+            } 
+                return false;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    public static boolean checkRate(JTextField txt) {
+        try {
+            Float rt = Float.parseFloat(txt.getText());
+            if (rt >= 0) {
+                return true;
+            } 
+                return false;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    
     public boolean isNullImage(JLabel label) {
         if (label.getToolTipText() != null) {
             return false;
@@ -79,6 +95,15 @@ public class ValidateSupport {
         }
     }
 
+//    public static boolean isNull(JTextField txt) {
+//        if (txt.getText().trim().length() > 0) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+    
+    
     public static boolean isNull(JTextField txt) {
         txt.setBackground(white);
         if (txt.getText().trim().length() > 0) {
@@ -102,8 +127,13 @@ public class ValidateSupport {
             txt.setBackground(pink);
         }
         return false;
+      
     public static boolean isNull(JTextPane txp) {
         return txp.getText().trim().isEmpty();
+    }
+    
+    public static boolean isNull(JTextArea txt) {
+        return txt.getText().trim().isEmpty();
     }
     
     public static boolean isSeleted(JRadioButton rdo) {

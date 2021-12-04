@@ -9,22 +9,34 @@ import Controller.Helper.DateSupport;
 import Controller.Helper.Image_Auth;
 import Controller.Helper.Mgsbox;
 import Controller.Helper.ValidateSupport;
+import Controller.ModelDAO.EmployeeDAO;
 import Controller.ModelDAO.MedicineDAO;
+import Controller.ModelDAO.ProducerDAO;
 import Controller.ModelDAO.TypeOfMedicineDAO;
 import Controller.ModelDAO.WareHouseDAO;
+import Model.Employee;
 import Model.Medicine;
+import Model.Producer;
 import Model.TypeOfMedicine;
 import Model.WareHouse;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Color;
+import static java.awt.Color.white;
 import java.awt.Font;
 import java.awt.event.ItemEvent;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -40,6 +52,11 @@ public class WarehouseForm extends javax.swing.JPanel {
         EditTable(tblWarehouse);
         loadDataToTable();
         loadComboboxTypeOfMedicine();
+        loadComboboxNameOfTOM();
+        loadComboboxProducer();
+        lblOk.setVisible(false);
+        lblImage.setVisible(false);
+        txtMedicineID.setVisible(false);
     }
 
     /**
@@ -59,15 +76,12 @@ public class WarehouseForm extends javax.swing.JPanel {
         jScrollPane5 = new javax.swing.JScrollPane();
         txpMedicineConcen = new javax.swing.JTextPane();
         lblUnit = new javax.swing.JLabel();
-        txtUnit = new javax.swing.JTextField();
         lblPrice = new javax.swing.JLabel();
-        txtPrice = new javax.swing.JTextField();
         jSeparator2 = new javax.swing.JSeparator();
         lblTypeOfMedicineID = new javax.swing.JLabel();
         lblBatchID = new javax.swing.JLabel();
-        lblUserObject = new javax.swing.JLabel();
         txtBatchID = new javax.swing.JTextField();
-        cbxTypeOfMedicineID = new javax.swing.JComboBox<>();
+        cboTypeOfMedicineID = new javax.swing.JComboBox<>();
         lblDistributor = new javax.swing.JLabel();
         lblQuantity = new javax.swing.JLabel();
         txtQuantity = new javax.swing.JTextField();
@@ -75,14 +89,8 @@ public class WarehouseForm extends javax.swing.JPanel {
         txtRemainingAmout = new javax.swing.JTextField();
         lblDateImport = new javax.swing.JLabel();
         jdcDateImport = new com.toedter.calendar.JDateChooser();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txpUserObject = new javax.swing.JTextPane();
         lblNameOfTOM = new javax.swing.JLabel();
-        txtNameOfTOM = new javax.swing.JTextField();
-        lblNote = new javax.swing.JLabel();
         lblPrecription = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        txpNote = new javax.swing.JTextPane();
         lblManufacture = new javax.swing.JLabel();
         rdoTruePre = new javax.swing.JRadioButton();
         jdcManufactureDate = new com.toedter.calendar.JDateChooser();
@@ -96,22 +104,34 @@ public class WarehouseForm extends javax.swing.JPanel {
         tblWarehouse = new javax.swing.JTable();
         btnImport = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
-        jSeparator3 = new javax.swing.JSeparator();
         lblMedicineID = new javax.swing.JLabel();
-        cbxMedicineID = new javax.swing.JComboBox<>();
+        cboMedicineID = new javax.swing.JComboBox<>();
         lblProducerID = new javax.swing.JLabel();
-        txtProducerID = new javax.swing.JTextField();
         lblMedicineName = new javax.swing.JLabel();
-        jSeparator4 = new javax.swing.JSeparator();
-        txtMedicineName = new javax.swing.JTextField();
-        jSeparator5 = new javax.swing.JSeparator();
         lblMedicineIngre = new javax.swing.JLabel();
-        jSeparator6 = new javax.swing.JSeparator();
-        jSeparator7 = new javax.swing.JSeparator();
         jSeparator9 = new javax.swing.JSeparator();
         jSeparator10 = new javax.swing.JSeparator();
         btnRefesh = new javax.swing.JButton();
         txtDistributor = new GUI.TextField();
+        cboNameOfTOM = new javax.swing.JComboBox<>();
+        btnChange = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        txtPriceSale = new GUI.TextField();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        txpUsermanual = new javax.swing.JTextPane();
+        jLabel4 = new javax.swing.JLabel();
+        txtMedicineID = new GUI.TextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtRate = new GUI.TextField();
+        txtSearch = new GUI.TextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        lblImage = new javax.swing.JLabel();
+        lblOk = new javax.swing.JLabel();
+        cboProducer = new javax.swing.JComboBox<>();
+        txtMedicineName = new GUI.TextField();
+        txtPrice = new GUI.TextField();
+        txtUnit = new GUI.TextField();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -122,24 +142,18 @@ public class WarehouseForm extends javax.swing.JPanel {
         jScrollPane4.setToolTipText("");
 
         txpMedicineIngre.setEditable(false);
+        txpMedicineIngre.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jScrollPane4.setViewportView(txpMedicineIngre);
 
         lblMedicineConcen.setText("Medicine's Concentration:");
 
         txpMedicineConcen.setEditable(false);
+        txpMedicineConcen.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jScrollPane5.setViewportView(txpMedicineConcen);
 
         lblUnit.setText("Unit:");
 
-        txtUnit.setEditable(false);
-        txtUnit.setBackground(new java.awt.Color(255, 255, 255));
-        txtUnit.setBorder(null);
-
         lblPrice.setText("Price:");
-
-        txtPrice.setEditable(false);
-        txtPrice.setBackground(new java.awt.Color(255, 255, 255));
-        txtPrice.setBorder(null);
 
         lblTypeOfMedicineID.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblTypeOfMedicineID.setText("Type Of Medicine ID:");
@@ -148,29 +162,15 @@ public class WarehouseForm extends javax.swing.JPanel {
         lblBatchID.setForeground(new java.awt.Color(255, 51, 51));
         lblBatchID.setText("Batch ID:");
 
-        lblUserObject.setText("User Object:");
+        txtBatchID.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        cbxTypeOfMedicineID.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cbxTypeOfMedicineID.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbxTypeOfMedicineIDItemStateChanged(evt);
-            }
-        });
-        cbxTypeOfMedicineID.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                cbxTypeOfMedicineIDMouseClicked(evt);
-            }
-        });
-        cbxTypeOfMedicineID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbxTypeOfMedicineIDActionPerformed(evt);
-            }
-        });
+        cboTypeOfMedicineID.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         lblDistributor.setText("Distributor:");
 
         lblQuantity.setText("Quantity:");
 
+        txtQuantity.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtQuantity.setBorder(null);
         txtQuantity.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -187,38 +187,28 @@ public class WarehouseForm extends javax.swing.JPanel {
 
         txtRemainingAmout.setEditable(false);
         txtRemainingAmout.setBackground(new java.awt.Color(255, 255, 255));
+        txtRemainingAmout.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtRemainingAmout.setBorder(null);
 
         lblDateImport.setText("Import Date:");
 
         jdcDateImport.setDateFormatString("yyyy-MM-dd\n");
 
-        txpUserObject.setEditable(false);
-        jScrollPane1.setViewportView(txpUserObject);
-
         lblNameOfTOM.setText("Name of TOM:");
 
-        txtNameOfTOM.setEditable(false);
-        txtNameOfTOM.setBackground(new java.awt.Color(255, 255, 255));
-        txtNameOfTOM.setBorder(null);
-        txtNameOfTOM.setMargin(new java.awt.Insets(2, 2, 0, 2));
-
-        lblNote.setText("Note:");
-
         lblPrecription.setText("Precription:");
-
-        txpNote.setEditable(false);
-        jScrollPane3.setViewportView(txpNote);
 
         lblManufacture.setText("Manufacture Date:");
 
         rdoTruePre.setBackground(new java.awt.Color(255, 255, 255));
+        btnGroupPrescription.add(rdoTruePre);
         rdoTruePre.setText("Yes");
 
         jdcManufactureDate.setDate(new java.util.Date(1637055667000L));
         jdcManufactureDate.setDateFormatString("yyyy-MM-dd");
 
         rdoFalsePre.setBackground(new java.awt.Color(255, 255, 255));
+        btnGroupPrescription.add(rdoFalsePre);
         rdoFalsePre.setText("No");
         rdoFalsePre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -234,8 +224,10 @@ public class WarehouseForm extends javax.swing.JPanel {
         jLabel3.setText("Note");
 
         txpBatchNote.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        txpBatchNote.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jScrollPane6.setViewportView(txpBatchNote);
 
+        tblWarehouse.setBackground(new java.awt.Color(222, 221, 248));
         tblWarehouse.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null},
@@ -259,9 +251,10 @@ public class WarehouseForm extends javax.swing.JPanel {
             }
         });
         tblWarehouse.setFocusable(false);
+        tblWarehouse.setGridColor(new java.awt.Color(15, 106, 205));
         tblWarehouse.setIntercellSpacing(new java.awt.Dimension(0, 0));
         tblWarehouse.setRowHeight(25);
-        tblWarehouse.setSelectionBackground(new java.awt.Color(232, 57, 95));
+        tblWarehouse.setSelectionBackground(new java.awt.Color(51, 153, 255));
         tblWarehouse.setShowGrid(false);
         tblWarehouse.getTableHeader().setReorderingAllowed(false);
         tblWarehouse.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -285,20 +278,11 @@ public class WarehouseForm extends javax.swing.JPanel {
         lblMedicineID.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblMedicineID.setText("Medicine ID:");
 
-        cbxMedicineID.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboMedicineID.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         lblProducerID.setText("Producer ID:");
 
-        txtProducerID.setEditable(false);
-        txtProducerID.setBackground(new java.awt.Color(255, 255, 255));
-        txtProducerID.setBorder(null);
-        txtProducerID.setMargin(new java.awt.Insets(2, 2, 0, 2));
-
         lblMedicineName.setText("Medicide's name:");
-
-        txtMedicineName.setEditable(false);
-        txtMedicineName.setBackground(new java.awt.Color(255, 255, 255));
-        txtMedicineName.setBorder(null);
 
         lblMedicineIngre.setText("Medicine's Ingredient:");
 
@@ -313,283 +297,376 @@ public class WarehouseForm extends javax.swing.JPanel {
             }
         });
 
+        txtDistributor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        cboNameOfTOM.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cboNameOfTOM.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cboNameOfTOMMouseClicked(evt);
+            }
+        });
+
+        btnChange.setBackground(new java.awt.Color(255, 255, 255));
+        btnChange.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/night-mode.png"))); // NOI18N
+        btnChange.setBorder(null);
+        btnChange.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnChangeMouseClicked(evt);
+            }
+        });
+
+        jLabel2.setText("PriceSale:");
+
+        txtPriceSale.setText(" ");
+        txtPriceSale.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPriceSale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPriceSaleActionPerformed(evt);
+            }
+        });
+
+        jScrollPane7.setViewportView(txpUsermanual);
+
+        jLabel4.setText("User manual:");
+
+        txtMedicineID.setText(" ");
+        txtMedicineID.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        txtMedicineID.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtMedicineID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMedicineIDActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Rate:");
+
+        txtRate.setText(" ");
+        txtRate.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        txtSearch.setText(" ");
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSearchKeyPressed(evt);
+            }
+        });
+
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/search_24px.png"))); // NOI18N
+        jLabel6.setText(" ");
+
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/clear_16px.png"))); // NOI18N
+        jLabel7.setText(" ");
+        jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel7MouseClicked(evt);
+            }
+        });
+
+        lblImage.setForeground(new java.awt.Color(255, 0, 0));
+        lblImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/add-button.png"))); // NOI18N
+        lblImage.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblImageMouseClicked(evt);
+            }
+        });
+
+        lblOk.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/ok_16px.png"))); // NOI18N
+        lblOk.setText(" ");
+        lblOk.setToolTipText("");
+
+        cboProducer.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        txtMedicineName.setText(" ");
+
+        txtPrice.setText(" ");
+
+        txtUnit.setText(" ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 889, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addComponent(jLabel1))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(15, 15, 15)
-                            .addComponent(lblTypeOfMedicineID)
-                            .addGap(4, 4, 4)
-                            .addComponent(cbxTypeOfMedicineID, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(lblNameOfTOM)
-                            .addGap(10, 10, 10)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtNameOfTOM, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(25, 25, 25)
-                            .addComponent(lblPrecription)
-                            .addGap(14, 14, 14)
-                            .addComponent(rdoTruePre, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(2, 2, 2)
-                            .addComponent(rdoFalsePre, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(285, 285, 285)
-                            .addComponent(lblUserObject)
-                            .addGap(8, 8, 8)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(29, 29, 29)
-                            .addComponent(lblNote)
-                            .addGap(3, 3, 3)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(50, 50, 50)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 800, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(15, 15, 15)
-                            .addComponent(lblMedicineID)
-                            .addGap(4, 4, 4)
-                            .addComponent(cbxMedicineID, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(4, 4, 4)
-                            .addComponent(lblProducerID)
-                            .addGap(3, 3, 3)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(1, 1, 1)
-                                    .addComponent(txtProducerID, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(18, 18, 18)
-                            .addComponent(lblMedicineName)
-                            .addGap(9, 9, 9)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtMedicineName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(1, 1, 1)
-                                    .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(167, 167, 167)
-                            .addComponent(lblMedicineIngre)
-                            .addGap(4, 4, 4)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(lblMedicineConcen)
-                            .addGap(4, 4, 4)
-                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(249, 249, 249)
-                            .addComponent(lblUnit)
-                            .addGap(3, 3, 3)
-                            .addComponent(txtUnit, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(11, 11, 11)
-                            .addComponent(lblPrice)
-                            .addGap(10, 10, 10)
-                            .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(275, 275, 275)
-                            .addComponent(jSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(50, 50, 50)
-                            .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(49, 49, 49)
-                            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 800, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(184, 184, 184)
-                            .addComponent(lblDateImport)
-                            .addGap(18, 18, 18)
-                            .addComponent(jdcDateImport, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(lblManufacture)
-                            .addGap(4, 4, 4)
-                            .addComponent(jdcManufactureDate, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(lblExpirationDate)
-                            .addGap(4, 4, 4)
-                            .addComponent(jdcExpirationDate, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(221, 221, 221)
-                            .addComponent(jLabel3)
-                            .addGap(18, 18, 18)
-                            .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(15, 15, 15)
-                            .addComponent(lblBatchID)
-                            .addGap(10, 10, 10)
-                            .addComponent(txtBatchID, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(13, 13, 13)
-                            .addComponent(lblDistributor)
-                            .addGap(18, 18, 18)
-                            .addComponent(txtDistributor, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(lblQuantity)
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jSeparator9)
-                                .addComponent(txtQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(12, 12, 12)
-                                    .addComponent(lblRemainingAmout)
-                                    .addGap(21, 21, 21)
-                                    .addComponent(txtRemainingAmout, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(125, 125, 125)
-                                    .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(711, 711, 711)
-                            .addComponent(btnRefesh)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(btnImport))))
-                .addGap(5, 5, 5))
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(lblTypeOfMedicineID)
+                        .addGap(4, 4, 4)
+                        .addComponent(cboTypeOfMedicineID, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblNameOfTOM)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboNameOfTOM, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(25, 25, 25)
+                        .addComponent(lblPrecription)
+                        .addGap(14, 14, 14)
+                        .addComponent(rdoTruePre, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(2, 2, 2)
+                        .addComponent(rdoFalsePre, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34)
+                        .addComponent(btnChange))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(51, 51, 51)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 800, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(lblMedicineID)
+                        .addGap(4, 4, 4)
+                        .addComponent(cboMedicineID, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(33, 33, 33)
+                        .addComponent(lblProducerID)
+                        .addGap(4, 4, 4)
+                        .addComponent(cboProducer, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(26, 26, 26)
+                        .addComponent(lblMedicineName)
+                        .addGap(4, 4, 4)
+                        .addComponent(txtMedicineName, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38)
+                        .addComponent(jLabel7))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(89, 89, 89)
+                        .addComponent(txtMedicineID, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(51, 51, 51)
+                        .addComponent(lblUnit)
+                        .addGap(4, 4, 4)
+                        .addComponent(txtUnit, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
+                        .addComponent(lblMedicineIngre)
+                        .addGap(4, 4, 4)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(26, 26, 26)
+                        .addComponent(lblMedicineConcen)
+                        .addGap(4, 4, 4)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(jLabel2)
+                        .addGap(10, 10, 10)
+                        .addComponent(txtPriceSale, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(lblPrice)
+                        .addGap(10, 10, 10)
+                        .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(16, 16, 16)
+                        .addComponent(jLabel5)
+                        .addGap(4, 4, 4)
+                        .addComponent(txtRate, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel4)
+                        .addGap(10, 10, 10)
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(56, 56, 56)
+                        .addComponent(lblImage)
+                        .addGap(6, 6, 6)
+                        .addComponent(lblOk))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(49, 49, 49)
+                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 800, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(lblBatchID)
+                        .addGap(10, 10, 10)
+                        .addComponent(txtBatchID, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(13, 13, 13)
+                        .addComponent(lblDistributor)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtDistributor, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(4, 4, 4)
+                        .addComponent(lblQuantity)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(lblRemainingAmout)
+                        .addGap(21, 21, 21)
+                        .addComponent(txtRemainingAmout, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(438, 438, 438)
+                        .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(125, 125, 125)
+                        .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(74, 74, 74)
+                        .addComponent(lblDateImport)
+                        .addGap(4, 4, 4)
+                        .addComponent(jdcDateImport, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(lblManufacture)
+                        .addGap(4, 4, 4)
+                        .addComponent(jdcManufactureDate, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(lblExpirationDate)
+                        .addGap(10, 10, 10)
+                        .addComponent(jdcExpirationDate, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel3)
+                        .addGap(4, 4, 4)
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(239, 239, 239)
+                        .addComponent(jLabel6)
+                        .addGap(4, 4, 4)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 884, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(btnRefesh)
+                        .addGap(682, 682, 682)
+                        .addComponent(btnImport)))
+                .addGap(10, 10, 10))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(11, 11, 11)
                 .addComponent(jLabel1)
-                .addGap(13, 13, 13)
+                .addGap(1, 1, 1)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(7, 7, 7)
+                        .addGap(20, 20, 20)
                         .addComponent(lblTypeOfMedicineID))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(4, 4, 4)
-                        .addComponent(cbxTypeOfMedicineID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(17, 17, 17)
+                        .addComponent(cboTypeOfMedicineID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(7, 7, 7)
+                        .addGap(20, 20, 20)
                         .addComponent(lblNameOfTOM))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtNameOfTOM, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblPrecription)
-                    .addComponent(rdoTruePre)
-                    .addComponent(rdoFalsePre))
-                .addGap(8, 8, 8)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblUserObject)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblNote)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20)
+                        .addGap(17, 17, 17)
+                        .addComponent(cboNameOfTOM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(lblPrecription))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(rdoTruePre))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(rdoFalsePre))
+                    .addComponent(btnChange))
+                .addGap(31, 31, 31)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
+                .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
+                        .addGap(7, 7, 7)
                         .addComponent(lblMedicineID))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(cbxMedicineID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(4, 4, 4)
+                        .addComponent(cboMedicineID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
+                        .addGap(7, 7, 7)
                         .addComponent(lblProducerID))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(txtProducerID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(1, 1, 1)
-                        .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(4, 4, 4)
+                        .addComponent(cboProducer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
+                        .addGap(5, 5, 5)
                         .addComponent(lblMedicineName))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtMedicineName, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(13, 13, 13)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblMedicineIngre)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblMedicineConcen)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(6, 6, 6)
+                        .addGap(4, 4, 4)
+                        .addComponent(txtMedicineName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel7))
+                .addGap(11, 11, 11)
+                .addComponent(txtMedicineID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
+                        .addGap(1, 1, 1)
                         .addComponent(lblUnit))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(2, 2, 2)
-                        .addComponent(txtUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
-                        .addComponent(lblPrice))
-                    .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(1, 1, 1)
+                        .addComponent(lblMedicineIngre))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblMedicineConcen)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(jLabel2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(txtPriceSale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(lblPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel5))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(txtRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel4))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblImage)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(lblOk)))
                 .addGap(6, 6, 6)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(3, 3, 3)
+                .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtBatchID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtRemainingAmout, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(2, 2, 2)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblBatchID)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(lblDistributor)
-                                .addComponent(txtDistributor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lblQuantity)
-                            .addComponent(lblRemainingAmout))))
-                .addGap(1, 1, 1)
+                        .addComponent(lblBatchID))
+                    .addComponent(txtBatchID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(lblDistributor))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(txtDistributor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(lblQuantity))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(lblRemainingAmout))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(txtRemainingAmout, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(3, 3, 3)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(1, 1, 1)
+                .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(lblDateImport))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jdcDateImport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(lblManufacture))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jdcManufactureDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(lblExpirationDate))
+                    .addComponent(lblDateImport)
+                    .addComponent(jdcDateImport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblManufacture)
+                    .addComponent(jdcManufactureDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblExpirationDate, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jdcExpirationDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(11, 11, 11)
+                .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(11, 11, 11)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(6, 6, 6)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnRefesh)
                     .addComponent(btnImport)))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void cbxTypeOfMedicineIDItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxTypeOfMedicineIDItemStateChanged
-        // TODO add your handling code her
-    }//GEN-LAST:event_cbxTypeOfMedicineIDItemStateChanged
-
-    private void cbxTypeOfMedicineIDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cbxTypeOfMedicineIDMouseClicked
-        // TODO add your handling code here:
-        //
-    }//GEN-LAST:event_cbxTypeOfMedicineIDMouseClicked
-
-    private void cbxTypeOfMedicineIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxTypeOfMedicineIDActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbxTypeOfMedicineIDActionPerformed
 
     private void txtQuantityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuantityActionPerformed
         // TODO add your handling code here:
@@ -616,20 +693,32 @@ public class WarehouseForm extends javax.swing.JPanel {
     }//GEN-LAST:event_tblWarehouseMouseClicked
 
     private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
-
         if (new WareHouseDAO().isDuplicateWarehouseID(txtBatchID.getText())) {
             Mgsbox.error(this, "Batch ID is duplicated!");
-        } else if (ValidateSupport.isNull(txtBatchID) || ValidateSupport.isNull(txtDistributor) || ValidateSupport.isNull(txtQuantity)) {
+        } else if (ValidateSupport.isNull(txtBatchID) || ValidateSupport.isNull(txtDistributor)
+                || ValidateSupport.isNull(txtQuantity) || ValidateSupport.isNull(txtMedicineID)
+                || ValidateSupport.isNull(txtMedicineName)
+                || ValidateSupport.isNull(txtUnit) || ValidateSupport.isNull(txtMedicineID)
+                || ValidateSupport.isNull(txtPriceSale) || ValidateSupport.isNull(txtPrice)
+                || ValidateSupport.isNull(txtRate) || ValidateSupport.isNull(txpMedicineConcen)
+                || ValidateSupport.isNull(txpMedicineIngre) || ValidateSupport.isNull(txpUsermanual)) {
             Mgsbox.error(this, "Can not be blank!");
-        } else if (isCheckHSD(jdcManufactureDate, jdcExpirationDate) && ValidateSupport.isNumber(txtUnit)) {
+        } else if (!ValidateSupport.checkPrice(txtPriceSale)) {
+            Mgsbox.error(this, "Please fill in the correct format Price!!!");
+        } else if (!ValidateSupport.checkPrice(txtPrice)) {
+            Mgsbox.error(this, "Please fill in the correct format PriceSale!!!");
+        } else if (!ValidateSupport.checkPrice(txtRate)) {
+            Mgsbox.error(this, "Please fill in the correct format Rate!!!");
+        } else if (new MedicineDAO().selectByID(txtMedicineID.getText()) != null) {
+            Mgsbox.error(this, "Medicine ID already exist");
+        }
+        else if (isCheckHSD(jdcManufactureDate, jdcExpirationDate) && ValidateSupport.isNumber(txtQuantity)) {
             try {
-                new WareHouseDAO().insert(getModel());
-                ofMedicine.setMdcBatchID(txtBatchID.getText().trim());
-                new MedicineDAO().insert(ofMedicine);
-                clearFormBatch();
-                Mgsbox.alert(this, "Import medicine successfully...");
-                ofMedicine = null;
-                loadDataToTable();
+                if (cboMedicineID.getSelectedItem().equals("Add new")) {
+                    importWarehouse(getModelMedicine(), getModel());
+                } else {
+                    importWarehouse(new MedicineDAO().selectByID(cboMedicineID.getSelectedItem().toString().trim()), getModel());
+                }
             } catch (Exception e) {
                 Mgsbox.error(this, "Import medicine failed!!!");
                 e.printStackTrace();
@@ -645,31 +734,111 @@ public class WarehouseForm extends javax.swing.JPanel {
         clearFormMedicine();
         loadDataToTable();
         loadComboboxTypeOfMedicine();
+        loadComboboxNameOfTOM();
+        cboMedicineID.setSelectedItem(null);
     }//GEN-LAST:event_btnRefeshActionPerformed
+
+    private void cboNameOfTOMMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cboNameOfTOMMouseClicked
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_cboNameOfTOMMouseClicked
+
+    private void btnChangeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnChangeMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 1) {
+            btnChange.setToolTipText("Cick 2 for change Background");
+            setBackground(Color.decode("#9badf2"));
+            Controller.Helper.BackgroundC1.ChangeTxt(txtBatchID);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtDistributor);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtMedicineID);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtPriceSale);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtRate);
+            Controller.Helper.BackgroundC1.ChangeTxtPane(txpUsermanual);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtMedicineName);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtPrice);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtQuantity);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtRemainingAmout);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtUnit);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtSearch);
+            Controller.Helper.BackgroundC1.ChangeTxtPane(txpMedicineConcen);
+            Controller.Helper.BackgroundC1.ChangeTxtPane(txpBatchNote);
+            Controller.Helper.BackgroundC1.ChangeTxtPane(txpMedicineIngre);
+            Controller.Helper.BackgroundC1.ChangeRdo(rdoFalsePre);
+            Controller.Helper.BackgroundC1.ChangeRdo(rdoTruePre);
+            Controller.Helper.BackgroundC1.ChangeBtn(btnChange);
+        } else if (evt.getClickCount() == 2) {
+            btnChange.setToolTipText("Cick 1 for change Background");
+            setBackground(Color.white);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtBatchID);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtDistributor);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtMedicineName);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtMedicineID);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtPriceSale);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtRate);
+            Controller.Helper.BackgroundC2.ChangeTxtPane(txpUsermanual);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtPrice);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtQuantity);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtRemainingAmout);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtUnit);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtSearch);
+            Controller.Helper.BackgroundC2.ChangeTxtPane(txpMedicineConcen);
+            Controller.Helper.BackgroundC2.ChangeTxtPane(txpBatchNote);
+            Controller.Helper.BackgroundC2.ChangeTxtPane(txpMedicineIngre);
+            Controller.Helper.BackgroundC2.ChangeRdo(rdoFalsePre);
+            Controller.Helper.BackgroundC2.ChangeRdo(rdoTruePre);
+            Controller.Helper.BackgroundC2.ChangeBtn(btnChange);
+        }
+    }//GEN-LAST:event_btnChangeMouseClicked
+
+    private void txtMedicineIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMedicineIDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMedicineIDActionPerformed
+
+    private void txtPriceSaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPriceSaleActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPriceSaleActionPerformed
+
+    private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
+        // TODO add your handling code here:
+        clearFormMedicine();
+    }//GEN-LAST:event_jLabel7MouseClicked
+
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        // TODO add your handling code here:
+        search(txtSearch.getText());
+    }//GEN-LAST:event_txtSearchKeyPressed
+
+    private void lblImageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblImageMouseClicked
+        // TODO add your handling code here:
+        selectImage();
+        lblOk.setVisible(true);
+    }//GEN-LAST:event_lblImageMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnChange;
     private javax.swing.ButtonGroup btnGroupPrescription;
     private javax.swing.JButton btnImport;
     private javax.swing.JButton btnRefesh;
-    private javax.swing.JComboBox<String> cbxMedicineID;
-    private javax.swing.JComboBox<String> cbxTypeOfMedicineID;
+    private javax.swing.JComboBox<String> cboMedicineID;
+    private javax.swing.JComboBox<String> cboNameOfTOM;
+    private javax.swing.JComboBox<String> cboProducer;
+    private javax.swing.JComboBox<String> cboTypeOfMedicineID;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator10;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JSeparator jSeparator4;
-    private javax.swing.JSeparator jSeparator5;
-    private javax.swing.JSeparator jSeparator6;
-    private javax.swing.JSeparator jSeparator7;
     private javax.swing.JSeparator jSeparator9;
     private com.toedter.calendar.JDateChooser jdcDateImport;
     private com.toedter.calendar.JDateChooser jdcExpirationDate;
@@ -678,13 +847,14 @@ public class WarehouseForm extends javax.swing.JPanel {
     private javax.swing.JLabel lblDateImport;
     private javax.swing.JLabel lblDistributor;
     private javax.swing.JLabel lblExpirationDate;
+    private javax.swing.JLabel lblImage;
     private javax.swing.JLabel lblManufacture;
     private javax.swing.JLabel lblMedicineConcen;
     private javax.swing.JLabel lblMedicineID;
     private javax.swing.JLabel lblMedicineIngre;
     private javax.swing.JLabel lblMedicineName;
     private javax.swing.JLabel lblNameOfTOM;
-    private javax.swing.JLabel lblNote;
+    private javax.swing.JLabel lblOk;
     private javax.swing.JLabel lblPrecription;
     private javax.swing.JLabel lblPrice;
     private javax.swing.JLabel lblProducerID;
@@ -692,24 +862,24 @@ public class WarehouseForm extends javax.swing.JPanel {
     private javax.swing.JLabel lblRemainingAmout;
     private javax.swing.JLabel lblTypeOfMedicineID;
     private javax.swing.JLabel lblUnit;
-    private javax.swing.JLabel lblUserObject;
     private javax.swing.JRadioButton rdoFalsePre;
     private javax.swing.JRadioButton rdoTruePre;
     private javax.swing.JTable tblWarehouse;
     private javax.swing.JTextPane txpBatchNote;
     private javax.swing.JTextPane txpMedicineConcen;
     private javax.swing.JTextPane txpMedicineIngre;
-    private javax.swing.JTextPane txpNote;
-    private javax.swing.JTextPane txpUserObject;
+    private javax.swing.JTextPane txpUsermanual;
     private javax.swing.JTextField txtBatchID;
     private GUI.TextField txtDistributor;
-    private javax.swing.JTextField txtMedicineName;
-    private javax.swing.JTextField txtNameOfTOM;
-    private javax.swing.JTextField txtPrice;
-    private javax.swing.JTextField txtProducerID;
+    private GUI.TextField txtMedicineID;
+    private GUI.TextField txtMedicineName;
+    private GUI.TextField txtPrice;
+    private GUI.TextField txtPriceSale;
     private javax.swing.JTextField txtQuantity;
+    private GUI.TextField txtRate;
     private javax.swing.JTextField txtRemainingAmout;
-    private javax.swing.JTextField txtUnit;
+    private GUI.TextField txtSearch;
+    private GUI.TextField txtUnit;
     // End of variables declaration//GEN-END:variables
     private void EditTable(JTable a) {
         a.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -719,8 +889,16 @@ public class WarehouseForm extends javax.swing.JPanel {
         a.setRowHeight(25);
     }
 
-    private Medicine ofMedicine = null;
     WareHouseDAO wdao = new WareHouseDAO();
+
+    public void importWarehouse(Medicine mdc, WareHouse wh) {
+        new WareHouseDAO().insert(wh);
+        mdc.setMdcBatchID(wh.getWhBatchID());
+        new MedicineDAO().insert(mdc);
+        clearFormBatch();
+        Mgsbox.alert(this, "Import medicine successfully...");
+        loadDataToTable();
+    }
 
     private void loadDataToTable() {
         DefaultTableModel model = (DefaultTableModel) tblWarehouse.getModel();
@@ -747,10 +925,7 @@ public class WarehouseForm extends javax.swing.JPanel {
     }
 
     private void clearFormTOM() {
-        txtNameOfTOM.setText("");
         btnGroupPrescription.clearSelection();
-        txpUserObject.setText("");
-        txpNote.setText("");
     }
 
     private void clearFormBatch() {
@@ -763,15 +938,18 @@ public class WarehouseForm extends javax.swing.JPanel {
 
     private void clearFormMedicine() {
         txtMedicineName.setText("");
+        txtMedicineID.setText("");
         txpMedicineConcen.setText("");
         txpMedicineIngre.setText("");
-        txtProducerID.setText("");
         txtUnit.setText("");
         txtPrice.setText("");
+        txtPriceSale.setText("");
+        txtRate.setText("");
+        txpUsermanual.setText("");
     }
 
     private void loadComboboxTypeOfMedicine() {
-        DefaultComboBoxModel boxModel = (DefaultComboBoxModel) cbxTypeOfMedicineID.getModel();
+        DefaultComboBoxModel boxModel = (DefaultComboBoxModel) cboTypeOfMedicineID.getModel();
         boxModel.removeAllElements();
         boxModel.addElement("Please Choose");
         try {
@@ -783,10 +961,10 @@ public class WarehouseForm extends javax.swing.JPanel {
             e.printStackTrace();
         }
 
-        cbxTypeOfMedicineID.addItemListener((ItemEvent event) -> {
+        cboTypeOfMedicineID.addItemListener((ItemEvent event) -> {
             if (event.getStateChange() == ItemEvent.SELECTED) {
-                if (cbxTypeOfMedicineID.getSelectedIndex() != 0) {
-                    String IDType = cbxTypeOfMedicineID.getSelectedItem().toString();
+                if (cboTypeOfMedicineID.getSelectedIndex() != 0) {
+                    String IDType = cboTypeOfMedicineID.getSelectedItem().toString();
                     loadComboboxMedicineID(IDType);
                     TypeOfMedicine ofTMedicine = new TypeOfMedicineDAO().selectByID(IDType);
                     setModelTOM(ofTMedicine);
@@ -801,46 +979,63 @@ public class WarehouseForm extends javax.swing.JPanel {
     }
 
     private void loadComboboxMedicineID(String TypeOfMedicineID) {
-        DefaultComboBoxModel boxModelMecicine = (DefaultComboBoxModel) cbxMedicineID.getModel();
+        DefaultComboBoxModel boxModelMecicine = (DefaultComboBoxModel) cboMedicineID.getModel();
         boxModelMecicine.removeAllElements();
         boxModelMecicine.addElement("Please Choose");
+        boxModelMecicine.addElement("Add new");
         try {
             List<Medicine> medicines = new MedicineDAO().selectByTypeOfMedicineID(TypeOfMedicineID);
-            medicines.forEach(medicine -> {
-                boxModelMecicine.addElement(medicine.getMdcID());
+            if (medicines != null) {
+                medicines.forEach(medicine -> {
+                    boxModelMecicine.addElement(medicine.getMdcID().trim());
+                });
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        cboMedicineID.addItemListener((ItemEvent event) -> {
+            if (event.getStateChange() == ItemEvent.SELECTED && cboMedicineID.getSelectedIndex() > 1) {
+                String ID = cboMedicineID.getSelectedItem().toString();
+                setModelMedicine(new MedicineDAO().selectByID(ID));
+                txtMedicineID.setVisible(false);
+            } else {
+                editableFormMedicine(true);
+                clearFormMedicine();
+            }
+        });
+    }
+  
+    private void loadComboboxProducer(){
+        DefaultComboBoxModel boxModel = (DefaultComboBoxModel) cboProducer.getModel();
+        boxModel.removeAllElements();
+        
+        try {
+            for (Producer pro : new ProducerDAO().selectAll()) {
+                boxModel.addElement(pro.getPdcID());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void loadComboboxNameOfTOM() {
+        DefaultComboBoxModel boxModel = (DefaultComboBoxModel) cboNameOfTOM.getModel();
+        boxModel.removeAllElements();
+        boxModel.addElement("..........");
+        try {
+            List<TypeOfMedicine> typeOfMedicines = new TypeOfMedicineDAO().selectAll();
+            typeOfMedicines.forEach(typeOfMedicine -> {
+                boxModel.addElement(typeOfMedicine.getTomName());
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
-        cbxMedicineID.addItemListener((ItemEvent event) -> {
-            if (event.getStateChange() == ItemEvent.SELECTED && cbxMedicineID.getSelectedIndex() != 0) {
-                String ID = cbxMedicineID.getSelectedItem().toString();
-                ofMedicine = new MedicineDAO().selectByID(ID);
-                setModelMedicine(ofMedicine);
+        cboNameOfTOM.addItemListener((ItemEvent event) -> {
+            if (event.getStateChange() == ItemEvent.SELECTED && cboNameOfTOM.getSelectedIndex() != 0) {
+                String Name = cboNameOfTOM.getSelectedItem().toString();
+                setModelTOM(new TypeOfMedicineDAO().selectByName(Name));
             }
         });
-    }
-
-    private void setModelMedicine(Medicine ofMedicine) {
-        DefaultComboBoxModel boxModelMecicine = (DefaultComboBoxModel) cbxMedicineID.getModel();
-        boxModelMecicine.removeAllElements();
-        boxModelMecicine.addElement(ofMedicine.getMdcID());
-        cbxMedicineID.setSelectedItem(ofMedicine.getMdcID());
-        txtProducerID.setText(ofMedicine.getMdcProducerID());
-        txtMedicineName.setText(ofMedicine.getMdcName());
-        txpMedicineIngre.setText(ofMedicine.getMdcIngredient());
-        txpMedicineConcen.setText(ofMedicine.getMdcConcentration());
-        txtUnit.setText(ofMedicine.getMdcUnit());
-        txtPrice.setText(ofMedicine.getMdcPriceImport() + "");
-    }
-
-    private void setModelTOM(TypeOfMedicine ofTMedicine) {
-        cbxTypeOfMedicineID.setSelectedItem(ofTMedicine.getTomID());
-        txtNameOfTOM.setText(ofTMedicine.getTomName());
-        rdoFalsePre.setSelected(ofTMedicine.isTomIsPrecription() ? false : true);
-        rdoTruePre.setSelected(ofTMedicine.isTomIsPrecription());
-        txpUserObject.setText(ofTMedicine.getTomUserObject().trim());
-        txpNote.setText(ofTMedicine.getTomNote() == null ? "There are no notes" : ofTMedicine.getTomNote());
     }
 
     private void setModelWareHouse(WareHouse wh) {
@@ -848,10 +1043,31 @@ public class WarehouseForm extends javax.swing.JPanel {
         txtDistributor.setText(wh.getWhDistributor());
         txtQuantity.setText(wh.getWhQuantity() + "");
         txtRemainingAmout.setText(wh.getWhRemainingAmout() + "");
-        txpNote.setText(wh.getWhNote());
+        txpUsermanual.setText(wh.getWhNote());
         jdcDateImport.setDate(wh.getWhImportDay());
         jdcExpirationDate.setDate(wh.getWhExpiryDate());
         jdcManufactureDate.setDate(wh.getWhDateOfManufacture());
+    }
+
+    private void setModelTOM(TypeOfMedicine ofTMedicine) {
+        cboTypeOfMedicineID.setSelectedItem(ofTMedicine.getTomID());
+        cboNameOfTOM.setSelectedItem(ofTMedicine.getTomName());
+        rdoFalsePre.setSelected(ofTMedicine.isTomIsPrecription() ? false : true);
+        rdoTruePre.setSelected(ofTMedicine.isTomIsPrecription());
+    }
+
+    private void setModelMedicine(Medicine ofMedicine) {
+        txpUsermanual.setText(ofMedicine.getMdcUserManual());
+        txtRate.setText(ofMedicine.getMdcRate() + "");
+        txtPriceSale.setText(ofMedicine.getMdcPriceSale() + "");
+        lblImage.setToolTipText(ofMedicine.getMdcImage());
+        cboMedicineID.setSelectedItem(ofMedicine.getMdcID());
+        cboProducer.setSelectedItem(ofMedicine.getMdcProducerID());
+        txtMedicineName.setText(ofMedicine.getMdcName());
+        txpMedicineIngre.setText(ofMedicine.getMdcIngredient());
+        txpMedicineConcen.setText(ofMedicine.getMdcConcentration());
+        txtUnit.setText(ofMedicine.getMdcUnit());
+        txtPrice.setText(ofMedicine.getMdcPriceImport() + "");
     }
 
     private WareHouse getModel() {
@@ -868,6 +1084,23 @@ public class WarehouseForm extends javax.swing.JPanel {
         return wh;
     }
 
+    private Medicine getModelMedicine() {
+        Medicine mdc = new Medicine();
+        mdc.setMdcID(txtMedicineID.getText());
+        mdc.setMdcTypeOfMedicineID(cboTypeOfMedicineID.getSelectedItem().toString());
+        mdc.setMdcProducerID(cboProducer.getSelectedItem().toString());
+        mdc.setMdcName(txtMedicineName.getText());
+        mdc.setMdcIngredient(txpMedicineIngre.getText());
+        mdc.setMdcConcentration(txpMedicineConcen.getText());
+        mdc.setMdcUserManual(txpUsermanual.getText());
+        mdc.setMdcPriceSale(Double.parseDouble(txtPriceSale.getText()));
+        mdc.setMdcPriceImport(Double.parseDouble(txtPrice.getText()));
+        mdc.setMdcRate(Double.parseDouble(txtRate.getText()));
+        mdc.setMdcImage(lblImage.getToolTipText());
+        mdc.setMdcUnit(txtUnit.getText());
+        return mdc;
+    }
+
     public boolean isCheckHSD(JDateChooser date, JDateChooser date2) {
         Calendar c1 = Calendar.getInstance();
         Calendar c2 = Calendar.getInstance();
@@ -881,4 +1114,39 @@ public class WarehouseForm extends javax.swing.JPanel {
             return true;
         }
     }
+
+    private void selectImage() {
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter excelExtensionFilter = new FileNameExtensionFilter("Image file", "png", "jpg");
+        fileChooser.setFileFilter(excelExtensionFilter);
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            lblImage.setToolTipText(file.getName());
+            Image_Auth.saveImage(file);
+
+        }
+    }
+
+    private void editableFormMedicine(boolean a) {
+        txtMedicineID.setVisible(true);
+        cboProducer.setEnabled(a);
+        txtMedicineName.setEditable(a);
+        txtUnit.setEditable(a);
+        txtRate.setEditable(a);
+        txpMedicineConcen.setEditable(a);
+        txpUsermanual.setEditable(a);
+        txpMedicineConcen.setEditable(a);
+        txpMedicineIngre.setEditable(a);
+        txtPrice.setEditable(a);
+        txtPriceSale.setEditable(a);
+        lblImage.setVisible(a);
+    }
+
+    private void search(String text) {
+        DefaultTableModel model = (DefaultTableModel) tblWarehouse.getModel();
+        TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
+        tblWarehouse.setRowSorter(rowSorter);
+        rowSorter.setRowFilter(RowFilter.regexFilter(text));
+    }
+
 }
