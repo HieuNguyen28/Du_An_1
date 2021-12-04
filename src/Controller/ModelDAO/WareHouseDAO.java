@@ -24,7 +24,7 @@ public class WareHouseDAO extends ModelDataAccessObject<WareHouse, String> {
     private final String DELETE_SQL = "DELETE FROM Kho WHERE MaLoThuoc=?";
     private final String SELECT_ALL_SQL = "SELECT * FROM Kho";
     private final String SELECT_BY_ID_SQL = "SELECT * FROM Kho WHERE MaLoThuoc=?";
-
+    
     @Override
     public void insert(WareHouse entity) {
         try {

@@ -5,6 +5,7 @@
 package Controller.ModelDAO;
 
 import Controller.Helper.Database;
+import static Controller.Helper.Database.executeUpdate;
 import Model.Customer;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -27,8 +28,8 @@ public class CustomerDAO extends ModelDataAccessObject<Customer, String> {
     public void insert(Customer entity) {
         try {
             Controller.Helper.Database.executeUpdate(INSERT_SQL,
-                    entity.getCtmID(), 
-                    entity.getCtmName(), 
+                    entity.getCtmID(),
+                    entity.getCtmName(),
                     entity.getCtmNumberPhone(),
                     entity.getCtmStartDateBuy(),
                     entity.getCtmLastDateBuy(),
@@ -97,7 +98,7 @@ public class CustomerDAO extends ModelDataAccessObject<Customer, String> {
             throw new RuntimeException(ex);
         }
     }
-    
+
     public Customer selectByPN(String pn) {
         String sql = "select * from KhachHang where SoDienThoai = ?";
         List<Customer> list = this.selectBySQL(sql, pn);
@@ -106,4 +107,9 @@ public class CustomerDAO extends ModelDataAccessObject<Customer, String> {
         }
         return list.get(0);
     }
+
+//    public void IdentityCustomer(String a) {
+//        String sql = "{AUTO_IDKH (?}";
+//        executeUpdate(sql, a);
+//    }
 }

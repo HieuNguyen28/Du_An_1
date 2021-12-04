@@ -21,6 +21,7 @@ public class TypeOfMedicineDAO extends ModelDataAccessObject<TypeOfMedicine, Str
     private final String DELETE_SQL = "DELETE FROM LoaiThuoc WHERE MaLoaiThuoc=?";
     private final String SELECT_ALL_SQL = "SELECT * FROM LoaiThuoc";
     private final String SELECT_BY_ID_SQL = "SELECT * FROM LoaiThuoc WHERE MaLoaiThuoc=?";
+    private final String SELECT_BY_Name_TOM = "SELECT * FROM LoaiThuoc WHERE TenLoaiThuoc=?";
 
     @Override
     public void insert(TypeOfMedicine entity) {
@@ -72,6 +73,14 @@ public class TypeOfMedicineDAO extends ModelDataAccessObject<TypeOfMedicine, Str
         }
         return list.get(0);
     }
+    
+    public TypeOfMedicine selectByName(String Name) {
+        List<TypeOfMedicine> list = this.selectBySQL(SELECT_BY_Name_TOM, Name);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
 
     @Override
     protected List<TypeOfMedicine> selectBySQL(String sql, Object... args) {
@@ -93,5 +102,6 @@ public class TypeOfMedicineDAO extends ModelDataAccessObject<TypeOfMedicine, Str
             throw new RuntimeException(e);
         }
     }
-
+    
+    
 }
