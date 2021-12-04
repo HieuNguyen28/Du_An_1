@@ -95,10 +95,8 @@ public class ReceiptForm extends javax.swing.JPanel {
         jLabel11 = new javax.swing.JLabel();
         txtReceiptID = new GUI.TextField();
         cbbVoucher = new ComboBox_Suggestion.ComboBoxSuggestion();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        lblBalance = new javax.swing.JLabel();
-        txtCash = new GUI.TextField();
+        btnChange = new javax.swing.JButton();
+
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -220,17 +218,12 @@ public class ReceiptForm extends javax.swing.JPanel {
 
         cbbVoucher.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "..." }));
 
-        jLabel12.setText("Cash:");
-
-        jLabel13.setText("Balance:");
-
-        lblBalance.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        lblBalance.setText("0");
-
-        txtCash.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtCash.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtCashKeyReleased(evt);
+        btnChange.setBackground(new java.awt.Color(255, 255, 255));
+        btnChange.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/night-mode.png"))); // NOI18N
+        btnChange.setBorder(null);
+        btnChange.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnChangeMouseClicked(evt);
             }
         });
 
@@ -241,9 +234,6 @@ public class ReceiptForm extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 706, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -313,6 +303,19 @@ public class ReceiptForm extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lblName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addContainerGap())))))
+                                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap())
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(btnPay, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                                    .addComponent(cbbVoucher, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(20, 20, 20))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(19, 19, 19))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -329,6 +332,24 @@ public class ReceiptForm extends javax.swing.JPanel {
                             .addComponent(txtQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
+                        .addGap(11, 11, 11)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel11)
+                                    .addComponent(txtReceiptID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(44, 44, 44)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btnAdd)
+                                    .addComponent(jLabel3)
+                                    .addComponent(cbbDrugName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4))))
+
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel11)
@@ -410,6 +431,8 @@ public class ReceiptForm extends javax.swing.JPanel {
         DefaultTableModel dtm = (DefaultTableModel) tblReceipt.getModel();
         dtm.removeRow(index);
     }//GEN-LAST:event_btnRemoveActionPerformed
+
+    int index = 0;
 
     int index = 0;
     int flag = 0;
@@ -506,6 +529,27 @@ public class ReceiptForm extends javax.swing.JPanel {
             new PaymentSuccess().setVisible(true);
         }
     }//GEN-LAST:event_btnPayActionPerformed
+
+    private void btnChangeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnChangeMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 1) {
+            btnChange.setToolTipText("Cick 2 for change Background");
+            setBackground(Color.decode("#9badf2"));
+            Controller.Helper.BackgroundC1.ChangeTxt(txtExpirationDate);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtQuantity);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtReceiptID);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtRemainingAmount);
+            Controller.Helper.BackgroundC1.ChangeBtn(btnChange);
+        } else if (evt.getClickCount() == 2) {
+            btnChange.setToolTipText("Cick 1 for change Background");
+            setBackground(Color.white);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtExpirationDate);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtQuantity);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtReceiptID);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtRemainingAmount);
+            Controller.Helper.BackgroundC2.ChangeBtn(btnChange);
+        }
+    }//GEN-LAST:event_btnChangeMouseClicked
 
     private void txtCashKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCashKeyReleased
         // TODO add your handling code here:
@@ -648,6 +692,7 @@ public class ReceiptForm extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnChange;
     private javax.swing.JButton btnPay;
     private javax.swing.JButton btnRemove;
     private ComboBox_Suggestion.ComboBoxSuggestion cbbBatchID;
