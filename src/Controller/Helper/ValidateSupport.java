@@ -18,9 +18,17 @@ import javax.swing.JTextPane;
  */
 public class ValidateSupport {
 
+    public static boolean isNull(JTextField txt) {
+        txt.setBackground(white);
+        if (txt.getText().trim().length() > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public static boolean isNumber(JTextField txt) {
         if (!txt.getText().trim().matches("(\\d+.\\d+)|\\d+")) {
-            Mgsbox.error(txt.getRootPane(), "Please enter a number....");
             return false;
         } else {
             return true;
@@ -97,9 +105,29 @@ public class ValidateSupport {
     
     
     public static boolean isNull(JTextField txt) {
-        return txt.getText().trim().isEmpty();
+        txt.setBackground(white);
+        if (txt.getText().trim().length() > 0) {
+            return false;
+        } else {
+            txt.setBackground(pink);
+            return true;
+        }
     }
-    
+
+    public static boolean checkPrice(JTextField txt) {
+        try {
+            float hp = Float.parseFloat(txt.getText());
+            if (hp >= 0) {
+                return true;
+            } else {
+                txt.setBackground(pink);
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            txt.setBackground(pink);
+        }
+        return false;
+      
     public static boolean isNull(JTextPane txp) {
         return txp.getText().trim().isEmpty();
     }
@@ -110,6 +138,7 @@ public class ValidateSupport {
     
     public static boolean isSeleted(JRadioButton rdo) {
         return rdo.isSelected();  
+
     }
-    
+
 }

@@ -296,6 +296,7 @@ public class CustomerForm extends javax.swing.JPanel {
         // TODO add your handling code here:
         update();
         editBtn(false);
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -310,16 +311,13 @@ public class CustomerForm extends javax.swing.JPanel {
         } else if (!ValidateSupport.checkSDT(txtPN)) {
             Mgsbox.error(this, "Please fill in the correct format as required !!!");
         } else if (!isDuplicateCustomerID(txtID)) {
-//            for (int i = 0; i < tblCustomer.getRowCount(); i++) {
-//                String makh = tblCustomer.getValueAt(i, 1).toString();
-//                ctm.IdentityCustomer(makh);
-//            }
             insert();
             editBtn(false);
         } else {
             Mgsbox.error(this, "This customer code already exists");
         }
 
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     int index = 0;
@@ -485,6 +483,9 @@ public class CustomerForm extends javax.swing.JPanel {
             ctm.update(model);
             loadDataToTable(new CustomerDAO().selectAll());
             Mgsbox.alert(this, "Update successful!");
+            clearForm();
+            defaultButton(false);
+            defaultText(false);
         } catch (Exception e) {
             Mgsbox.alert(this, "Update failed!");
         }
@@ -496,6 +497,9 @@ public class CustomerForm extends javax.swing.JPanel {
             ctm.insert(model);
             loadDataToTable(new CustomerDAO().selectAll());
             Mgsbox.alert(this, "Insert successful!");
+            clearForm();
+            defaultButton(false);
+            defaultText(false);
         } catch (Exception e) {
             Mgsbox.alert(this, "Insert failed!");
         }
@@ -509,6 +513,8 @@ public class CustomerForm extends javax.swing.JPanel {
                 loadDataToTable(new CustomerDAO().selectAll());
                 this.clearForm();
                 Mgsbox.alert(this, "Delete successfully!");
+                defaultButton(false);
+                defaultText(false);
             } catch (Exception e) {
                 Mgsbox.alert(this, "Delete failed!");
             }
@@ -566,5 +572,4 @@ public class CustomerForm extends javax.swing.JPanel {
         tblCustomer.setRowSorter(rowSorter);
         rowSorter.setRowFilter(RowFilter.regexFilter(text));
     }
-
 }
