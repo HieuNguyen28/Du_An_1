@@ -5,7 +5,7 @@
  */
 package GUI;
 
-import ChartBar.ModelChart;
+import CustomizeGUI.BlankChart.ChartBar.ModelChart;
 import static Controller.Helper.Database.executeQuery;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.awt.Color;
@@ -67,19 +67,19 @@ public class StatisForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelBorder1 = new GUI.PanelBorder();
+        panelBorder1 = new CustomizeGUI.Componets.PanelBorder();
         jPanel1 = new javax.swing.JPanel();
-        progress1 = new ChartBar.Progress();
-        progress2 = new ChartBar.Progress();
-        progress3 = new ChartBar.Progress();
+        progress1 = new CustomizeGUI.BlankChart.ChartBar.Progress();
+        progress2 = new CustomizeGUI.BlankChart.ChartBar.Progress();
+        progress3 = new CustomizeGUI.BlankChart.ChartBar.Progress();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        lineChart = new ChartBar.LineChart();
+        lineChart = new CustomizeGUI.BlankChart.ChartBar.LineChart();
         jPanel3 = new javax.swing.JPanel();
-        chart = new ChartBar.Chart();
+        chart = new CustomizeGUI.BlankChart.ChartBar.Chart();
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 51));
 
@@ -217,7 +217,7 @@ public class StatisForm extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private ChartBar.Chart chart;
+    private CustomizeGUI.BlankChart.ChartBar.Chart chart;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -225,11 +225,11 @@ public class StatisForm extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private ChartBar.LineChart lineChart;
-    private GUI.PanelBorder panelBorder1;
-    private ChartBar.Progress progress1;
-    private ChartBar.Progress progress2;
-    private ChartBar.Progress progress3;
+    private CustomizeGUI.BlankChart.ChartBar.LineChart lineChart;
+    private CustomizeGUI.Componets.PanelBorder panelBorder1;
+    private CustomizeGUI.BlankChart.ChartBar.Progress progress1;
+    private CustomizeGUI.BlankChart.ChartBar.Progress progress2;
+    private CustomizeGUI.BlankChart.ChartBar.Progress progress3;
     // End of variables declaration//GEN-END:variables
 
     final String sql = "select top 6 FORMAT(ThoiGianMua, 'MM') as m, SUM(TienTruocVoucher) as income, SUM(TienVoucher)"

@@ -1,5 +1,6 @@
 package GUI;
 
+import CustomizeGUI.Componets.FrameCamera;
 import Controller.Helper.CreateExcel;
 import Controller.Helper.DateSupport;
 import Controller.Helper.EmailSupport;

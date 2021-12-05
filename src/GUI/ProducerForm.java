@@ -26,7 +26,7 @@ public class ProducerForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlMain = new GUI.PanelBorder();
+        pnlMain = new CustomizeGUI.Componets.PanelBorder();
         jLabel6 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         txtID = new GUI.TextField();
@@ -368,7 +368,7 @@ public class ProducerForm extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private GUI.PanelBorder pnlMain;
+    private CustomizeGUI.Componets.PanelBorder pnlMain;
     private javax.swing.JTable tblProducer;
     private GUI.TextField txtCompanyName;
     private GUI.TextField txtEmail;
