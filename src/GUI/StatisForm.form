@@ -26,7 +26,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="GUI.PanelBorder" name="panelBorder1">
+    <Container class="CustomizeGUI.Componets.PanelBorder" name="panelBorder1">
 
       <Layout>
         <DimensionLayout dim="0">
@@ -118,7 +118,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="ChartBar.Progress" name="progress1">
+            <Component class="CustomizeGUI.BlankChart.ChartBar.Progress" name="progress1">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="f6" green="c1" red="42" type="rgb"/>
@@ -129,7 +129,7 @@
                 <Property name="value" type="int" value="85"/>
               </Properties>
             </Component>
-            <Component class="ChartBar.Progress" name="progress2">
+            <Component class="CustomizeGUI.BlankChart.ChartBar.Progress" name="progress2">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="f6" green="42" red="84" type="rgb"/>
@@ -141,7 +141,7 @@
                 <Property name="value" type="int" value="70"/>
               </Properties>
             </Component>
-            <Component class="ChartBar.Progress" name="progress3">
+            <Component class="CustomizeGUI.BlankChart.ChartBar.Progress" name="progress3">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="54" green="f6" red="42" type="rgb"/>
@@ -218,7 +218,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="ChartBar.LineChart" name="lineChart">
+            <Component class="CustomizeGUI.BlankChart.ChartBar.LineChart" name="lineChart">
             </Component>
           </SubComponents>
         </Container>
@@ -242,7 +242,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="ChartBar.Chart" name="chart">
+            <Component class="CustomizeGUI.BlankChart.ChartBar.Chart" name="chart">
             </Component>
           </SubComponents>
         </Container>

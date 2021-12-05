@@ -1,5 +1,7 @@
 package GUI;
 
+import CustomizeGUI.Componets.PaymentSuccess;
+import CustomizeGUI.Componets.FrameCameraQRCodeVoucher;
 import Controller.Helper.DateSupport;
 import Controller.Helper.Image_Auth;
 import Controller.Helper.Mgsbox;

@@ -2,7 +2,7 @@ package GUI;
 
 import Controller.Helper.Image_Auth;
 import Controller.Helper.Mgsbox;
-import Event.EventMenu;
+import Controller.Helper.EventMenu;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -90,13 +90,13 @@ public class Main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelBorder1 = new GUI.PanelBorder();
+        panelBorder1 = new CustomizeGUI.Componets.PanelBorder();
         lblChangePassword = new javax.swing.JLabel();
         lblTime = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         lblInfor = new javax.swing.JLabel();
-        menu2 = new GUI.Menu();
-        pnlMain = new GUI.PanelBorder();
+        menu2 = new CustomizeGUI.Componets.Menu();
+        pnlMain = new CustomizeGUI.Componets.PanelBorder();
         lblMainFrame = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -196,8 +196,8 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel lblInfor;
     private javax.swing.JLabel lblMainFrame;
     private javax.swing.JLabel lblTime;
-    private GUI.Menu menu2;
-    private GUI.PanelBorder panelBorder1;
-    private GUI.PanelBorder pnlMain;
+    private CustomizeGUI.Componets.Menu menu2;
+    private CustomizeGUI.Componets.PanelBorder panelBorder1;
+    private CustomizeGUI.Componets.PanelBorder pnlMain;
     // End of variables declaration//GEN-END:variables
 }
