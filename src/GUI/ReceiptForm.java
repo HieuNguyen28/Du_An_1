@@ -320,11 +320,15 @@ public class ReceiptForm extends javax.swing.JPanel {
                 if (e.getStateChange() == ItemEvent.SELECTED && cbbVoucher.getSelectedIndex() != 0) {
                     double total = Double.valueOf(lblTotal.getText());
                     Voucher voucher = new VoucherDAO().selectByID(cbbVoucher.getSelectedItem().toString());
+                    int i = DateSupport.now().compareTo(voucher.getVcEndDate());
                     if (total < voucher.getVcTotalBillCanAdd()) {
                         Mgsbox.alert(null, "Total bill doesn't enough");
                         cbbVoucher.setSelectedIndex(0);
                     }else if (!checkVoucher()) {
                         Mgsbox.alert(null, "No discounted drugs in the bill");
+                        cbbVoucher.setSelectedIndex(0);
+                    }else if (i > 0) {
+                        Mgsbox.alert(null, "The voucher has expired");
                         cbbVoucher.setSelectedIndex(0);
                     }
                 }
