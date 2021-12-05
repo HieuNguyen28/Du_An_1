@@ -1,5 +1,6 @@
 package GUI;
 
+import Controller.Helper.CreateExcel;
 import Controller.Helper.DateSupport;
 import Controller.Helper.EmailSupport;
 import Controller.Helper.Image_Auth;
@@ -8,11 +9,11 @@ import Controller.Helper.Mgsbox;
 import Controller.Helper.QRCodeSupport;
 import Controller.Helper.ValidateSupport;
 import Controller.ModelDAO.EmployeeDAO;
+import static GUI.ChangePasswordForm.REGEX_PASSWORD;
 import Model.Employee;
 import com.google.zxing.WriterException;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Color;
-import static java.awt.Color.red;
 import static java.awt.Color.white;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -28,10 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -69,51 +67,6 @@ public class EmployeeGUI extends javax.swing.JPanel {
         }
     }
 
-//    void initNewFrame() {
-//        
-//        framewebcam.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-//        
-//        JPanel jPanel1 = new javax.swing.JPanel();
-//        JButton btnSelfie = new JButton("Chụp nè");
-//        JSeparator jSeparator1 = new javax.swing.JSeparator();
-//        JPanel jPanel2 = new javax.swing.JPanel();
-//
-//        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-//        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-//
-//        jPanel1.add(btnSelfie, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 470, 20));
-//
-//        jSeparator1.setForeground(new java.awt.Color(126, 167, 206));
-//        
-//        jPanel2.setBackground(new java.awt.Color(250, 250, 250));
-//        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(230, 230, 230)));
-//        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-//        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 470, 300));
-//        jPanel1.add(btnSelfie, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, -1, -1));
-//        framewebcam.add(jPanel1);
-//        framewebcam.setVisible(true);
-//    }
-//    private void openAndSelfie() {
-//        JFrame framewebcam = new JFrame("SELFIE");
-//        framewebcam.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//        framewebcam.setSize(470, 370);
-//        framewebcam.setLocationRelativeTo(null);
-//        JButton btnSelfie = new JButton("Chụp nè");
-//        btnSelfie.setSize(470, 100);
-//        btnSelfie.setBackground(red);
-//        JPanel pnlMain = new JPanel();
-//        pnlMain.setSize(470,370);
-//        JPanel pnlCam = new JPanel();
-//        pnlCam.setSize(470,270);
-//        pnlCam.setBackground(red);
-//        pnlMain.add(pnlCam);
-//        pnlMain.add(btnSelfie);
-//        framewebcam.add(pnlMain);
-////        WebcamPanel panel = null;
-////        Webcam webcam = null;
-//        framewebcam.setVisible(true);
-//
-//    }
     private void LoadDataToTable() {
         DefaultTableModel model = (DefaultTableModel) tblEmployee.getModel();
         model.setRowCount(0);
@@ -333,6 +286,10 @@ public class EmployeeGUI extends javax.swing.JPanel {
             Mgsbox.error(this, "Username already exists!");
             txtUsername.requestFocus();
             return false;
+        }else if (!txtPassword.getText().matches(REGEX_PASSWORD)) {
+            Mgsbox.alert(this, "New password is too weak. Try again!");
+            txtPassword.requestFocus();
+            return false;
         }
         return true;
     }
@@ -415,6 +372,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
         lblCardEmployee = new javax.swing.JLabel();
         btnOpenfile = new javax.swing.JButton();
         btnOpenCamera = new javax.swing.JButton();
+        btnCreateExcel = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setForeground(new java.awt.Color(80, 23, 231));
@@ -667,6 +625,16 @@ public class EmployeeGUI extends javax.swing.JPanel {
             }
         });
 
+        btnCreateExcel.setBackground(new java.awt.Color(255, 255, 255));
+        btnCreateExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/excel.png"))); // NOI18N
+        btnCreateExcel.setText("Export to Excel");
+        btnCreateExcel.setBorder(null);
+        btnCreateExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCreateExcelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -683,7 +651,10 @@ public class EmployeeGUI extends javax.swing.JPanel {
                         .addContainerGap()
                         .addComponent(btnOpenfile)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnOpenCamera)))
+                        .addComponent(btnOpenCamera))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnCreateExcel)))
                 .addGap(11, 11, 11)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -734,18 +705,18 @@ public class EmployeeGUI extends javax.swing.JPanel {
                         .addComponent(lblPassWord)
                         .addGap(18, 18, 18)
                         .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 698, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(303, 303, 303)
-                .addComponent(btnNew, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(btnDelete)
-                .addGap(10, 10, 10)
-                .addComponent(btnUpdate)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 698, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(150, 150, 150)
+                        .addComponent(btnNew, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9)
+                        .addComponent(btnDelete)
+                        .addGap(10, 10, 10)
+                        .addComponent(btnUpdate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -754,13 +725,6 @@ public class EmployeeGUI extends javax.swing.JPanel {
                 .addComponent(btnChange)
                 .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(pnlCardEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnOpenfile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnOpenCamera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -828,16 +792,26 @@ public class EmployeeGUI extends javax.swing.JPanel {
                                 .addComponent(lblPassWord))
                             .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(17, 17, 17)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(8, 8, 8)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnNew, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(8, 8, 8)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnNew, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(pnlCardEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnOpenfile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnOpenCamera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnCreateExcel)
+                        .addContainerGap())))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -913,7 +887,9 @@ public class EmployeeGUI extends javax.swing.JPanel {
         btnEdit.setVisible(false);
         btnUpdate.setVisible(true);
         setStatusControl(true);
+        txtPassword.setEditable(false);
         txtID.setEditable(false);
+        txtUsername.setEditable(false);
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void tblEmployeeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblEmployeeKeyPressed
@@ -1039,6 +1015,11 @@ public class EmployeeGUI extends javax.swing.JPanel {
 
     }//GEN-LAST:event_btnOpenCameraActionPerformed
 
+    private void btnCreateExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateExcelActionPerformed
+        // TODO add your handling code here:
+        CreateExcel.ExportToExcel(tblEmployee, "Employee");
+    }//GEN-LAST:event_btnCreateExcelActionPerformed
+
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -1052,6 +1033,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnChange;
+    private javax.swing.JButton btnCreateExcel;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnNew;

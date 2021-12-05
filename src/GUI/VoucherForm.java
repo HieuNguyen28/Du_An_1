@@ -1,6 +1,5 @@
 package GUI;
 
-
 import Controller.Helper.DateSupport;
 import Controller.Helper.Image_Auth;
 import Controller.Helper.QRCodeSupport;
@@ -35,12 +34,20 @@ public class VoucherForm extends javax.swing.JPanel {
         loadDataToTable();
         loadComboboxMedicine();
         setStatus(false);
-
-        dcDayStart.setMinSelectableDate(DateSupport.now());
-        dcDayEnd.setMinSelectableDate(DateSupport.now());
-        btnAdd.setVisible(false);
-        btnUpdate.setVisible(false);
-        btnDelete.setVisible(false);
+        initRole();
+    }
+    private void initRole() {
+        if (Image_Auth.USER.isEpeIsRole()) {
+            btnAdd.setVisible(false);
+            btnUpdate.setVisible(false);
+            btnDelete.setVisible(true);
+        }else{
+            btnAdd.setVisible(false);
+            btnUpdate.setVisible(false);
+            btnDelete.setVisible(false);
+            btnEdit.setVisible(false);
+            btnNew.setVisible(false);
+        }
     }
 
     private boolean isDuplicateID(String ID) {
@@ -124,8 +131,6 @@ public class VoucherForm extends javax.swing.JPanel {
         cbbMedicineID.setSelectedIndex(0);
         txtReceiptApply.setText("");
         txtVoucherID.setText("");
-        dcDayEnd.cleanup();
-        dcDayStart.cleanup();
         lblQRCode.setIcon(null);
         lblStartDate.setText("");
         lblEndDate.setText("");
@@ -515,11 +520,11 @@ jLabel4 = new javax.swing.JLabel();
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-    delete(tblVoucher.getValueAt(tblVoucher.getSelectedRow(), 0).toString());
+        delete(tblVoucher.getValueAt(tblVoucher.getSelectedRow(), 0).toString());
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
- if (ValidateSupport.isNull(txtVoucherID)) {
+        if (ValidateSupport.isNull(txtVoucherID)) {
             Mgsbox.error(this, "Please enter Voucher ID...");
         } else if (!ValidateSupport.isNumber(txtDiscount) || !ValidateSupport.isNumber(txtReceiptApply)) {
             Mgsbox.error(txtDiscount.getRootPane(), "Please enter a number....");
@@ -575,7 +580,6 @@ jLabel4 = new javax.swing.JLabel();
         }
     }//GEN-LAST:event_btnCaptureActionPerformed
 
-
     // Variables declaration - do not modify                     
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnCapture;
@@ -586,7 +590,7 @@ jLabel4 = new javax.swing.JLabel();
     private javax.swing.JComboBox<String> cbbMedicineID;
     private com.toedter.calendar.JDateChooser dcDayEnd;
     private com.toedter.calendar.JDateChooser dcDayStart;
- private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -603,6 +607,6 @@ jLabel4 = new javax.swing.JLabel();
     public javax.swing.JPanel pnlVoucher;
     private javax.swing.JTable tblVoucher;
     private GUI.TextField txtDiscount;
- private GUI.TextField txtReceiptApply;
+    private GUI.TextField txtReceiptApply;
     private GUI.TextField txtVoucherID;
 }

@@ -4,14 +4,21 @@
  */
 package Controller.Helper;
 
+import java.awt.Font;
 import java.awt.HeadlessException;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -32,21 +39,35 @@ public class CreateExcel {
             FileNameExtensionFilter excelExtensionFilter = new FileNameExtensionFilter("Excel file", "xls", "xlsx", "xlsm");
             excelfileChooser.setFileFilter(excelExtensionFilter);
             excelfileChooser.setMultiSelectionEnabled(false);
-            int user = excelfileChooser.showDialog(null, "Create File");
-            if (user == excelfileChooser.APPROVE_OPTION) {
+            
+            if (excelfileChooser.showDialog(null, "Create File") == excelfileChooser.APPROVE_OPTION) {
                 excelFile = new XSSFWorkbook();
                 XSSFSheet excelSheet = excelFile.createSheet(titleSheet);
-                XSSFRow excelRowTitle = excelSheet.createRow(0);
 
+                CellStyle headerCellStyle = excelSheet.getWorkbook().createCellStyle();
+                headerCellStyle.setFillForegroundColor(IndexedColors.TAN.index);
+                headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+                XSSFRow excelRowTitle = excelSheet.createRow(0);
                 for (int headings = 0; headings < table.getColumnCount(); headings++) {
-                    excelRowTitle.createCell(headings).setCellValue(table.getColumnName(headings));
+                    Cell cell = excelRowTitle.createCell(headings);
+                    cell.setCellValue(table.getColumnName(headings));
+                    cell.setCellStyle(headerCellStyle);
                 }
 
                 for (int rows = 0; rows < table.getRowCount(); rows++) {
                     XSSFRow rowsTable = excelSheet.createRow(rows + 1);
                     for (int cols = 0; cols < table.getColumnCount(); cols++) {
                         rowsTable.createCell(cols).setCellValue(table.getModel().getValueAt(rows, cols).toString());
+
                     }
+                }
+                Row row = excelSheet.getRow(excelSheet.getFirstRowNum());
+                Iterator<Cell> cellIterator = row.cellIterator();
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+                    int columnIndex = cell.getColumnIndex();
+                    excelSheet.autoSizeColumn(columnIndex);
                 }
                 excelFOU = new FileOutputStream(excelfileChooser.getSelectedFile() + ".xlsx");
                 excelBOU = new BufferedOutputStream(excelFOU);

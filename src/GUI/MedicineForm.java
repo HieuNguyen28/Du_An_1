@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import Controller.Helper.CreateExcel;
 import Controller.Helper.Image_Auth;
 import static Controller.Helper.Image_Auth.USER;
 import Controller.Helper.Mgsbox;
@@ -15,6 +16,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -35,6 +37,8 @@ public class MedicineForm extends javax.swing.JPanel {
         initComponents();
         EditTable(tblMedicine);
         LoadDataToTable();
+        loadComboboxUnit();
+        txtPriceSale.setEditable(false);
         lblMedicineImage.setHorizontalAlignment((int) CENTER_ALIGNMENT);
     }
 
@@ -76,11 +80,12 @@ public class MedicineForm extends javax.swing.JPanel {
         txtIgredient = new GUI.TextField();
         txtContent = new GUI.TextField();
         txtUserManual = new GUI.TextField();
-        txtCost = new GUI.TextField();
-        txtShared = new GUI.TextField();
-        txtPrice = new GUI.TextField();
+        txtPriceSale = new GUI.TextField();
+        txtRate = new GUI.TextField();
+        txtPriceImport = new GUI.TextField();
         jLabel11 = new javax.swing.JLabel();
         txtSearch = new javax.swing.JTextField();
+        btnCreateExcel = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -109,9 +114,9 @@ public class MedicineForm extends javax.swing.JPanel {
 
         cbbUnit.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Jar", "Blister", "Boxes", "Tablets", " " }));
 
-        jLabel12.setText("Cost:");
+        jLabel12.setText("Price Sale");
 
-        jLabel13.setText("Shared:");
+        jLabel13.setText("Rate");
 
         lblMedicineImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/medicine.png"))); // NOI18N
         lblMedicineImage.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -131,7 +136,7 @@ public class MedicineForm extends javax.swing.JPanel {
             .addComponent(lblMedicineImage, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
         );
 
-        jLabel14.setText("Price:");
+        jLabel14.setText("Price Import:");
 
         tblMedicine.setBackground(new java.awt.Color(222, 221, 248));
         tblMedicine.setModel(new javax.swing.table.DefaultTableModel(
@@ -201,7 +206,29 @@ public class MedicineForm extends javax.swing.JPanel {
 
         txtDrugID.setForeground(new java.awt.Color(255, 0, 51));
 
+        txtRate.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtRateKeyReleased(evt);
+            }
+        });
+
+        txtPriceImport.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPriceImportKeyReleased(evt);
+            }
+        });
+
         jLabel11.setText("Search:");
+
+        btnCreateExcel.setBackground(new java.awt.Color(255, 255, 255));
+        btnCreateExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/excel.png"))); // NOI18N
+        btnCreateExcel.setText("Export to Excel");
+        btnCreateExcel.setBorder(null);
+        btnCreateExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCreateExcelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -223,7 +250,7 @@ public class MedicineForm extends javax.swing.JPanel {
                             .addComponent(txtProducer, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtContent, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtDrugID, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCost, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtPriceSale, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
@@ -236,7 +263,7 @@ public class MedicineForm extends javax.swing.JPanel {
                             .addComponent(txtDrugName, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(cbbUnit, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtShared, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(txtRate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
@@ -248,27 +275,26 @@ public class MedicineForm extends javax.swing.JPanel {
                             .addComponent(txtIgredient, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtDrugBatch, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtUserManual, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtPrice, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addContainerGap(816, Short.MAX_VALUE))))
+                            .addComponent(txtPriceImport, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel1))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel11)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCreateExcel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -296,7 +322,7 @@ public class MedicineForm extends javax.swing.JPanel {
                         .addGap(22, 22, 22)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel12)
-                            .addComponent(txtCost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtPriceSale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -320,19 +346,20 @@ public class MedicineForm extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel13)
                             .addComponent(jLabel14)
-                            .addComponent(txtShared, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txtRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtPriceImport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(3, 3, 3)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnEdit)
                     .addComponent(btnDelete)
-                    .addComponent(btnUpdate))
+                    .addComponent(btnUpdate)
+                    .addComponent(btnCreateExcel))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -379,16 +406,16 @@ public class MedicineForm extends javax.swing.JPanel {
                 || ValidateSupport.isNull(txtDrugBatch)
                 || ValidateSupport.isNull(txtProducer)
                 || ValidateSupport.isNull(txtContent)
-                || ValidateSupport.isNull(txtCost)
+                || ValidateSupport.isNull(txtPriceSale)
                 || ValidateSupport.isNull(txtDrugName)
                 || ValidateSupport.isNull(txtIgredient)
-                || ValidateSupport.isNull(txtShared)
+                || ValidateSupport.isNull(txtRate)
                 || ValidateSupport.isNull(txtUserManual)
-                || ValidateSupport.isNull(txtPrice)) {
+                || ValidateSupport.isNull(txtPriceImport)) {
             Mgsbox.error(this, "Please fill out the form...");
-        } else if (!ValidateSupport.checkPrice(txtPrice)
-                || !ValidateSupport.checkPrice(txtCost)
-                || !ValidateSupport.checkPrice(txtShared)) {
+        } else if (!ValidateSupport.checkPrice(txtPriceImport)
+                || !ValidateSupport.checkPrice(txtPriceSale)
+                || !ValidateSupport.checkPrice(txtRate)) {
             Mgsbox.error(this, "Please fill in the correct format as required !!!");
         } else  {
             update();
@@ -397,8 +424,26 @@ public class MedicineForm extends javax.swing.JPanel {
 
     }//GEN-LAST:event_btnUpdateActionPerformed
 
+    private void btnCreateExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateExcelActionPerformed
+        // TODO add your handling code here:
+        CreateExcel.ExportToExcel(tblMedicine, "Medicine");
+    }//GEN-LAST:event_btnCreateExcelActionPerformed
+
+    private void txtRateKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRateKeyReleased
+        // TODO add your handling code here:
+        countPriceSale(Double.parseDouble(txtRate.getText().isEmpty() ? "0" : txtRate.getText())
+                , Double.parseDouble(txtPriceImport.getText().isEmpty() ? "0" : txtPriceImport.getText()));
+    }//GEN-LAST:event_txtRateKeyReleased
+
+    private void txtPriceImportKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPriceImportKeyReleased
+        // TODO add your handling code here:
+        countPriceSale(Double.parseDouble(txtRate.getText().isEmpty() ? "0" : txtRate.getText())
+                , Double.parseDouble(txtPriceImport.getText().isEmpty() ? "0" : txtPriceImport.getText()));
+    }//GEN-LAST:event_txtPriceImportKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCreateExcel;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnUpdate;
@@ -422,16 +467,16 @@ public class MedicineForm extends javax.swing.JPanel {
     public javax.swing.JLabel lblMedicineImage;
     private javax.swing.JTable tblMedicine;
     private GUI.TextField txtContent;
-    private GUI.TextField txtCost;
     private GUI.TextField txtDrugBatch;
     private GUI.TextField txtDrugID;
     private GUI.TextField txtDrugName;
     private GUI.TextField txtDrugTypeID;
     private GUI.TextField txtIgredient;
-    private GUI.TextField txtPrice;
+    private GUI.TextField txtPriceImport;
+    private GUI.TextField txtPriceSale;
     private GUI.TextField txtProducer;
+    private GUI.TextField txtRate;
     private javax.swing.JTextField txtSearch;
-    private GUI.TextField txtShared;
     private GUI.TextField txtUserManual;
     // End of variables declaration//GEN-END:variables
     private void EditTable(JTable a) {
@@ -445,8 +490,23 @@ public class MedicineForm extends javax.swing.JPanel {
     MedicineDAO MD = new MedicineDAO();
     JFileChooser fileChooser = new JFileChooser();
     int index = 0;
-
+    
+    private void countPriceSale(double rate, double priceImport){
+        txtPriceSale.setText(priceImport+ (rate * priceImport)+"");
+    }
     //lấy dữ liệu trên bảng
+    private void loadComboboxUnit() {
+        DefaultComboBoxModel boxModel = (DefaultComboBoxModel) cbbUnit.getModel();
+        boxModel.removeAllElements();
+        try {
+            new MedicineDAO().selectAll().forEach(mdc -> {
+                boxModel.addElement(mdc.getMdcUnit());
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     private void LoadDataToTable() {
         DefaultTableModel model = (DefaultTableModel) tblMedicine.getModel();
         model.setRowCount(0);
@@ -519,16 +579,15 @@ public class MedicineForm extends javax.swing.JPanel {
         txtContent.setText(model.getMdcConcentration());
         cbbUnit.setSelectedItem(model.getMdcUnit());
         txtUserManual.setText(model.getMdcUserManual());
-        txtCost.setText(String.valueOf(model.getMdcPriceSale()));
+        txtPriceSale.setText(String.valueOf(model.getMdcPriceSale()));
         if (model.getMdcImage() != null) {
             lblMedicineImage.setIcon(Image_Auth.readImage(new File("Image",model.getMdcImage()),
                     lblMedicineImage.getWidth(), 
                     lblMedicineImage.getHeight()));
-            
             lblMedicineImage.setToolTipText(model.getMdcImage());
         }
-        txtShared.setText(String.valueOf(model.getMdcRate()));
-        txtPrice.setText(String.valueOf(model.getMdcPriceImport()));
+        txtRate.setText(String.format("%.2f",model.getMdcRate()));
+        txtPriceImport.setText(String.valueOf(model.getMdcPriceImport()));
     }
 
     private Medicine getModel() {
@@ -542,9 +601,9 @@ public class MedicineForm extends javax.swing.JPanel {
         model.setMdcConcentration(txtContent.getText());
         model.setMdcUnit((String) cbbUnit.getSelectedItem());
         model.setMdcUserManual(txtUserManual.getText());
-        model.setMdcPriceSale(Double.parseDouble(txtCost.getText()));
-        model.setMdcRate(Double.parseDouble(txtShared.getText()));
-        model.setMdcPriceImport(Double.parseDouble(txtPrice.getText()));
+        model.setMdcPriceSale(Double.parseDouble(txtPriceSale.getText()));
+        model.setMdcRate(Double.parseDouble(txtRate.getText()));
+        model.setMdcPriceImport(Double.parseDouble(txtPriceImport.getText()));
         model.setMdcImage(lblMedicineImage.getToolTipText());
         return model;
     }
@@ -573,9 +632,9 @@ public class MedicineForm extends javax.swing.JPanel {
         txtIgredient.setText(a);
         txtContent.setText(a);
         txtUserManual.setText(a);
-        txtCost.setText(a);
-        txtShared.setText(a);
-        txtPrice.setText(a);
+        txtPriceSale.setText(a);
+        txtRate.setText(a);
+        txtPriceImport.setText(a);
         cbbUnit.setSelectedIndex(index = 0);
     }
 
@@ -593,13 +652,11 @@ public class MedicineForm extends javax.swing.JPanel {
         txtProducer.setEditable(b);
         txtDrugBatch.setEditable(b);
         txtContent.setEditable(b);
-        txtCost.setEditable(b);
         txtDrugName.setEditable(b);
         txtIgredient.setEditable(b);
-        txtPrice.setEditable(b);
-        txtShared.setEditable(b);
+        txtPriceImport.setEditable(b);
+        txtRate.setEditable(b);
         txtUserManual.setEditable(b);
-
         btnUpdate.setEnabled(b);
         btnEdit.setEnabled(!b);
     }
@@ -610,11 +667,11 @@ public class MedicineForm extends javax.swing.JPanel {
         txtProducer.setEditable(!b);
         txtDrugBatch.setEditable(!b);
         txtContent.setEditable(b);
-        txtCost.setEditable(b);
+        txtPriceSale.setEditable(b);
         txtDrugName.setEditable(b);
         txtIgredient.setEditable(b);
-        txtPrice.setEditable(b);
-        txtShared.setEditable(b);
+        txtPriceImport.setEditable(b);
+        txtRate.setEditable(b);
         txtUserManual.setEditable(b);
 
         btnUpdate.setEnabled(b);
@@ -637,11 +694,11 @@ public class MedicineForm extends javax.swing.JPanel {
         txtProducer.setEditable(!b);
         txtDrugBatch.setEditable(!b);
         txtContent.setEditable(b);
-        txtCost.setEditable(b);
+        txtPriceSale.setEditable(b);
         txtDrugName.setEditable(b);
         txtIgredient.setEditable(b);
-        txtPrice.setEditable(b);
-        txtShared.setEditable(!b);
+        txtPriceImport.setEditable(b);
+        txtRate.setEditable(!b);
         txtUserManual.setEditable(b);
 
         btnUpdate.setEnabled(b);

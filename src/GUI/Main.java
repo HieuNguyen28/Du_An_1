@@ -48,7 +48,7 @@ public class Main extends javax.swing.JFrame {
                     showForm(new MedicineForm());
                 } else if (index == 4) {
                     showForm(new MedicineTypeForm());
-                } else if (index == 5) {
+                } else if (index == 5 && Image_Auth.USER.isEpeIsRole()) {
                     showForm(new StatisForm());
                 } else if (index == 6) {
                     showForm(new CustomerForm());
@@ -66,6 +66,8 @@ public class Main extends javax.swing.JFrame {
                     if (Mgsbox.comfirm(null, "Do you really want to exit ?")) {
                         System.exit(0);
                     }
+                }else{
+                    Mgsbox.alert(null, "Only manager can view this form...");
                 }
             }
         });
@@ -89,7 +91,7 @@ public class Main extends javax.swing.JFrame {
     private void initComponents() {
 
         panelBorder1 = new GUI.PanelBorder();
-        jLabel1 = new javax.swing.JLabel();
+        lblChangePassword = new javax.swing.JLabel();
         lblTime = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         lblInfor = new javax.swing.JLabel();
@@ -104,15 +106,15 @@ public class Main extends javax.swing.JFrame {
         panelBorder1.setPreferredSize(new java.awt.Dimension(909, 608));
         panelBorder1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel1.setText("Đổi mật khẩu");
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        lblChangePassword.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        lblChangePassword.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblChangePassword.setText("Đổi mật khẩu");
+        lblChangePassword.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
+                lblChangePasswordMouseClicked(evt);
             }
         });
-        panelBorder1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 570, 70, 20));
+        panelBorder1.add(lblChangePassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 570, 70, 20));
 
         lblTime.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         lblTime.setForeground(new java.awt.Color(0, 0, 153));
@@ -151,10 +153,10 @@ public class Main extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
-        this.setVisible(false);
+    private void lblChangePasswordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblChangePasswordMouseClicked
+        dispose();
         new ChangePasswordForm().setVisible(true);
-    }//GEN-LAST:event_jLabel1MouseClicked
+    }//GEN-LAST:event_lblChangePasswordMouseClicked
 
 //    public static void main(String args[]) {
 //        /* Set the Nimbus look and feel */
@@ -189,8 +191,8 @@ public class Main extends javax.swing.JFrame {
 //    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lblChangePassword;
     private javax.swing.JLabel lblInfor;
     private javax.swing.JLabel lblMainFrame;
     private javax.swing.JLabel lblTime;
