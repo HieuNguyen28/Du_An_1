@@ -324,12 +324,15 @@ public class ReceiptForm extends javax.swing.JPanel {
                     if (total < voucher.getVcTotalBillCanAdd()) {
                         Mgsbox.alert(null, "Total bill doesn't enough");
                         cbbVoucher.setSelectedIndex(0);
+                        TEXT_FROM_QRCODE_VOUCHER = null;
                     }else if (!checkVoucher()) {
                         Mgsbox.alert(null, "No discounted drugs in the bill");
                         cbbVoucher.setSelectedIndex(0);
+                        TEXT_FROM_QRCODE_VOUCHER = null;
                     }else if (i > 0) {
                         Mgsbox.alert(null, "The voucher has expired");
                         cbbVoucher.setSelectedIndex(0);
+                        TEXT_FROM_QRCODE_VOUCHER = null;
                     }
                 }
             }
