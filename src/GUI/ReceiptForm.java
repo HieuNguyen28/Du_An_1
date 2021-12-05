@@ -55,7 +55,7 @@ public class ReceiptForm extends javax.swing.JPanel {
         loadDataToVoucher();
         tblReceipt.addKeyListener(KA);
     }
-    public static String TEXT_FROM_QRCODE_VOUCHER= null;
+    public static String TEXT_FROM_QRCODE_VOUCHER = null;
     private Double bHeight = 0.0;
     private InvoiceDAO idao = new InvoiceDAO();
     private MedicineDAO mdao = new MedicineDAO();
@@ -313,8 +313,45 @@ public class ReceiptForm extends javax.swing.JPanel {
             }
         } catch (Exception e) {
         }
+
+        cbbVoucher.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED && cbbVoucher.getSelectedIndex() != 0) {
+                    double total = Double.valueOf(lblTotal.getText());
+                    Voucher voucher = new VoucherDAO().selectByID(cbbVoucher.getSelectedItem().toString());
+                    int i = DateSupport.now().compareTo(voucher.getVcEndDate());
+                    if (total < voucher.getVcTotalBillCanAdd()) {
+                        Mgsbox.alert(null, "Total bill doesn't enough");
+                        cbbVoucher.setSelectedIndex(0);
+                        TEXT_FROM_QRCODE_VOUCHER = null;
+                    }else if (!checkVoucher()) {
+                        Mgsbox.alert(null, "No discounted drugs in the bill");
+                        cbbVoucher.setSelectedIndex(0);
+                        TEXT_FROM_QRCODE_VOUCHER = null;
+                    }else if (i > 0) {
+                        Mgsbox.alert(null, "The voucher has expired");
+                        cbbVoucher.setSelectedIndex(0);
+                        TEXT_FROM_QRCODE_VOUCHER = null;
+                    }
+                }
+            }
+        });
     }
 
+    private boolean checkVoucher(){
+        Voucher voucher = new VoucherDAO().selectByID(cbbVoucher.getSelectedItem().toString());
+        for (int i = 0; i < tblReceipt.getRowCount(); i++) {
+            List<Medicine> list = new MedicineDAO().selectByMedicineName(tblReceipt.getValueAt(i, 0).toString());
+            for (Medicine medicine : list) {
+                if (medicine.getMdcID().equals(voucher.getVcMedicineID())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     private void clearForm() {
         lblName.setText("");
         lblPN.setText("");
@@ -720,7 +757,8 @@ lblTotal = new javax.swing.JLabel();
                 }
                 lblTotal.setText(String.valueOf(total));
             }
-        }    };
+        }
+    };
     private void tblReceiptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblReceiptMouseClicked
         // TODO add your handling code here:
         index = tblReceipt.getSelectedRow();
@@ -729,7 +767,7 @@ lblTotal = new javax.swing.JLabel();
             System.out.println(flag);
         }
     }//GEN-LAST:event_tblReceiptMouseClicked
-private void btnPayActionPerformed(java.awt.event.ActionEvent evt) {                                       
+    private void btnPayActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         if (check()) {
             String maHD = txtReceiptID.getText();
@@ -768,11 +806,11 @@ private void btnPayActionPerformed(java.awt.event.ActionEvent evt) {
         }
     }//GEN-
  private void txtCashKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCashKeyReleased
-        // TODO add your handling code here:
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER && Double.valueOf(txtCash.getText()) > Double.valueOf(lblTotal.getText())) {
-            double balance = Double.valueOf(txtCash.getText()) - Double.valueOf(lblTotal.getText());
-            lblBalance.setText(String.valueOf(balance));
-        }
+     // TODO add your handling code here:
+     if (evt.getKeyCode() == KeyEvent.VK_ENTER && Double.valueOf(txtCash.getText()) > Double.valueOf(lblTotal.getText())) {
+         double balance = Double.valueOf(txtCash.getText()) - Double.valueOf(lblTotal.getText());
+         lblBalance.setText(String.valueOf(balance));
+     }
     }//GEN-LAST:event_txtCashKeyReleased
 
     private void tblReceiptKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblReceiptKeyReleased
@@ -791,29 +829,29 @@ private void btnPayActionPerformed(java.awt.event.ActionEvent evt) {
     private void cbbVoucherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbVoucherActionPerformed
     }//GEN-LAST:event_cbbVoucherActionPerformed
 
-    private void lblQRVoucherMouseClicked(java.awt.event.MouseEvent evt) {                                          
+    private void lblQRVoucherMouseClicked(java.awt.event.MouseEvent evt) {
         new FrameCameraQRCodeVoucher().setVisible(true);
-            Thread setImage = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(EmployeeGUI.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        if (TEXT_FROM_QRCODE_VOUCHER != null) {
-                            System.out.println(TEXT_FROM_QRCODE_VOUCHER);
-                            cbbVoucher.setSelectedItem(TEXT_FROM_QRCODE_VOUCHER);
-                            // DO SOMETHING AT THERE
-                            break;
-                        }
+        Thread setImage = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(EmployeeGUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
-}
- });
-            setImage.start();
-    }               
- // Variables declaration - do not modify                     
+                    if (TEXT_FROM_QRCODE_VOUCHER != null) {
+                        System.out.println(TEXT_FROM_QRCODE_VOUCHER);
+                        cbbVoucher.setSelectedItem(TEXT_FROM_QRCODE_VOUCHER);
+                        // DO SOMETHING AT THERE
+                        break;
+                    }
+                }
+            }
+        });
+        setImage.start();
+    }
+    // Variables declaration - do not modify                     
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnPay;
     private javax.swing.JButton btnRemove;
@@ -847,4 +885,3 @@ private void btnPayActionPerformed(java.awt.event.ActionEvent evt) {
     private GUI.TextField txtReceiptID;
     private GUI.TextField txtRemainingAmount;
 }
-

@@ -53,13 +53,25 @@ public class ProducerForm extends javax.swing.JPanel {
 
         jLabel1.setText("Producer ID:");
 
+        txtID.setEditable(false);
+        txtID.setBackground(new java.awt.Color(255, 255, 255));
+
         jLabel2.setText("Company name:");
+
+        txtCompanyName.setEditable(false);
+        txtCompanyName.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel3.setText("Founding:");
 
         jLabel4.setText("Email:");
 
+        txtEmail.setEditable(false);
+        txtEmail.setBackground(new java.awt.Color(255, 255, 255));
+
         jLabel5.setText("Hotline:");
+
+        txtHotline.setEditable(false);
+        txtHotline.setBackground(new java.awt.Color(255, 255, 255));
 
         tblProducer.setBackground(new java.awt.Color(222, 221, 248));
         tblProducer.setModel(new javax.swing.table.DefaultTableModel(
