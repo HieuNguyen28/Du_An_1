@@ -162,6 +162,8 @@ public class ReceiptForm extends javax.swing.JPanel {
                     y += yShift;
                     g2d.drawString("Phone: 0123456789 Fax: 0373 917333", 12, y);
                     y += yShift;
+                    g2d.drawString("Date: " + DateSupport.now(), 12, y);
+                    y += yShift;
                     g2d.drawString("-------------------------------------", 12, y);
                     y += headerRectHeight;
                     g2d.drawString("          Phieu tinh tien", 10, y);
@@ -370,6 +372,15 @@ public class ReceiptForm extends javax.swing.JPanel {
         cbbVoucher.setSelectedIndex(0);
     }
 
+//    private boolean checkIteamADD(){
+//        if(cbbDrugName.getSelectedIndex()==0){
+//            Mgsbox.error(this, "You must selected DrugName");
+//        }else if(cbbCustomerPhoneNumber.getSelectedIndex()==0){
+//            Mgsbox.error(this, "You must selected DrugName");
+//        }
+//        return true;
+//        
+//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -716,10 +727,14 @@ lblTotal = new javax.swing.JLabel();
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
-        if (Double.valueOf(txtQuantity.getText()) > Double.valueOf(txtRemainingAmount.getText())) {
+        if (cbbDrugName.getSelectedIndex() == 0) {
+            Mgsbox.alert(this, "You must select DrugName!");
+        } else if (Double.valueOf(txtQuantity.getText()) > Double.valueOf(txtRemainingAmount.getText())) {
             Mgsbox.alert(this, "Hết thuốc");
         } else if (cbbBatchID.getSelectedIndex() == 0) {
             Mgsbox.alert(this, "You must select a batch ID of medicine!");
+        } else if (cbbCustomerPhoneNumber.getSelectedIndex() == 0) {
+            Mgsbox.alert(this, "You must select CustomerPhoneNumber!");
         } else {
             String batchID = (String) cbbBatchID.getSelectedItem();
             String drugName = cbbDrugName.getSelectedItem().toString();

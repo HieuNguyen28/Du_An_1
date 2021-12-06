@@ -716,7 +716,7 @@ public class WarehouseForm extends javax.swing.JPanel {
         if (new WareHouseDAO().isDuplicateWarehouseID(txtBatchID.getText())) {
             Mgsbox.error(this, "Batch ID is duplicated!");
         } else if (ValidateSupport.isNull(txtBatchID) || ValidateSupport.isNull(txtDistributor)
-                || ValidateSupport.isNull(txtQuantity) || ValidateSupport.isNull(txtMedicineID)
+                || ValidateSupport.isNull(txtQuantity)
                 || ValidateSupport.isNull(txtMedicineName)
                 || ValidateSupport.isNull(txtUnit) || ValidateSupport.isNull(txtMedicineID)
                 || ValidateSupport.isNull(txtPriceSale) || ValidateSupport.isNull(txtPrice)
@@ -729,7 +729,7 @@ public class WarehouseForm extends javax.swing.JPanel {
             Mgsbox.error(this, "Please fill in the correct format PriceSale!!!");
         } else if (!ValidateSupport.checkPrice(txtRate)) {
             Mgsbox.error(this, "Please fill in the correct format Rate!!!");
-        } else if (new MedicineDAO().selectByID(txtMedicineID.getText()) != null) {
+        } else if (new MedicineDAO().selectByID(txtMedicineID.getText()) != null && cboMedicineID.getSelectedIndex() == 1) {
             Mgsbox.error(this, "Medicine ID already exist");
         } else if (isCheckHSD(jdcManufactureDate, jdcExpirationDate) && ValidateSupport.isNumber(txtQuantity)) {
             try {
@@ -1107,6 +1107,7 @@ public class WarehouseForm extends javax.swing.JPanel {
     }
 
     private void setModelMedicine(Medicine ofMedicine) {
+        txtMedicineID.setText(ofMedicine.getMdcID());
         txpUsermanual.setText(ofMedicine.getMdcUserManual());
         txtRate.setText(String.format("%.2f",ofMedicine.getMdcRate()));
         txtPriceSale.setText(ofMedicine.getMdcPriceSale() + "");
