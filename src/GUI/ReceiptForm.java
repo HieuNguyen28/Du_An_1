@@ -83,6 +83,9 @@ public class ReceiptForm extends javax.swing.JPanel {
         } else if (tblReceipt.getRowCount() == 0) {
             Mgsbox.alert(this, "There is no drug in receipt");
             return false;
+        } else if (Double.parseDouble(txtCash.getText()) < Double.parseDouble(lblTotal.getText())) {
+            Mgsbox.error(this, "You not enough money to pay this bill!");
+            return false;
         }
         return true;
     }
@@ -327,11 +330,11 @@ public class ReceiptForm extends javax.swing.JPanel {
                         Mgsbox.alert(null, "Total bill doesn't enough");
                         cbbVoucher.setSelectedIndex(0);
                         TEXT_FROM_QRCODE_VOUCHER = null;
-                    }else if (!checkVoucher()) {
+                    } else if (!checkVoucher()) {
                         Mgsbox.alert(null, "No discounted drugs in the bill");
                         cbbVoucher.setSelectedIndex(0);
                         TEXT_FROM_QRCODE_VOUCHER = null;
-                    }else if (i > 0) {
+                    } else if (i > 0) {
                         Mgsbox.alert(null, "The voucher has expired");
                         cbbVoucher.setSelectedIndex(0);
                         TEXT_FROM_QRCODE_VOUCHER = null;
@@ -341,7 +344,7 @@ public class ReceiptForm extends javax.swing.JPanel {
         });
     }
 
-    private boolean checkVoucher(){
+    private boolean checkVoucher() {
         Voucher voucher = new VoucherDAO().selectByID(cbbVoucher.getSelectedItem().toString());
         for (int i = 0; i < tblReceipt.getRowCount(); i++) {
             List<Medicine> list = new MedicineDAO().selectByMedicineName(tblReceipt.getValueAt(i, 0).toString());
@@ -353,11 +356,11 @@ public class ReceiptForm extends javax.swing.JPanel {
         }
         return false;
     }
-    
+
     private void clearForm() {
         lblName.setText("");
         lblPN.setText("");
-        lblTotal.setText("");
+        lblTotal.setText("0");
         DefaultTableModel model = (DefaultTableModel) tblReceipt.getModel();
         for (int i = 0; i < tblReceipt.getRowCount(); i++) {
             model.removeRow(i);
@@ -713,19 +716,25 @@ lblTotal = new javax.swing.JLabel();
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
-        String batchID = (String) cbbBatchID.getSelectedItem();
-        String drugName = cbbDrugName.getSelectedItem().toString();
-        Medicine medicine = mdao.selectByA(drugName, batchID);
-        String price = String.valueOf(medicine.getMdcPriceSale());
-        String data[] = {cbbDrugName.getSelectedItem().toString(), txtQuantity.getText(), price, cbbBatchID.getSelectedItem().toString()};
-        DefaultTableModel dtm = (DefaultTableModel) tblReceipt.getModel();
-        dtm.addRow(data);
-        double total = medicine.getMdcPriceSale() * Double.valueOf(txtQuantity.getText()) + Double.valueOf(lblTotal.getText());
-        lblTotal.setText(String.valueOf(total));
-        txtQuantity.setText("");
-        txtExpirationDate.setText("");
-        txtRemainingAmount.setText("");
-        cbbDrugName.setSelectedIndex(0);
+        if (Double.valueOf(txtQuantity.getText()) > Double.valueOf(txtRemainingAmount.getText())) {
+            Mgsbox.alert(this, "Hết thuốc");
+        } else if (cbbBatchID.getSelectedIndex() == 0) {
+            Mgsbox.alert(this, "You must select a batch ID of medicine!");
+        } else {
+            String batchID = (String) cbbBatchID.getSelectedItem();
+            String drugName = cbbDrugName.getSelectedItem().toString();
+            Medicine medicine = mdao.selectByA(drugName, batchID);
+            String price = String.valueOf(medicine.getMdcPriceSale());
+            String data[] = {cbbDrugName.getSelectedItem().toString(), txtQuantity.getText(), price, cbbBatchID.getSelectedItem().toString()};
+            DefaultTableModel dtm = (DefaultTableModel) tblReceipt.getModel();
+            dtm.addRow(data);
+            double total = medicine.getMdcPriceSale() * Double.valueOf(txtQuantity.getText()) + Double.valueOf(lblTotal.getText());
+            lblTotal.setText(String.valueOf(total));
+            txtQuantity.setText("");
+            txtExpirationDate.setText("");
+            txtRemainingAmount.setText("");
+            cbbDrugName.setSelectedIndex(0);
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void cbbCustomerPhoneNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbCustomerPhoneNumberActionPerformed
@@ -805,6 +814,10 @@ lblTotal = new javax.swing.JLabel();
                 }
             }
             new PaymentSuccess().setVisible(true);
+            clearForm();
+            txtCash.setText("0");
+            lblBalance.setText("0");
+
         }
     }//GEN-
  private void txtCashKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCashKeyReleased

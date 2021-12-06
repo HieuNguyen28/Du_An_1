@@ -436,7 +436,6 @@ public class MedicineForm extends javax.swing.JPanel {
     }//GEN-LAST:event_txtRateKeyReleased
 
     private void txtPriceImportKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPriceImportKeyReleased
-        // TODO add your handling code here:
         countPriceSale(Double.parseDouble(txtRate.getText().isEmpty() ? "0" : txtRate.getText())
                 , Double.parseDouble(txtPriceImport.getText().isEmpty() ? "0" : txtPriceImport.getText()));
     }//GEN-LAST:event_txtPriceImportKeyReleased
@@ -586,7 +585,7 @@ public class MedicineForm extends javax.swing.JPanel {
                     lblMedicineImage.getHeight()));
             lblMedicineImage.setToolTipText(model.getMdcImage());
         }
-        txtRate.setText(String.format("%.2f",model.getMdcRate()));
+        txtRate.setText(String.format("%.2f",model.getMdcRate()).replace(",", "."));
         txtPriceImport.setText(String.valueOf(model.getMdcPriceImport()));
     }
 
@@ -667,7 +666,7 @@ public class MedicineForm extends javax.swing.JPanel {
         txtProducer.setEditable(!b);
         txtDrugBatch.setEditable(!b);
         txtContent.setEditable(b);
-        txtPriceSale.setEditable(b);
+        txtPriceSale.setEditable(!b);
         txtDrugName.setEditable(b);
         txtIgredient.setEditable(b);
         txtPriceImport.setEditable(b);
@@ -694,7 +693,7 @@ public class MedicineForm extends javax.swing.JPanel {
         txtProducer.setEditable(!b);
         txtDrugBatch.setEditable(!b);
         txtContent.setEditable(b);
-        txtPriceSale.setEditable(b);
+        txtPriceSale.setEditable(!b);
         txtDrugName.setEditable(b);
         txtIgredient.setEditable(b);
         txtPriceImport.setEditable(b);

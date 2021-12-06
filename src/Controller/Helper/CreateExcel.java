@@ -39,7 +39,7 @@ public class CreateExcel {
             FileNameExtensionFilter excelExtensionFilter = new FileNameExtensionFilter("Excel file", "xls", "xlsx", "xlsm");
             excelfileChooser.setFileFilter(excelExtensionFilter);
             excelfileChooser.setMultiSelectionEnabled(false);
-            
+
             if (excelfileChooser.showDialog(null, "Create File") == excelfileChooser.APPROVE_OPTION) {
                 excelFile = new XSSFWorkbook();
                 XSSFSheet excelSheet = excelFile.createSheet(titleSheet);
@@ -58,8 +58,7 @@ public class CreateExcel {
                 for (int rows = 0; rows < table.getRowCount(); rows++) {
                     XSSFRow rowsTable = excelSheet.createRow(rows + 1);
                     for (int cols = 0; cols < table.getColumnCount(); cols++) {
-                        rowsTable.createCell(cols).setCellValue(table.getModel().getValueAt(rows, cols).toString());
-
+                        rowsTable.createCell(cols).setCellValue(table.getModel().getValueAt(rows, cols) + "");
                     }
                 }
                 Row row = excelSheet.getRow(excelSheet.getFirstRowNum());

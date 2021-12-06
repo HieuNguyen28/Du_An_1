@@ -506,9 +506,11 @@ public class MedicineTypeForm extends javax.swing.JPanel {
     }
 
     private void setModel(TypeOfMedicine model) {
-        txtDrugTypeID.setText(model.getTomID());
-        txtDrugNameID.setText(model.getTomName());
-        txtUserObject.setText(model.getTomUserObject());
+        txtDrugTypeID.setText(model.getTomID().trim());
+        txtDrugNameID.setText(model.getTomName().trim());
+        txtUserObject.setText(model.getTomUserObject().trim());
+        System.out.println(model.getTomUserObject().length());
+        System.out.println(txtUserObject.getText().length());
         rdoYes.setSelected(model.isTomIsPrecription());
         rdoNo.setSelected(!model.isTomIsPrecription());
         txtNote.setText(model.getTomNote());
@@ -519,7 +521,7 @@ public class MedicineTypeForm extends javax.swing.JPanel {
         model.setTomID(txtDrugTypeID.getText());
         model.setTomName(txtDrugNameID.getText());
         model.setTomIsPrecription(rdoYes.isSelected());
-        model.setTomUserObject(txtUserObject.getText());
+        model.setTomUserObject(txtUserObject.getText().trim());
         model.setTomNote(txtNote.getText());
         return model;
     }

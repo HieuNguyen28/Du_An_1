@@ -175,7 +175,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
         model.setEpeDayOfBirth(DateSupport.toDate(new SimpleDateFormat("yyyy-MM-dd").format(dcDate.getDate())));
         model.setEpeAddress(txtAddress.getText());
         model.setEpeNumberPhone(txtPhoneNumber.getText());
-        model.setEpeEmail(txtEmail.getText());
+        model.setEpeEmail(txtEmail.getText().trim());
         model.setEpeImage(lblImage.getToolTipText());
         model.setEpeIsRole(rdoManager.isSelected());
         model.setEpeUserName(txtUsername.getText());
@@ -325,7 +325,6 @@ public class EmployeeGUI extends javax.swing.JPanel {
         btnOpenfile.setEnabled(flag);
         btnOpenCamera.setEnabled(flag);
     }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -819,6 +818,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
     private void tblEmployeeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblEmployeeMouseClicked
         // TODO add your handling code here:
         findAndLoadRowToControl(tblEmployee.getValueAt(tblEmployee.getSelectedRow(), 0).toString());
+        setStatusControl(false);
         if (Image_Auth.USER.isEpeIsRole()) {
             btnDelete.setVisible(true);
         }
