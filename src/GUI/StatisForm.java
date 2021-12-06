@@ -232,7 +232,7 @@ public class StatisForm extends javax.swing.JPanel {
     private CustomizeGUI.BlankChart.ChartBar.Progress progress3;
     // End of variables declaration//GEN-END:variables
 
-    final String sql = "select top 6 FORMAT(ThoiGianMua, 'MM') as m, SUM(TienTruocVoucher) as income, SUM(TienVoucher)"
+    final String sql = "select top 8 FORMAT(ThoiGianMua, 'MM') as m, SUM(TienTruocVoucher) as income, SUM(TienVoucher)"
                 + " as expense, SUM(TienSauVoucher) as profit from HoaDon group by FORMAT(ThoiGianMua, 'MM')order by"
                 + " FORMAT(ThoiGianMua, 'MM') asc";
     private List<ModelChart> loadData() throws SQLServerException {
@@ -253,8 +253,20 @@ public class StatisForm extends javax.swing.JPanel {
                         month = "April";
                     }else if (rs.getString(1).equals("05")) {
                         month = "May";
-                    }else{
+                    }else if(rs.getString(1).equals("06")){
                         month = "June";
+                    }else if(rs.getString(1).equals("07")){
+                        month = "July";
+                    }else if(rs.getString(1).equals("08")){
+                        month = "August";
+                    }else if(rs.getString(1).equals("09")){
+                        month = "September";
+                    }else if(rs.getString(1).equals("10")){
+                        month = "October";
+                    }else if(rs.getString(1).equals("11")){
+                        month = "November";
+                    }else if(rs.getString(1).equals("12")){
+                        month = "December";
                     }
                     double income = rs.getDouble(2);
                     double expense = rs.getDouble(3);
