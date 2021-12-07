@@ -56,6 +56,7 @@ public class ReceiptForm extends javax.swing.JPanel {
         loadDataToCustomer();
         loadDataToVoucher();
         tblReceipt.addKeyListener(KA);
+        btnStatus(true);
     }
     public static String TEXT_FROM_QRCODE_VOUCHER = null;
     private Double bHeight = 0.0;
@@ -242,6 +243,7 @@ public class ReceiptForm extends javax.swing.JPanel {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     String drugName = cbbDrugName.getSelectedItem().toString();
                     loadDataToBatchID(drugName);
+                    btnRemove.setEnabled(false);
                 }
             }
         });
@@ -370,6 +372,18 @@ public class ReceiptForm extends javax.swing.JPanel {
         txtReceiptID.setText("HD");
         cbbCustomerPhoneNumber.setSelectedIndex(0);
         cbbVoucher.setSelectedIndex(0);
+    }
+
+    private void btnStatus(boolean b) {
+        btnAdd.setEnabled(b);
+        btnRemove.setEnabled(!b);
+        btnPay.setEnabled(!b);
+    }
+
+    private void btnAddStatus(boolean b) {
+        btnAdd.setEnabled(b);
+        btnRemove.setEnabled(!b);
+        btnPay.setEnabled(b);
     }
 
 //    private boolean checkIteamADD(){
@@ -749,7 +763,9 @@ lblTotal = new javax.swing.JLabel();
             txtExpirationDate.setText("");
             txtRemainingAmount.setText("");
             cbbDrugName.setSelectedIndex(0);
+            btnAddStatus(false);
         }
+        btnStatus(true);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void cbbCustomerPhoneNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbCustomerPhoneNumberActionPerformed
@@ -768,6 +784,8 @@ lblTotal = new javax.swing.JLabel();
         lblTotal.setText(String.valueOf(total));
         DefaultTableModel dtm = (DefaultTableModel) tblReceipt.getModel();
         dtm.removeRow(index);
+        txtCash.setText("");
+        btnStatus(true);
     }//GEN-LAST:event_btnRemoveActionPerformed
 
     int index = 0;
@@ -788,10 +806,13 @@ lblTotal = new javax.swing.JLabel();
     private void tblReceiptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblReceiptMouseClicked
         // TODO add your handling code here:
         index = tblReceipt.getSelectedRow();
-        if (evt.getClickCount() == 2) {
+        if (evt.getClickCount() == 1) {
             flag = 1;
             System.out.println(flag);
-        }
+            btnAdd.setEnabled(true);
+            btnRemove.setEnabled(true);
+            btnPay.setEnabled(false);
+        }  
     }//GEN-LAST:event_tblReceiptMouseClicked
     private void btnPayActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
@@ -832,7 +853,7 @@ lblTotal = new javax.swing.JLabel();
             clearForm();
             txtCash.setText("0");
             lblBalance.setText("0");
-
+            btnStatus(true);
         }
     }//GEN-
  private void txtCashKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCashKeyReleased
@@ -840,6 +861,7 @@ lblTotal = new javax.swing.JLabel();
      if (evt.getKeyCode() == KeyEvent.VK_ENTER && Double.valueOf(txtCash.getText()) > Double.valueOf(lblTotal.getText())) {
          double balance = Double.valueOf(txtCash.getText()) - Double.valueOf(lblTotal.getText());
          lblBalance.setText(String.valueOf(balance));
+         btnPay.setEnabled(true);
      }
     }//GEN-LAST:event_txtCashKeyReleased
 
