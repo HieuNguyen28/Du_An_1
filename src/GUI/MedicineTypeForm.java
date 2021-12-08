@@ -9,6 +9,7 @@ import Controller.Helper.CreateExcel;
 import Controller.Helper.Image_Auth;
 import Controller.Helper.Mgsbox;
 import Controller.Helper.ValidateSupport;
+import Controller.ModelDAO.IdDAO;
 import Controller.ModelDAO.TypeOfMedicineDAO;
 import Model.TypeOfMedicine;
 import java.awt.Color;
@@ -199,8 +200,12 @@ public class MedicineTypeForm extends javax.swing.JPanel {
             }
         });
 
+        txtDrugTypeID.setEditable(false);
+        txtDrugTypeID.setBackground(new java.awt.Color(255, 255, 255));
         txtDrugTypeID.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
+        txtDrugNameID.setEditable(false);
+        txtDrugNameID.setBackground(new java.awt.Color(255, 255, 255));
         txtDrugNameID.setText(" ");
         txtDrugNameID.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
@@ -271,7 +276,7 @@ public class MedicineTypeForm extends javax.swing.JPanel {
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                         .addComponent(jLabel6)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE))
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel3)
@@ -365,6 +370,7 @@ public class MedicineTypeForm extends javax.swing.JPanel {
         // TODO add your handling code here:
         clearForm();
         BtnNew(true);
+        createID();
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
@@ -653,5 +659,14 @@ public class MedicineTypeForm extends javax.swing.JPanel {
         return false;
 
     }
-
+    
+    IdDAO iddao = new IdDAO();
+    private void createID(){
+        List<Object> data = iddao.medicineTypeID();
+        List<Object> data1 = iddao.medicineID();
+        int id = Integer.valueOf(data.get(0).toString()) + 1;
+        int id1 = Integer.valueOf(data1.get(0).toString()) + 1;
+        txtDrugTypeID.setText("MDO"+id);
+        txtDrugNameID.setText("MED"+id1);
+    }
 }

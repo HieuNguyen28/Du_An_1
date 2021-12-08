@@ -3,6 +3,7 @@ package GUI;
 import Controller.Helper.CreateExcel;
 import static Controller.Helper.DateSupport.toDate;
 import Controller.Helper.Mgsbox;
+import Controller.ModelDAO.IdDAO;
 import Controller.ModelDAO.ProducerDAO;
 import Model.Producer;
 import java.awt.Color;
@@ -286,6 +287,7 @@ public class ProducerForm extends javax.swing.JPanel {
         defaultText(true);
         defaultButton(false);
         btnAdd.setEnabled(true);
+        createID();
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
@@ -520,5 +522,12 @@ public class ProducerForm extends javax.swing.JPanel {
         txtID.setEditable(a);
         txtEmail.setEditable(a);
         txtHotline.setEditable(a);
+    }
+    
+    IdDAO iddao = new IdDAO();
+    private void createID(){
+        List<Object> data = iddao.producerID();
+        int id = Integer.valueOf(data.get(0).toString()) + 1;
+        txtID.setText("NS"+id);
     }
 }

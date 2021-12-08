@@ -7,6 +7,7 @@ import Controller.ModelDAO.MedicineDAO;
 import Controller.ModelDAO.VoucherDAO;
 import Controller.Helper.Mgsbox;
 import Controller.Helper.ValidateSupport;
+import Controller.ModelDAO.IdDAO;
 import Model.Voucher;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.WriterException;
@@ -16,6 +17,7 @@ import java.awt.Font;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
@@ -202,6 +204,13 @@ public class VoucherForm extends javax.swing.JPanel {
         } else {
             return false;
         }
+    }
+    
+    IdDAO iddao = new IdDAO();
+    private void createID(){
+        List<Object> data = iddao.voucherID();
+        int id = Integer.valueOf(data.get(0).toString()) + 1;
+        txtVoucherID.setText("SPK"+id);
     }
 
     /**
@@ -513,6 +522,7 @@ jLabel4 = new javax.swing.JLabel();
         txtVoucherID.setEditable(true);
         btnNew.setVisible(false);
         btnAdd.setVisible(true);
+        createID();
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
