@@ -40,6 +40,7 @@ public class MedicineTypeForm extends javax.swing.JPanel {
         LoadDataToTable(new TypeOfMedicineDAO().selectAll());
         EditTable(tblMeType);
         txtDrugNameID.setBackground(white);
+        loadDataToSort();
     }
 
     /**
@@ -222,7 +223,7 @@ public class MedicineTypeForm extends javax.swing.JPanel {
             }
         });
 
-        cboTOM.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None Sort", " " }));
+        cboTOM.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None Sort", "Sort Name", "Sort UserObject", " " }));
 
         txtSearch.setText(" ");
         txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -510,7 +511,8 @@ public class MedicineTypeForm extends javax.swing.JPanel {
                 -> o1.getTomUserObject().compareTo(o2.getTomUserObject()));
         return listSort;
     }
-
+    
+    
     private void setModel(TypeOfMedicine model) {
         txtDrugTypeID.setText(model.getTomID().trim());
         txtDrugNameID.setText(model.getTomName().trim());
