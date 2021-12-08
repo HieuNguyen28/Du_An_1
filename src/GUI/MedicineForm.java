@@ -15,7 +15,10 @@ import Model.Medicine;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
@@ -498,8 +501,8 @@ public class MedicineForm extends javax.swing.JPanel {
         DefaultComboBoxModel boxModel = (DefaultComboBoxModel) cbbUnit.getModel();
         boxModel.removeAllElements();
         try {
-            new MedicineDAO().selectAll().forEach(mdc -> {
-                boxModel.addElement(mdc.getMdcUnit());
+            new MedicineDAO().selectUnit().forEach(mdc -> {
+                boxModel.addElement(mdc);
             });
         } catch (Exception e) {
             e.printStackTrace();

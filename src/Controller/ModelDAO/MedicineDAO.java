@@ -9,8 +9,13 @@ import Model.Customer;
 import Model.Medicine;
 import Model.TypeOfMedicine;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,7 +23,7 @@ import java.util.List;
  */
 public class MedicineDAO extends ModelDataAccessObject<Medicine, String> {
 
-        private final String INSERT_SQL = "INSERT INTO Thuoc(MaThuoc,MaLoaiThuoc,MaLoThuoc,MaNhaSanXuat,TenThuoc,ThanhPhan,HamLuong,DonViTinh,HuongDanSuDung,GiaNiemYet,HinhAnh,LaiSuat,GiaGoc)"
+    private final String INSERT_SQL = "INSERT INTO Thuoc(MaThuoc,MaLoaiThuoc,MaLoThuoc,MaNhaSanXuat,TenThuoc,ThanhPhan,HamLuong,DonViTinh,HuongDanSuDung,GiaNiemYet,HinhAnh,LaiSuat,GiaGoc)"
             + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
     private final String UPDATE_SQL = "UPDATE Thuoc SET TenThuoc=?,ThanhPhan=?,HamLuong=?,DonViTinh=?,HuongDanSuDung=?,GiaNiemYet=?,HinhAnh=?,LaiSuat=?,GiaGoc=? WHERE MaThuoc=?";
     private final String DELETE_SQL = "DELETE FROM Thuoc WHERE MaThuoc=?";
@@ -27,8 +32,8 @@ public class MedicineDAO extends ModelDataAccessObject<Medicine, String> {
     private final String SELECT_BY_TYPE_OF_MEDICINE_SQL = "SELECT * FROM Thuoc WHERE MaLoaiThuoc=?";
     private final String SELECT_BY_BATCH_ID = "SELECT * FROM Thuoc WHERE MaLoThuoc=?";
     private final String SELECT_BY_Name_Of_TOM = "SELECT * FROM LoaiThuoc WHERE TenLoaiThuoc=?";
-    
-    
+    private final String SELECT_UNIT = "SELECT DonViTinh FROM Thuoc";
+
     @Override
     public void insert(Medicine entity) {
         try {
@@ -144,14 +149,29 @@ public class MedicineDAO extends ModelDataAccessObject<Medicine, String> {
         List<Medicine> list = this.selectBySQL(SELECT_BY_TYPE_OF_MEDICINE_SQL, ID);
         return list.isEmpty() ? null : list;
     }
+
     public List<Medicine> selectByNameTOM(String Name) {
         List<Medicine> list = this.selectBySQL(SELECT_BY_Name_Of_TOM, Name);
         return list.isEmpty() ? null : list;
     }
-    
+
+    public List<String> selectUnit() {
+        List<String> list = new ArrayList<>();
+        ResultSet rs = Database.executeQuery(SELECT_UNIT);
+        try {
+            while (rs.next()) {
+                list.add(rs.getString("DonViTinh"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicineDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Set<String> set = new HashSet<String>(list);
+        List<String> listWithoutDuplicate = new ArrayList<String>(set);
+        return listWithoutDuplicate;
+    }
+
     public boolean checkMedicineID(String ID) {
         return selectByID(ID) != null;
     }
-    
-     
+
 }
