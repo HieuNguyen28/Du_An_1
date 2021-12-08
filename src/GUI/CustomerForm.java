@@ -16,6 +16,7 @@ import static java.awt.Color.white;
 import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -82,6 +83,7 @@ public class CustomerForm extends javax.swing.JPanel {
 
         jLabel4.setText("Phone number:");
 
+        tblCustomer.setBackground(new java.awt.Color(222, 221, 248));
         tblCustomer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         tblCustomer.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -192,12 +194,15 @@ public class CustomerForm extends javax.swing.JPanel {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtSearchKeyPressed(evt);
             }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchKeyReleased(evt);
+            }
         });
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/search_24px.png"))); // NOI18N
         jLabel6.setText(" ");
 
-        cboSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None sort", "Sort by name", "Sort by total", " " }));
+        cboSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None sort", "Sort by FirstName", "Sort by LastName", "Sort by total", " " }));
         cboSort.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboSortActionPerformed(evt);
@@ -311,7 +316,7 @@ public class CustomerForm extends javax.swing.JPanel {
         // TODO add your handling code here:
         update();
         editBtn(false);
-        
+
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -383,6 +388,10 @@ public class CustomerForm extends javax.swing.JPanel {
         CreateExcel.ExportToExcel(tblCustomer, "Customer");
     }//GEN-LAST:event_btnCreateExcelActionPerformed
 
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
@@ -431,8 +440,10 @@ public class CustomerForm extends javax.swing.JPanel {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() == 1) {
-                    loadDataToTable(SortByName());
-                } else if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() > 1) {
+                    loadDataToTable(SortByFirstName());
+                } else if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() == 2) {
+                    loadDataToTable(sortByLastName());
+                } else if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() > 2) {
                     loadDataToTable(SortByTotal());
                 } else if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() < 1) {
                     loadDataToTable(new CustomerDAO().selectAll());
@@ -441,7 +452,7 @@ public class CustomerForm extends javax.swing.JPanel {
         });
     }
 
-    public List<Customer> SortByName() {
+    public List<Customer> SortByFirstName() {
         List<Customer> listSort = new CustomerDAO().selectAll();
         Collections.sort(listSort, (Customer o1, Customer o2)
                 -> o1.getCtmName().compareTo(o2.getCtmName()));
@@ -449,6 +460,24 @@ public class CustomerForm extends javax.swing.JPanel {
         return listSort;
     }
 
+    public List<Customer> sortByLastName() {
+        List<Customer> listSort = new CustomerDAO().selectAll();
+        Collections.sort(listSort, new Comparator<Customer>() {
+            @Override
+            public int compare(Customer o1, Customer o2) {
+                List<String> nhanVien1 = Arrays.asList(o1.getCtmName().split(" "));
+                Collections.reverse(nhanVien1);
+                List<String> nhanVien2 = Arrays.asList(o2.getCtmName().split(" "));
+                Collections.reverse(nhanVien2);
+                return nhanVien1.get(0).substring(0, 1).compareTo(nhanVien2.get(0).substring(0, 1));
+            }
+        });
+        return listSort;
+    }
+
+    ;
+
+    
     public List<Customer> SortByTotal() {
         List<Customer> listSort = new CustomerDAO().selectAll();
         Collections.sort(listSort, new Comparator<Customer>() {

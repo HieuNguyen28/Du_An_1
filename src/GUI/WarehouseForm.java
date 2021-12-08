@@ -261,8 +261,8 @@ public class WarehouseForm extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(tblWarehouse);
 
-        btnImport.setBackground(new java.awt.Color(0, 153, 255));
-        btnImport.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnImport.setBackground(new java.awt.Color(92, 84, 179));
+        btnImport.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnImport.setForeground(new java.awt.Color(255, 255, 255));
         btnImport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/import.png"))); // NOI18N
         btnImport.setText("Import");
@@ -283,8 +283,8 @@ public class WarehouseForm extends javax.swing.JPanel {
 
         lblMedicineIngre.setText("Medicine's Ingredient:");
 
-        btnRefesh.setBackground(new java.awt.Color(0, 153, 255));
-        btnRefesh.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnRefesh.setBackground(new java.awt.Color(92, 84, 179));
+        btnRefesh.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnRefesh.setForeground(new java.awt.Color(255, 255, 255));
         btnRefesh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/import.png"))); // NOI18N
         btnRefesh.setText("Refesh");
