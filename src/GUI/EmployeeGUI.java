@@ -10,6 +10,7 @@ import Controller.Helper.Mgsbox;
 import Controller.Helper.QRCodeSupport;
 import Controller.Helper.ValidateSupport;
 import Controller.ModelDAO.EmployeeDAO;
+import Controller.ModelDAO.IdDAO;
 import static GUI.ChangePasswordForm.REGEX_PASSWORD;
 import Model.Employee;
 import com.google.zxing.WriterException;
@@ -42,6 +43,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
     File lastPast;
     String fileImg = "";
     public static BufferedImage IMAGE_WEBCAM = null;
+    IdDAO iddao = new IdDAO();
 
     public EmployeeGUI() {
         initComponents();
@@ -53,6 +55,12 @@ public class EmployeeGUI extends javax.swing.JPanel {
         initRole();
     }
 
+    private void createID(){
+        List<Object> data = iddao.employeeID();
+        int id = Integer.valueOf(data.get(0).toString()) + 1;
+        txtID.setText("NV"+id);
+    }
+    
     private void initRole() {
         if (Image_Auth.USER.isEpeIsRole()) {
             btnUpdate.setVisible(false);
@@ -532,6 +540,8 @@ public class EmployeeGUI extends javax.swing.JPanel {
             }
         });
 
+        txtID.setEditable(false);
+        txtID.setBackground(new java.awt.Color(255, 255, 255));
         txtID.setForeground(new java.awt.Color(204, 0, 0));
         txtID.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
@@ -881,6 +891,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
         setStatusControl(true);
         btnNew.setVisible(false);
         btnAdd.setVisible(true);
+        createID();
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed

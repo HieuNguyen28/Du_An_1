@@ -6,6 +6,7 @@ import Controller.Helper.DateSupport;
 import Controller.Helper.Image_Auth;
 import Controller.Helper.Mgsbox;
 import Controller.ModelDAO.CustomerDAO;
+import Controller.ModelDAO.IdDAO;
 import Controller.ModelDAO.InvoiceDAO;
 import Controller.ModelDAO.MedicineDAO;
 import Controller.ModelDAO.VoucherDAO;
@@ -56,6 +57,7 @@ public class ReceiptForm extends javax.swing.JPanel {
         loadDataToCustomer();
         loadDataToVoucher();
         tblReceipt.addKeyListener(KA);
+        createID();
     }
     public static String TEXT_FROM_QRCODE_VOUCHER = null;
     private Double bHeight = 0.0;
@@ -64,8 +66,15 @@ public class ReceiptForm extends javax.swing.JPanel {
     private CustomerDAO cdao = new CustomerDAO();
     private WareHouseDAO wdao = new WareHouseDAO();
     private WareHouse wareHouse = null;
+    private IdDAO iddao = new IdDAO();
     private String maKH = "";
 
+    private void createID(){
+        List<Object> data = iddao.receiptID();
+        int id = Integer.valueOf(data.get(0).toString()) + 1;
+        txtReceiptID.setText("HD"+id);
+    }
+    
     private boolean check() {
         Invoice invoice = idao.selectByID(txtReceiptID.getText());
         if (txtReceiptID.getText().equals("") || txtReceiptID.getText().equalsIgnoreCase("HD")) {
