@@ -39,7 +39,7 @@ public class Main extends javax.swing.JFrame {
             @Override
             public void menuIndexChange(int index) {
                 if (index == 0) {
-                    showForm(new ReceiptForm());
+                    showForm(new ReceiptForm1());
                 } else if (index == 1) {
                     showForm(new EmployeeGUI());
                 } else if (index == 2) {

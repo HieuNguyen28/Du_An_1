@@ -10,6 +10,7 @@ import static Controller.Helper.DateSupport.now;
 import Controller.Helper.Mgsbox;
 import Controller.Helper.ValidateSupport;
 import Controller.ModelDAO.CustomerDAO;
+import Controller.ModelDAO.IdDAO;
 import Model.Customer;
 import java.awt.Color;
 import static java.awt.Color.white;
@@ -171,6 +172,8 @@ public class CustomerForm extends javax.swing.JPanel {
             }
         });
 
+        txtID.setEditable(false);
+        txtID.setBackground(new java.awt.Color(255, 255, 255));
         txtID.setText(" ");
         txtID.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
@@ -305,6 +308,7 @@ public class CustomerForm extends javax.swing.JPanel {
         // TODO add your handling code here:
         clearForm();
         BtnNew(true);
+        createID();
     }//GEN-LAST:event_btnNewActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
@@ -368,6 +372,13 @@ public class CustomerForm extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnChangeMouseClicked
 
+    IdDAO iddao = new IdDAO();
+    private void createID(){
+        List<Object> data = iddao.customerID();
+        int id = Integer.valueOf(data.get(0).toString()) + 1;
+        txtID.setText("KH"+id);
+    }
+    
     private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
         // TODO add your handling code here:
         search(txtSearch.getText());

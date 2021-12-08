@@ -7,11 +7,21 @@ package GUI;
 
 import CustomizeGUI.BlankChart.ChartBar.ModelChart;
 import static Controller.Helper.Database.executeQuery;
+import Controller.Helper.Mgsbox;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.data.general.DefaultPieDataset;
 
 /**
  *
@@ -26,6 +36,7 @@ public class StatisForm extends javax.swing.JPanel {
         initComponents();
         setOpaque(false);
         init();
+        showPieChart();
     }
 
     private void init() {
@@ -53,9 +64,6 @@ public class StatisForm extends javax.swing.JPanel {
             System.out.println(e);
         }
         lineChart.start();
-        progress1.start();
-        progress2.start();
-        progress3.start();
     }
 
     /**
@@ -68,93 +76,193 @@ public class StatisForm extends javax.swing.JPanel {
     private void initComponents() {
 
         panelBorder1 = new CustomizeGUI.Componets.PanelBorder();
-        jPanel1 = new javax.swing.JPanel();
-        progress1 = new CustomizeGUI.BlankChart.ChartBar.Progress();
-        progress2 = new CustomizeGUI.BlankChart.ChartBar.Progress();
-        progress3 = new CustomizeGUI.BlankChart.ChartBar.Progress();
+        pnl = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        tab1 = new javax.swing.JPanel();
+        pnlBarChart = new javax.swing.JPanel();
+        tab2 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        dcStart = new com.toedter.calendar.JDateChooser();
+        dcEnd = new com.toedter.calendar.JDateChooser();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        lblTotal = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        lblIncome = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        lblAvg = new javax.swing.JLabel();
+        btnView = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         lineChart = new CustomizeGUI.BlankChart.ChartBar.LineChart();
         jPanel3 = new javax.swing.JPanel();
         chart = new CustomizeGUI.BlankChart.ChartBar.Chart();
 
-        jPanel1.setBackground(new java.awt.Color(51, 51, 51));
+        panelBorder1.setBackground(new java.awt.Color(255, 255, 255));
 
-        progress1.setBackground(new java.awt.Color(66, 193, 246));
-        progress1.setForeground(new java.awt.Color(26, 132, 181));
-        progress1.setValue(85);
+        pnl.setBackground(new java.awt.Color(255, 255, 255));
 
-        progress2.setBackground(new java.awt.Color(132, 66, 246));
-        progress2.setForeground(new java.awt.Color(64, 18, 153));
-        progress2.setToolTipText("");
-        progress2.setValue(70);
+        pnlBarChart.setBackground(new java.awt.Color(255, 255, 255));
+        pnlBarChart.setLayout(new java.awt.BorderLayout());
 
-        progress3.setBackground(new java.awt.Color(66, 246, 84));
-        progress3.setForeground(new java.awt.Color(19, 153, 32));
-        progress3.setValue(60);
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(220, 220, 220));
-        jLabel1.setText("Report monthly");
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(220, 220, 220));
-        jLabel2.setText("Total income sold ");
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(220, 220, 220));
-        jLabel3.setText("Total expense");
-
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(220, 220, 220));
-        jLabel4.setText("Total income profit");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(progress3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(progress2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(30, 30, 30)
-                                .addComponent(progress1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(11, 11, 11))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel3)
-                                .addGap(21, 21, 21))))))
+        javax.swing.GroupLayout tab1Layout = new javax.swing.GroupLayout(tab1);
+        tab1.setLayout(tab1Layout);
+        tab1Layout.setHorizontalGroup(
+            tab1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlBarChart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        tab1Layout.setVerticalGroup(
+            tab1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlBarChart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Top 3 customer", tab1);
+
+        tab2.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel5.setBackground(new java.awt.Color(51, 51, 51));
+
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Start:");
+
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("End:");
+
+        dcStart.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dcStartMouseClicked(evt);
+            }
+        });
+        dcStart.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                dcStartKeyReleased(evt);
+            }
+        });
+
+        dcEnd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dcEndMouseClicked(evt);
+            }
+        });
+
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Total receipt:");
+
+        lblTotal.setBackground(new java.awt.Color(255, 255, 255));
+        lblTotal.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblTotal.setForeground(new java.awt.Color(255, 255, 255));
+        lblTotal.setText("0");
+
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Total income:");
+
+        lblIncome.setBackground(new java.awt.Color(255, 255, 255));
+        lblIncome.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblIncome.setForeground(new java.awt.Color(255, 255, 255));
+        lblIncome.setText("0");
+
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setText("Average:");
+
+        lblAvg.setBackground(new java.awt.Color(255, 255, 255));
+        lblAvg.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblAvg.setForeground(new java.awt.Color(255, 255, 255));
+        lblAvg.setText("0");
+
+        btnView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/view.png"))); // NOI18N
+        btnView.setText("View");
+        btnView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnViewActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(progress1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(progress2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(progress3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblIncome, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblAvg, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(dcStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(dcEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(57, 57, 57)
+                        .addComponent(btnView)))
+                .addContainerGap(57, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1)
+                            .addComponent(dcStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2)
+                            .addComponent(dcEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(btnView)))
+                .addGap(28, 28, 28)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel5)
+                    .addComponent(lblIncome, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel7)
+                    .addComponent(lblAvg, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(52, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout tab2Layout = new javax.swing.GroupLayout(tab2);
+        tab2.setLayout(tab2Layout);
+        tab2Layout.setHorizontalGroup(
+            tab2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        tab2Layout.setVerticalGroup(
+            tab2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Statis receipt", tab2);
+
+        javax.swing.GroupLayout pnlLayout = new javax.swing.GroupLayout(pnl);
+        pnl.setLayout(pnlLayout);
+        pnlLayout.setHorizontalGroup(
+            pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        pnlLayout.setVerticalGroup(
+            pnlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         jPanel2.setBackground(new java.awt.Color(51, 51, 51));
@@ -187,8 +295,8 @@ public class StatisForm extends javax.swing.JPanel {
         panelBorder1.setLayout(panelBorder1Layout);
         panelBorder1Layout.setHorizontalGroup(
             panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBorder1Layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(panelBorder1Layout.createSequentialGroup()
+                .addComponent(pnl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -196,9 +304,9 @@ public class StatisForm extends javax.swing.JPanel {
         panelBorder1Layout.setVerticalGroup(
             panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBorder1Layout.createSequentialGroup()
-                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(panelBorder1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(pnl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(10, 10, 10)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -215,26 +323,73 @@ public class StatisForm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private boolean compareDate() {
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+        c1.setTime(dcStart.getDate());
+        c2.setTime(dcEnd.getDate());
+        long a = (c2.getTime().getTime() - c1.getTime().getTime()) / (24 * 3600 * 1000);
+        if (a == 0) {
+            Mgsbox.alert(this, "Start day and end day is equal");
+            return false;
+        }else if (a < 0) {
+            Mgsbox.alert(this, "Start date cannot be greater than end date");
+            return false;
+        }
+        return true;
+    }
+
+    private void dcStartMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dcStartMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dcStartMouseClicked
+
+    private void dcEndMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dcEndMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dcEndMouseClicked
+
+    private void dcStartKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dcStartKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dcStartKeyReleased
+
+    private void btnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActionPerformed
+        // TODO add your handling code here:
+        if (compareDate()) {
+            setStatis();
+        }
+    }//GEN-LAST:event_btnViewActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnView;
     private CustomizeGUI.BlankChart.ChartBar.Chart chart;
+    private com.toedter.calendar.JDateChooser dcEnd;
+    private com.toedter.calendar.JDateChooser dcStart;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JLabel lblAvg;
+    private javax.swing.JLabel lblIncome;
+    private javax.swing.JLabel lblTotal;
     private CustomizeGUI.BlankChart.ChartBar.LineChart lineChart;
     private CustomizeGUI.Componets.PanelBorder panelBorder1;
-    private CustomizeGUI.BlankChart.ChartBar.Progress progress1;
-    private CustomizeGUI.BlankChart.ChartBar.Progress progress2;
-    private CustomizeGUI.BlankChart.ChartBar.Progress progress3;
+    private javax.swing.JPanel pnl;
+    private javax.swing.JPanel pnlBarChart;
+    private javax.swing.JPanel tab1;
+    private javax.swing.JPanel tab2;
     // End of variables declaration//GEN-END:variables
 
-    final String sql = "select top 8 FORMAT(ThoiGianMua, 'MM') as m, SUM(TienTruocVoucher) as income, SUM(TienVoucher)"
-                + " as expense, SUM(TienSauVoucher) as profit from HoaDon group by FORMAT(ThoiGianMua, 'MM')order by"
-                + " FORMAT(ThoiGianMua, 'MM') asc";
+    private final String sql = "select FORMAT(ThoiGianMua, 'MM') as m, SUM(TienTruocVoucher) as income, SUM(TienVoucher)"
+            + " as expense, SUM(TienSauVoucher) as profit from HoaDon group by FORMAT(ThoiGianMua, 'MM')order by"
+            + " FORMAT(ThoiGianMua, 'MM') desc";
+    private final String sql1 = "select top 3 HovaTen, TongSoTienDaMua from KhachHang order by TongSoTienDaMua desc";
+    private final String sql2 = "{call sp_ThongKe (?, ?)}";
+
     private List<ModelChart> loadData() throws SQLServerException {
         List<ModelChart> data = new ArrayList<>();
         try {
@@ -242,32 +397,7 @@ public class StatisForm extends javax.swing.JPanel {
             try {
                 rs = executeQuery(sql);
                 while (rs.next()) {
-                    String month = "";
-                    if (rs.getString(1).equals("01")) {
-                        month = "January";
-                    }else if (rs.getString(1).equals("02")) {
-                        month = "February";
-                    }else if (rs.getString(1).equals("03")) {
-                        month = "March";
-                    }else if (rs.getString(1).equals("04")) {
-                        month = "April";
-                    }else if (rs.getString(1).equals("05")) {
-                        month = "May";
-                    }else if(rs.getString(1).equals("06")){
-                        month = "June";
-                    }else if(rs.getString(1).equals("07")){
-                        month = "July";
-                    }else if(rs.getString(1).equals("08")){
-                        month = "August";
-                    }else if(rs.getString(1).equals("09")){
-                        month = "September";
-                    }else if(rs.getString(1).equals("10")){
-                        month = "October";
-                    }else if(rs.getString(1).equals("11")){
-                        month = "November";
-                    }else if(rs.getString(1).equals("12")){
-                        month = "December";
-                    }
+                    String month = rs.getString(1);
                     double income = rs.getDouble(2);
                     double expense = rs.getDouble(3);
                     double profit = rs.getDouble(4);
@@ -280,5 +410,67 @@ public class StatisForm extends javax.swing.JPanel {
             System.out.println(e);
         }
         return data;
+    }
+
+    public void showPieChart() {
+
+        //create dataset
+        DefaultPieDataset barDataset = new DefaultPieDataset();
+        try {
+            ResultSet rs = null;
+            try {
+                rs = executeQuery(sql1);
+                while (rs.next()) {
+                    String customerName = rs.getString(1);
+                    double total = rs.getDouble(2);
+                    barDataset.setValue(customerName, total);
+                }
+            } finally {
+                rs.getStatement().getConnection().close();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        //create chart
+        JFreeChart piechart = ChartFactory.createPieChart("Top 3 customer", barDataset, false, true, false);//explain
+        PiePlot piePlot = (PiePlot) piechart.getPlot();
+
+        //changing pie chart blocks colors
+//        piePlot.setSectionPaint("IPhone 5s", new Color(255, 255, 102));
+//        piePlot.setSectionPaint("SamSung Grand", new Color(102, 255, 102));
+//        piePlot.setSectionPaint("MotoG", new Color(255, 102, 153));
+//        piePlot.setSectionPaint("Nokia Lumia", new Color(0, 204, 204));
+        piePlot.setBackgroundPaint(Color.WHITE);
+
+        //create chartPanel to display chart(graph)
+        ChartPanel barChartPanel = new ChartPanel(piechart);
+        pnlBarChart.removeAll();
+        pnlBarChart.add(barChartPanel, BorderLayout.CENTER);
+        pnlBarChart.validate();
+
+    }
+
+    private void setStatis() {
+        Date start = dcStart.getDate();
+        Date end = dcEnd.getDate();
+        try {
+            ResultSet rs = null;
+            try {
+                rs = executeQuery(sql2, start, end);
+                while (rs.next()) {
+                    double count = rs.getDouble(1);
+                    double total = rs.getDouble(2);
+                    double avg = rs.getDouble(3);
+                    lblTotal.setText(String.valueOf(count));
+                    lblIncome.setText(String.valueOf(total));
+                    lblAvg.setText(String.valueOf(avg));
+                }
+            } finally {
+                rs.getStatement().getConnection().close();
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
