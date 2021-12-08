@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import javax.swing.ImageIcon;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -28,7 +29,8 @@ import org.jfree.data.general.DefaultPieDataset;
  * @author Laxus
  */
 public class StatisForm extends javax.swing.JPanel {
-
+    ImageIcon icon = new ImageIcon("src\\Icons\\pie_chart.png");
+    ImageIcon icon1 = new ImageIcon("src\\Icons\\statis.png");
     /**
      * Creates new form StaticForm
      */
@@ -37,6 +39,8 @@ public class StatisForm extends javax.swing.JPanel {
         setOpaque(false);
         init();
         showPieChart();
+        jTabbedPane1.setIconAt(0, icon);
+        jTabbedPane1.setIconAt(1, icon1);
     }
 
     private void init() {
@@ -120,12 +124,10 @@ public class StatisForm extends javax.swing.JPanel {
 
         tab2.setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel5.setBackground(new java.awt.Color(51, 51, 51));
+        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Start:");
 
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("End:");
 
         dcStart.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -145,28 +147,25 @@ public class StatisForm extends javax.swing.JPanel {
             }
         });
 
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/total_receipt.png"))); // NOI18N
         jLabel3.setText("Total receipt:");
 
         lblTotal.setBackground(new java.awt.Color(255, 255, 255));
         lblTotal.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        lblTotal.setForeground(new java.awt.Color(255, 255, 255));
         lblTotal.setText("0");
 
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/total_income.png"))); // NOI18N
         jLabel5.setText("Total income:");
 
         lblIncome.setBackground(new java.awt.Color(255, 255, 255));
         lblIncome.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        lblIncome.setForeground(new java.awt.Color(255, 255, 255));
         lblIncome.setText("0");
 
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/average.png"))); // NOI18N
         jLabel7.setText("Average:");
 
         lblAvg.setBackground(new java.awt.Color(255, 255, 255));
         lblAvg.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        lblAvg.setForeground(new java.awt.Color(255, 255, 255));
         lblAvg.setText("0");
 
         btnView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/view.png"))); // NOI18N
@@ -227,9 +226,9 @@ public class StatisForm extends javax.swing.JPanel {
                         .addGap(21, 21, 21)
                         .addComponent(btnView)))
                 .addGap(28, 28, 28)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTotal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel5)
@@ -238,7 +237,7 @@ public class StatisForm extends javax.swing.JPanel {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel7)
                     .addComponent(lblAvg, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout tab2Layout = new javax.swing.GroupLayout(tab2);
