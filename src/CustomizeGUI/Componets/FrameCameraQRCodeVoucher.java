@@ -4,7 +4,7 @@
  */
 package CustomizeGUI.Componets;
 
-import GUI.ReceiptForm;
+import GUI.ReceiptForm1;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamPanel;
 import com.github.sarxos.webcam.WebcamResolution;
@@ -15,10 +15,7 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -149,7 +146,7 @@ public class FrameCameraQRCodeVoucher extends javax.swing.JFrame implements Runn
                 }
 
                 if (result != null) {
-                    ReceiptForm.TEXT_FROM_QRCODE_VOUCHER=result.getText();
+                    ReceiptForm1.TEXT_FROM_QRCODE_VOUCHER=result.getText();
                     webcam.close();
                     this.dispose();
                     break;
