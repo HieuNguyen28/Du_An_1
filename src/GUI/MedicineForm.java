@@ -10,11 +10,16 @@ import Controller.Helper.Image_Auth;
 import static Controller.Helper.Image_Auth.USER;
 import Controller.Helper.Mgsbox;
 import Controller.Helper.ValidateSupport;
+import Controller.ModelDAO.CustomerDAO;
 import Controller.ModelDAO.MedicineDAO;
 import Model.Medicine;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
@@ -36,8 +41,9 @@ public class MedicineForm extends javax.swing.JPanel {
     public MedicineForm() {
         initComponents();
         EditTable(tblMedicine);
-        LoadDataToTable();
+        LoadDataToTable(new MedicineDAO().selectAll());
         loadComboboxUnit();
+        loadDataToSort();
         txtPriceSale.setEditable(false);
         lblMedicineImage.setHorizontalAlignment((int) CENTER_ALIGNMENT);
     }
@@ -84,8 +90,10 @@ public class MedicineForm extends javax.swing.JPanel {
         txtRate = new GUI.TextField();
         txtPriceImport = new GUI.TextField();
         jLabel11 = new javax.swing.JLabel();
-        txtSearch = new javax.swing.JTextField();
         btnCreateExcel = new javax.swing.JButton();
+        btnChange = new javax.swing.JButton();
+        txtSearch = new GUI.TextField();
+        cboSort = new javax.swing.JComboBox<>();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -159,9 +167,10 @@ public class MedicineForm extends javax.swing.JPanel {
             }
         });
         tblMedicine.setFocusable(false);
+        tblMedicine.setGridColor(new java.awt.Color(15, 106, 205));
         tblMedicine.setIntercellSpacing(new java.awt.Dimension(0, 0));
         tblMedicine.setRowHeight(25);
-        tblMedicine.setSelectionBackground(new java.awt.Color(232, 57, 95));
+        tblMedicine.setSelectionBackground(new java.awt.Color(51, 153, 255));
         tblMedicine.setShowVerticalLines(false);
         tblMedicine.getTableHeader().setReorderingAllowed(false);
         tblMedicine.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -171,10 +180,10 @@ public class MedicineForm extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(tblMedicine);
 
-        btnEdit.setBackground(new java.awt.Color(0, 153, 255));
-        btnEdit.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnEdit.setBackground(new java.awt.Color(92, 84, 179));
+        btnEdit.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnEdit.setForeground(new java.awt.Color(255, 255, 255));
-        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/edit.png"))); // NOI18N
+        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/edit_32px.png"))); // NOI18N
         btnEdit.setText("Edit");
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -182,10 +191,10 @@ public class MedicineForm extends javax.swing.JPanel {
             }
         });
 
-        btnDelete.setBackground(new java.awt.Color(0, 153, 255));
-        btnDelete.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnDelete.setBackground(new java.awt.Color(92, 84, 179));
+        btnDelete.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnDelete.setForeground(new java.awt.Color(255, 255, 255));
-        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/delete.png"))); // NOI18N
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/delete_32px.png"))); // NOI18N
         btnDelete.setText("Delete");
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -193,10 +202,10 @@ public class MedicineForm extends javax.swing.JPanel {
             }
         });
 
-        btnUpdate.setBackground(new java.awt.Color(0, 153, 255));
-        btnUpdate.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnUpdate.setBackground(new java.awt.Color(92, 84, 179));
+        btnUpdate.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnUpdate.setForeground(new java.awt.Color(255, 255, 255));
-        btnUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/edit.png"))); // NOI18N
+        btnUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/update_32px.png"))); // NOI18N
         btnUpdate.setText("Update");
         btnUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -218,7 +227,7 @@ public class MedicineForm extends javax.swing.JPanel {
             }
         });
 
-        jLabel11.setText("Search:");
+        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/search_24px.png"))); // NOI18N
 
         btnCreateExcel.setBackground(new java.awt.Color(255, 255, 255));
         btnCreateExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/excel.png"))); // NOI18N
@@ -229,6 +238,24 @@ public class MedicineForm extends javax.swing.JPanel {
                 btnCreateExcelActionPerformed(evt);
             }
         });
+
+        btnChange.setBackground(new java.awt.Color(255, 255, 255));
+        btnChange.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/night-mode.png"))); // NOI18N
+        btnChange.setBorder(null);
+        btnChange.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnChangeMouseClicked(evt);
+            }
+        });
+
+        txtSearch.setText(" ");
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSearchKeyPressed(evt);
+            }
+        });
+
+        cboSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None Sort", "Sort NameUnit", "Sort DrugName", "Sort Price", "Sort UserManual", " " }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -275,33 +302,40 @@ public class MedicineForm extends javax.swing.JPanel {
                             .addComponent(txtIgredient, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtDrugBatch, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtUserManual, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtPriceImport, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jLabel1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(txtPriceImport, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(21, 21, 21))))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(btnCreateExcel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(11, 11, 11)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(btnChange, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
@@ -348,19 +382,21 @@ public class MedicineForm extends javax.swing.JPanel {
                             .addComponent(jLabel14)
                             .addComponent(txtRate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtPriceImport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(9, 9, 9)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGap(17, 17, 17)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel11)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(3, 3, 3)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEdit)
-                    .addComponent(btnDelete)
-                    .addComponent(btnUpdate)
-                    .addComponent(btnCreateExcel))
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCreateExcel)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -417,7 +453,7 @@ public class MedicineForm extends javax.swing.JPanel {
                 || !ValidateSupport.checkPrice(txtPriceSale)
                 || !ValidateSupport.checkPrice(txtRate)) {
             Mgsbox.error(this, "Please fill in the correct format as required !!!");
-        } else  {
+        } else {
             update();
             EditStatus(false);
         }
@@ -431,22 +467,64 @@ public class MedicineForm extends javax.swing.JPanel {
 
     private void txtRateKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRateKeyReleased
         // TODO add your handling code here:
-        countPriceSale(Double.parseDouble(txtRate.getText().isEmpty() ? "0" : txtRate.getText())
-                , Double.parseDouble(txtPriceImport.getText().isEmpty() ? "0" : txtPriceImport.getText()));
+        countPriceSale(Double.parseDouble(txtRate.getText().isEmpty() ? "0" : txtRate.getText()),
+                 Double.parseDouble(txtPriceImport.getText().isEmpty() ? "0" : txtPriceImport.getText()));
     }//GEN-LAST:event_txtRateKeyReleased
 
     private void txtPriceImportKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPriceImportKeyReleased
-        countPriceSale(Double.parseDouble(txtRate.getText().isEmpty() ? "0" : txtRate.getText())
-                , Double.parseDouble(txtPriceImport.getText().isEmpty() ? "0" : txtPriceImport.getText()));
+        countPriceSale(Double.parseDouble(txtRate.getText().isEmpty() ? "0" : txtRate.getText()),
+                 Double.parseDouble(txtPriceImport.getText().isEmpty() ? "0" : txtPriceImport.getText()));
     }//GEN-LAST:event_txtPriceImportKeyReleased
+
+    private void btnChangeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnChangeMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 1) {
+            btnChange.setToolTipText("Cick 2 for change Background");
+            Controller.Helper.BackgroundC1.ChangeTxt(txtDrugID);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtContent);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtDrugBatch);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtDrugName);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtDrugTypeID);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtIgredient);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtPriceImport);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtPriceSale);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtProducer);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtRate);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtUserManual);
+            Controller.Helper.BackgroundC1.ChangeTxt(txtSearch);
+            Controller.Helper.BackgroundC1.ChangeBtn(btnChange);
+        } else if (evt.getClickCount() == 2) {
+            btnChange.setToolTipText("Cick 1 for change Background");
+            Controller.Helper.BackgroundC2.ChangeTxt(txtDrugID);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtContent);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtDrugBatch);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtDrugName);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtDrugTypeID);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtIgredient);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtPriceImport);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtPriceSale);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtProducer);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtRate);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtUserManual);
+            Controller.Helper.BackgroundC2.ChangeTxt(txtSearch);
+            Controller.Helper.BackgroundC2.ChangeBtn(btnChange);
+        }
+    }//GEN-LAST:event_btnChangeMouseClicked
+
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        // TODO add your handling code here:
+        search(txtSearch.getText());
+    }//GEN-LAST:event_txtSearchKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnChange;
     private javax.swing.JButton btnCreateExcel;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cbbUnit;
+    private javax.swing.JComboBox<String> cboSort;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -475,7 +553,7 @@ public class MedicineForm extends javax.swing.JPanel {
     private GUI.TextField txtPriceSale;
     private GUI.TextField txtProducer;
     private GUI.TextField txtRate;
-    private javax.swing.JTextField txtSearch;
+    private GUI.TextField txtSearch;
     private GUI.TextField txtUserManual;
     // End of variables declaration//GEN-END:variables
     private void EditTable(JTable a) {
@@ -489,10 +567,11 @@ public class MedicineForm extends javax.swing.JPanel {
     MedicineDAO MD = new MedicineDAO();
     JFileChooser fileChooser = new JFileChooser();
     int index = 0;
-    
-    private void countPriceSale(double rate, double priceImport){
-        txtPriceSale.setText(priceImport+ (rate * priceImport)+"");
+
+    private void countPriceSale(double rate, double priceImport) {
+        txtPriceSale.setText(priceImport + (rate * priceImport) + "");
     }
+
     //lấy dữ liệu trên bảng
     private void loadComboboxUnit() {
         DefaultComboBoxModel boxModel = (DefaultComboBoxModel) cbbUnit.getModel();
@@ -505,12 +584,12 @@ public class MedicineForm extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-    
-    private void LoadDataToTable() {
+
+    private void LoadDataToTable(List<Medicine> listMedicine) {
         DefaultTableModel model = (DefaultTableModel) tblMedicine.getModel();
         model.setRowCount(0);
         try {
-            List<Medicine> listMedicine = MD.selectAll();
+             
             listMedicine.forEach(e -> {
                 model.addRow(new Object[]{e.getMdcID(),
                     e.getMdcBatchID(),
@@ -527,7 +606,58 @@ public class MedicineForm extends javax.swing.JPanel {
             Mgsbox.error(this, "Can't load data........");
         }
     }
-
+    
+     public List<Medicine> SortByUnit() {
+        List<Medicine> listSort = new MedicineDAO().selectAll();
+        Collections.sort(listSort, (Medicine o1, Medicine o2)
+                -> o1.getMdcUnit().compareTo(o2.getMdcUnit()));
+        LoadDataToTable(listSort);
+        return listSort;
+    }
+     
+    public List<Medicine> SortByDrugName() {
+         List<Medicine> listSort = new MedicineDAO().selectAll();
+        Collections.sort(listSort, (Medicine o1, Medicine o2)
+                -> o1.getMdcName().compareTo(o2.getMdcName()));
+        LoadDataToTable(listSort);
+        return listSort;
+    }
+    public List<Medicine> SortByUsermanual() {
+         List<Medicine> listSort = new MedicineDAO().selectAll();
+        Collections.sort(listSort, (Medicine o1, Medicine o2)
+                -> o1.getMdcUserManual().compareTo(o2.getMdcUserManual()));
+        LoadDataToTable(listSort);
+        return listSort;
+    }
+     public List<Medicine> SortByTotal() {
+        List<Medicine> listSort = new MedicineDAO().selectAll();
+        Collections.sort(listSort, new Comparator<Medicine>() {
+            @Override
+            public int compare(Medicine c1, Medicine c2) {
+                return Double.compare(c1.getMdcPriceSale(), c2.getMdcPriceSale());
+            }
+        });
+        return listSort;
+    }
+    private void loadDataToSort() {
+        cboSort.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() == 1) {
+                    LoadDataToTable(SortByUnit());
+                } else if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() == 2) {
+                     LoadDataToTable(SortByDrugName());
+                } else if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() == 3) {
+                     LoadDataToTable(SortByTotal());
+                }else if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() > 3) {
+                     LoadDataToTable(SortByUsermanual());
+                }
+                else if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() < 1) {
+                     LoadDataToTable(new MedicineDAO().selectAll());
+                }
+            }
+        });
+    }
     private void edit() {
         // setTrang();
         try {
@@ -541,12 +671,13 @@ public class MedicineForm extends javax.swing.JPanel {
             Mgsbox.error(this, "Data Query Error!!!");
         }
     }
+
     //Edit
     private void update() {
         Medicine model = getModel();
         try {
             MD.update(model);
-            this.LoadDataToTable();
+            this.LoadDataToTable(new MedicineDAO().selectAll());
             Mgsbox.alert(this, "Update successful!");
         } catch (Exception e) {
             Mgsbox.alert(this, "Update failed!");
@@ -559,7 +690,7 @@ public class MedicineForm extends javax.swing.JPanel {
             String MDID = txtDrugID.getText();
             try {
                 MD.delete(MDID);
-                this.LoadDataToTable();
+                this.LoadDataToTable(new MedicineDAO().selectAll());
                 this.clearForm();
                 Mgsbox.alert(this, "Delete successfully!");
             } catch (Exception e) {
@@ -580,12 +711,12 @@ public class MedicineForm extends javax.swing.JPanel {
         txtUserManual.setText(model.getMdcUserManual());
         txtPriceSale.setText(String.valueOf(model.getMdcPriceSale()));
         if (model.getMdcImage() != null) {
-            lblMedicineImage.setIcon(Image_Auth.readImage(new File("Image",model.getMdcImage()),
-                    lblMedicineImage.getWidth(), 
+            lblMedicineImage.setIcon(Image_Auth.readImage(new File("Image", model.getMdcImage()),
+                    lblMedicineImage.getWidth(),
                     lblMedicineImage.getHeight()));
             lblMedicineImage.setToolTipText(model.getMdcImage());
         }
-        txtRate.setText(String.format("%.2f",model.getMdcRate()).replace(",", "."));
+        txtRate.setText(String.format("%.2f", model.getMdcRate()).replace(",", "."));
         txtPriceImport.setText(String.valueOf(model.getMdcPriceImport()));
     }
 
@@ -687,6 +818,7 @@ public class MedicineForm extends javax.swing.JPanel {
             return true;
         }
     }
+
     public void editstaff(boolean b) {
         txtDrugID.setEditable(!b);
         txtDrugTypeID.setEditable(!b);
