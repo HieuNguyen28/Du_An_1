@@ -9,10 +9,14 @@ import static Controller.Helper.Image_Auth.USER;
 import Controller.Helper.Mgsbox;
 import Controller.Helper.QRCodeSupport;
 import Controller.Helper.ValidateSupport;
+import Controller.ModelDAO.CustomerDAO;
 import Controller.ModelDAO.EmployeeDAO;
+import Controller.ModelDAO.MedicineDAO;
 import Controller.ModelDAO.IdDAO;
 import static GUI.ChangePasswordForm.REGEX_PASSWORD;
+import Model.Customer;
 import Model.Employee;
+import Model.Medicine;
 import com.google.zxing.WriterException;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Color;
@@ -21,11 +25,16 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,8 +43,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 public class EmployeeGUI extends javax.swing.JPanel {
 
@@ -50,7 +61,8 @@ public class EmployeeGUI extends javax.swing.JPanel {
         EditTable(tblEmployee);
         setOpaque(false);
         lblImage.setHorizontalAlignment((int) CENTER_ALIGNMENT);
-        LoadDataToTable();
+        LoadDataToTable(new EmployeeDAO().selectAll());
+        loadDataToSort();
         setStatusControl(false);
         initRole();
     }
@@ -76,11 +88,10 @@ public class EmployeeGUI extends javax.swing.JPanel {
         }
     }
 
-    private void LoadDataToTable() {
+    private void LoadDataToTable(List<Employee> listEmployee) {
         DefaultTableModel model = (DefaultTableModel) tblEmployee.getModel();
         model.setRowCount(0);
         try {
-            List<Employee> listEmployee = ED.selectAll();
             listEmployee.forEach(e -> {
                 model.addRow(new Object[]{
                     e.getEpeID(),
@@ -96,10 +107,51 @@ public class EmployeeGUI extends javax.swing.JPanel {
         }
     }
 
+    public List<Employee> sortByLastName() {
+        List<Employee> listSort = new EmployeeDAO().selectAll();
+        Collections.sort(listSort, new Comparator<Employee>() {
+            @Override
+            public int compare(Employee o1, Employee o2) {
+                List<String> nhanVien1 = Arrays.asList(o1.getEpeName().split(" "));
+                Collections.reverse(nhanVien1);
+                List<String> nhanVien2 = Arrays.asList(o2.getEpeName().split(" "));
+                Collections.reverse(nhanVien2);
+                return nhanVien1.get(0).substring(0, 1).compareTo(nhanVien2.get(0).substring(0, 1));
+            }
+        });
+        return listSort;
+    }
+
+    public List<Employee> SortByRole() {
+        List<Employee> listSort = new EmployeeDAO().selectAll();
+        Collections.sort(listSort, new Comparator<Employee>() {
+            @Override
+            public int compare(Employee c1, Employee c2) {
+                return Boolean.compare(c1.isEpeIsRole(), c2.isEpeIsRole());
+            }
+        });
+        return listSort;
+    }
+
+    private void loadDataToSort() {
+        cboSort.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() == 1) {
+                    LoadDataToTable(sortByLastName());
+                } else if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() == 2) {
+                    LoadDataToTable(SortByRole());
+                } else if (e.getStateChange() == ItemEvent.SELECTED && cboSort.getSelectedIndex() < 1) {
+                    LoadDataToTable(new EmployeeDAO().selectAll());
+                }
+            }
+        });
+    }
+
     private void insert(Employee model) {
         try {
             ED.insert(model);
-            this.LoadDataToTable();
+            this.LoadDataToTable(new EmployeeDAO().selectAll());
             this.clearForm();
             Mgsbox.alert(this, "Successfully added employees");
         } catch (Exception e) {
@@ -112,7 +164,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
 
         try {
             ED.update(model);
-            this.LoadDataToTable();
+            this.LoadDataToTable(new EmployeeDAO().selectAll());
             clearForm();
             Mgsbox.alert(this, "Update successful!");
         } catch (Exception e) {
@@ -124,7 +176,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
         if (Mgsbox.comfirm(this, "Do you really want to delete this employee?")) {
             try {
                 ED.delete(EmployeeID);
-                this.LoadDataToTable();
+                this.LoadDataToTable(new EmployeeDAO().selectAll());
                 this.clearForm();
                 Mgsbox.alert(this, "Delete successfully!");
             } catch (Exception e) {
@@ -241,6 +293,13 @@ public class EmployeeGUI extends javax.swing.JPanel {
 
     }
 
+    public void search(String text) {
+        DefaultTableModel model = (DefaultTableModel) tblEmployee.getModel();
+        TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>(model);
+        tblEmployee.setRowSorter(rowSorter);
+        rowSorter.setRowFilter(RowFilter.regexFilter(text));
+    }
+
     private void EditTable(JTable a) {
         a.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
         a.getTableHeader().setOpaque(false);
@@ -295,7 +354,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
             Mgsbox.error(this, "Username already exists!");
             txtUsername.requestFocus();
             return false;
-        }else if (!txtPassword.getText().matches(REGEX_PASSWORD)) {
+        } else if (!txtPassword.getText().matches(REGEX_PASSWORD)) {
             Mgsbox.alert(this, "New password is too weak. Try again!");
             txtPassword.requestFocus();
             return false;
@@ -333,6 +392,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
         btnOpenfile.setEnabled(flag);
         btnOpenCamera.setEnabled(flag);
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -381,6 +441,9 @@ public class EmployeeGUI extends javax.swing.JPanel {
         btnOpenfile = new javax.swing.JButton();
         btnOpenCamera = new javax.swing.JButton();
         btnCreateExcel = new javax.swing.JButton();
+        cboSort = new javax.swing.JComboBox<>();
+        txtSearch = new GUI.TextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setForeground(new java.awt.Color(80, 23, 231));
@@ -645,6 +708,18 @@ public class EmployeeGUI extends javax.swing.JPanel {
             }
         });
 
+        cboSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "None Sort", "Sort Name Employee", "Sort Role" }));
+
+        txtSearch.setText(" ");
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSearchKeyPressed(evt);
+            }
+        });
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/search_24px.png"))); // NOI18N
+        jLabel1.setText(" ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -665,68 +740,79 @@ public class EmployeeGUI extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(btnCreateExcel)))
-                .addGap(11, 11, 11)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblID)
-                        .addGap(75, 75, 75)
-                        .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblName)
-                        .addGap(39, 39, 39)
-                        .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblSex)
-                        .addGap(0, 0, 0)
-                        .addComponent(rdoMale)
-                        .addGap(0, 0, 0)
-                        .addComponent(rdoFemale))
+                        .addGap(11, 11, 11)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblID)
+                                .addGap(75, 75, 75)
+                                .addComponent(txtID, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblName)
+                                .addGap(39, 39, 39)
+                                .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblSex)
+                                .addGap(0, 0, 0)
+                                .addComponent(rdoMale)
+                                .addGap(0, 0, 0)
+                                .addComponent(rdoFemale))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblDate)
+                                .addGap(61, 61, 61)
+                                .addComponent(dcDate, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblAddress)
+                                .addGap(25, 25, 25)
+                                .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblCard)
+                                .addGap(10, 10, 10)
+                                .addComponent(txtIdentityCard, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblUserName)
+                                .addGap(29, 29, 29)
+                                .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblPassWord)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(150, 150, 150)
+                                .addComponent(btnNew, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(9, 9, 9)
+                                .addComponent(btnDelete)
+                                .addGap(10, 10, 10)
+                                .addComponent(btnUpdate)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblNumnerPhone)
+                                .addGap(4, 4, 4)
+                                .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblEmail)
+                                .addGap(40, 40, 40)
+                                .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblRole)
+                                .addGap(18, 18, 18)
+                                .addComponent(rdoManager)
+                                .addGap(0, 0, 0)
+                                .addComponent(rdoStaff))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                    .addGap(458, 458, 458)
+                                    .addComponent(jLabel1)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txtSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 698, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblDate)
-                        .addGap(61, 61, 61)
-                        .addComponent(dcDate, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblAddress)
-                        .addGap(25, 25, 25)
-                        .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblCard)
-                        .addGap(10, 10, 10)
-                        .addComponent(txtIdentityCard, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblNumnerPhone)
-                        .addGap(4, 4, 4)
-                        .addComponent(txtPhoneNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblEmail)
-                        .addGap(40, 40, 40)
-                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblRole)
-                        .addGap(18, 18, 18)
-                        .addComponent(rdoManager)
-                        .addGap(0, 0, 0)
-                        .addComponent(rdoStaff))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblUserName)
-                        .addGap(29, 29, 29)
-                        .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblPassWord)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 698, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(150, 150, 150)
-                        .addComponent(btnNew, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(9, 9, 9)
-                        .addComponent(btnDelete)
-                        .addGap(10, 10, 10)
-                        .addComponent(btnUpdate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -801,8 +887,13 @@ public class EmployeeGUI extends javax.swing.JPanel {
                                 .addGap(3, 3, 3)
                                 .addComponent(lblPassWord))
                             .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(17, 17, 17)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cboSort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(8, 8, 8)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1032,6 +1123,11 @@ public class EmployeeGUI extends javax.swing.JPanel {
         CreateExcel.ExportToExcel(tblEmployee, "Employee");
     }//GEN-LAST:event_btnCreateExcelActionPerformed
 
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        // TODO add your handling code here:
+        search(txtSearch.getText());
+    }//GEN-LAST:event_txtSearchKeyPressed
+
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -1054,7 +1150,9 @@ public class EmployeeGUI extends javax.swing.JPanel {
     private javax.swing.JButton btnUpdate;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JComboBox<String> cboSort;
     private com.toedter.calendar.JDateChooser dcDate;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblAddress;
     private javax.swing.JLabel lblCard;
@@ -1086,6 +1184,7 @@ public class EmployeeGUI extends javax.swing.JPanel {
     private GUI.TextField txtName;
     private GUI.TextField txtPassword;
     private GUI.TextField txtPhoneNumber;
+    private GUI.TextField txtSearch;
     private GUI.TextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }
