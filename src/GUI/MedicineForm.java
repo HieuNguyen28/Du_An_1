@@ -482,6 +482,7 @@ public class MedicineForm extends javax.swing.JPanel {
     private void btnChangeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnChangeMouseClicked
         // TODO add your handling code here:
         if (evt.getClickCount() == 1) {
+            setBackground(Color.decode("#9badf2"));
             btnChange.setToolTipText("Cick 2 for change Background");
             Controller.Helper.BackgroundC1.ChangeTxt(txtDrugID);
             Controller.Helper.BackgroundC1.ChangeTxt(txtContent);
@@ -497,6 +498,7 @@ public class MedicineForm extends javax.swing.JPanel {
             Controller.Helper.BackgroundC1.ChangeTxt(txtSearch);
             Controller.Helper.BackgroundC1.ChangeBtn(btnChange);
         } else if (evt.getClickCount() == 2) {
+            setBackground(Color.white);
             btnChange.setToolTipText("Cick 1 for change Background");
             Controller.Helper.BackgroundC2.ChangeTxt(txtDrugID);
             Controller.Helper.BackgroundC2.ChangeTxt(txtContent);
