@@ -663,10 +663,10 @@ public class MedicineTypeForm extends javax.swing.JPanel {
     IdDAO iddao = new IdDAO();
     private void createID(){
         List<Object> data = iddao.medicineTypeID();
-        List<Object> data1 = iddao.medicineID();
+        //List<Object> data1 = iddao.medicineID();
         int id = Integer.valueOf(data.get(0).toString()) + 1;
-        int id1 = Integer.valueOf(data1.get(0).toString()) + 1;
+        //int id1 = Integer.valueOf(data1.get(0).toString()) + 1;
         txtDrugTypeID.setText("MDO"+id);
-        txtDrugNameID.setText("MED"+id1);
+        //txtDrugNameID.setText("MED"+id1);
     }
 }

@@ -430,10 +430,7 @@ public class ReceiptForm1 extends javax.swing.JPanel {
 
     private void txtCashKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCashKeyReleased
         // TODO add your handling code here:
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER || Double.valueOf(txtCash.getText()) > Double.valueOf(lblTotal.getText())) {
-            double balance = Double.valueOf(txtCash.getText()) - Double.valueOf(lblTotal.getText());
-            lblBalance.setText(String.valueOf(balance));
-        }
+        countTotal();
     }//GEN-LAST:event_txtCashKeyReleased
 
     private void btnPayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPayActionPerformed
@@ -559,7 +556,7 @@ public class ReceiptForm1 extends javax.swing.JPanel {
     List<Object> listData = new ArrayList<>();
     int index = 0;
     int flag = 0;
-    
+
     private KeyAdapter KA = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
@@ -573,13 +570,29 @@ public class ReceiptForm1 extends javax.swing.JPanel {
             }
         }
     };
-
-    private void createID(){
+    
+    private double countTotal(){
+        double voucher = 0;
+        double total=0;
+        double balance=0;
+        if (Double.valueOf(txtCash.getText()) > Double.valueOf(lblTotal.getText())) {
+            if (cbbVoucher.getSelectedIndex() != 0) {
+                voucher = new VoucherDAO().selectByID(cbbVoucher.getSelectedItem().toString()).getVcPriceDiscount();
+            }
+            if ((Double.valueOf(lblTotal.getText()) - voucher) > 0) {
+                total= (Double.valueOf(lblTotal.getText()) - voucher);
+            }
+             balance = Double.valueOf(txtCash.getText()) - total;
+            lblBalance.setText(String.valueOf(balance));
+        }
+        return balance;
+    }
+    private void createID() {
         List<Object> data = iddao.receiptID();
         int id = Integer.valueOf(data.get(0).toString()) + 1;
-        txtReceiptID.setText("HD"+id);
+        txtReceiptID.setText("HD" + id);
     }
-    
+
     private boolean check() {
         Invoice invoice = idao.selectByID(txtReceiptID.getText());
         if (txtReceiptID.getText().equals("") || txtReceiptID.getText().equalsIgnoreCase("HD")) {
@@ -706,6 +719,9 @@ public class ReceiptForm1 extends javax.swing.JPanel {
                     g2d.drawString(" Cash      :                 " + txtCash.getText() + "   ", 10, y);
                     y += yShift;
                     g2d.drawString("-------------------------------------", 10, y);
+                    y += yShift;
+                    Voucher v = new VoucherDAO().selectByID(cbbVoucher.getSelectedItem().toString());
+                    g2d.drawString("Discount   :                 " + v.getVcPriceDiscount(), 10, y);
                     y += yShift;
                     g2d.drawString(" Balance   :                 " + lblBalance.getText() + "   ", 10, y);
                     y += yShift;
@@ -852,6 +868,7 @@ public class ReceiptForm1 extends javax.swing.JPanel {
                         cbbVoucher.setSelectedIndex(0);
                         TEXT_FROM_QRCODE_VOUCHER = null;
                     }
+                    countTotal();
                 }
             }
         });
